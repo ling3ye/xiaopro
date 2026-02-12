@@ -32,7 +32,7 @@ const t = useTranslations(lang as SupportedLocale);
 
 // 获取文章数据（限制 10 条）
 const experiments = await getCollection('experiments', ({ id }) => {
-  return id.startsWith(`${lang}/`);
+  return id.includes(`/${lang}/`);
 });
 const solutions = await getCollection('solutions', ({ id }) => {
   return id.startsWith(`${lang}/`);
@@ -146,18 +146,29 @@ const structuredData = {
           </a>
         </div>
         <div class="featured__grid">
-          {featuredArticles.map(article => (
-            <Card
-              type="article"
-              title={article.data.title}
-              description={article.data.intro}
-              link={getLocalizedPath(`/${article.collection}/${article.id}`, currentLocale)}
-              tags={[article.collection === 'experiments' ? '教程' : '案例']}
-              date={('date' in article.data ? article.data.date as Date : undefined)}
-              featured={true}
-              image={article.data.image}
-            />
-          ))}
+          {featuredArticles.map(article => {
+            let link: string;
+            if (article.collection === 'experiments') {
+              const category = article.id.split('/')[0];
+              const slug = article.id.replace('.md', '').split('/').pop();
+              link = getLocalizedPath(`/${article.collection}/${category}/${slug}`, currentLocale);
+            } else {
+              const slug = article.id.replace('.md', '').split('/').pop();
+              link = getLocalizedPath(`/${article.collection}/${slug}`, currentLocale);
+            }
+            return (
+              <Card
+                type="article"
+                title={article.data.title}
+                description={article.data.intro}
+                link={link}
+                tags={[article.collection === 'experiments' ? '教程' : '案例']}
+                date={('date' in article.data ? article.data.date as Date : undefined)}
+                featured={true}
+                image={article.data.image}
+              />
+            );
+          })}
         </div>
       </div>
     </section>
@@ -178,16 +189,27 @@ const structuredData = {
           </a>
         </div>
         <div class="recent__grid">
-          {recentArticles.map(article => (
-            <Card
-              type="article"
-              title={article.data.title}
-              description={article.data.intro}
-              link={getLocalizedPath(`/${article.collection}/${article.id}`, currentLocale)}
-              tags={[article.collection === 'experiments' ? '教程' : '案例']}
-              date={('date' in article.data ? article.data.date as Date : undefined)}
-            />
-          ))}
+          {recentArticles.map(article => {
+            let link: string;
+            if (article.collection === 'experiments') {
+              const category = article.id.split('/')[0];
+              const slug = article.id.replace('.md', '').split('/').pop();
+              link = getLocalizedPath(`/${article.collection}/${category}/${slug}`, currentLocale);
+            } else {
+              const slug = article.id.replace('.md', '').split('/').pop();
+              link = getLocalizedPath(`/${article.collection}/${slug}`, currentLocale);
+            }
+            return (
+              <Card
+                type="article"
+                title={article.data.title}
+                description={article.data.intro}
+                link={link}
+                tags={[article.collection === 'experiments' ? '教程' : '案例']}
+                date={('date' in article.data ? article.data.date as Date : undefined)}
+              />
+            );
+          })}
         </div>
       </div>
     </section>
