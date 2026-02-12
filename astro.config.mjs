@@ -2,8 +2,10 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  // 将此处替换为你自己的购买的域名，注意要带上 https://
-  site: 'https://ling3ye.github.io/xiaopro/', 
+  // 1. 填写 GitHub 提供的基础域名
+  site: 'https://ling3ye.github.io', 
   
-  // 绑定自定义域名通常不需要设置 base，除非你要部署在该域名的子目录下
+  // 2. 非常重要！填写你的仓库名作为子路径
+  // 注意：前后都要加斜杠 /
+  base: '/xiaopro', 
 });
