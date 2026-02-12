@@ -1,0 +1,15 @@
+{
+  "brand": "Arduino",
+  "model": "Arduino UNO R4 WiFi",
+  "specs": {
+    "cpu": "RA4M1 (Arm Cortex-M4)",
+    "frequency": "48MHz",
+    "flash": "256KB",
+    "sram": "32KB",
+    "wifi": true,
+    "bluetooth": false
+  },
+  "keywords": ["beginner", "arm", "wifi", "educational"],
+  "officialUrl": "https://docs.arduino.cc/hardware/uno-r4-wifi",
+  "image": "https://picsum.photos/400/200"
+}

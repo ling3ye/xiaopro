@@ -1,0 +1,13 @@
+{
+  "category": "sensor",
+  "brand": "Bosch",
+  "model": "BME280",
+  "alias": ["温湿度气压传感器", "Environmental Sensor"],
+  "specs": {
+    "voltage": "1.71V - 3.6V",
+    "interface": "I2C / SPI",
+    "rangeTemp": "-40 - 85°C",
+    "rangeHum": "0 - 100%",
+    "rangePress": "300 - 1100hPa"
+  }
+}

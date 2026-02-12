@@ -1,0 +1,194 @@
+---
+/**
+ * 基础布局组件 Layout
+ *
+ * 整个网站的基础布局模板，包含：
+ * - HTML 文档结构
+ * - 头部元信息
+ * - 全局样式引入
+ * - 页头和页脚
+ * - 主体内容插槽
+ *
+ * @component Layout
+ *
+ * Props:
+ * @property {string} title - 页面标题
+ * @property {string} description - 页面描述
+ * @property {string} lang - 语言代码
+ * @property {string} currentPath - 当前页面路径
+ * @property {boolean} showSidebar - 是否显示侧边栏
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// 获取组件属性
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  currentPath?: string;
+  image?: string;
+  robots?: string;
+  structuredData?: object;
+}
+
+const {
+  title = 'XIAOPRO - 硬件开发教程与案例',
+  description = '探索硬件开发的无限可能，从基础教程到高级案例，一站式学习平台',
+  lang = 'zh-cn',
+  currentPath = '/',
+  image = '/og-image.jpg',
+  robots,
+  structuredData,
+} = Astro.props;
+
+// 构建页面标题
+const pageTitle = title === 'XIAOPRO - 硬件开发教程与案例'
+  ? title
+  : `${title} - XIAOPRO`;
+
+// 构建完整 URL
+const siteUrl = Astro.site || 'https://xiaopro.com';
+const canonicalUrl = new URL(currentPath, siteUrl).href;
+const imageUrl = new URL(image, siteUrl).href;
+---
+
+<!doctype html>
+<html lang={lang}>
+	<head>
+		<!-- 字符编码与视口设置 -->
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!-- SEO 元信息 -->
+		<title>{pageTitle}</title>
+		<meta name="description" content={description} />
+		<meta name="keywords" content="硬件开发,Arduino,ESP32,Raspberry Pi,STM32,嵌入式系统,IoT" />
+		{robots && <meta name="robots" content={robots} />}
+
+		<!-- Canonical URL -->
+		<link rel="canonical" href={canonicalUrl} />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:locale" content={lang} />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content={canonicalUrl} />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl} />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="apple-touch-icon" href="/favicon.svg" />
+
+		<!-- 生成器信息 -->
+		<meta name="generator" content={Astro.generator} />
+
+		<!-- 预加载关键资源 -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+		<!-- 结构化数据 (JSON-LD) -->
+		{structuredData && (
+			<script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
+		)}
+	</head>
+	<body>
+		<!-- 页头导航 -->
+		<Header lang={lang} currentPath={currentPath} />
+
+		<!-- 主体内容 -->
+		<main class="main">
+			<!-- 主内容插槽 -->
+			<slot />
+		</main>
+
+		<!-- 页脚 -->
+		<Footer lang={lang} />
+	</body>
+</html>
+
+<style>
+	/* ============================================
+	   布局特定样式
+	   ============================================ */
+
+	/**
+	 * 主体内容容器
+	 * 考虑到固定页头的高度
+	 */
+	.main {
+		min-height: calc(100vh - var(--header-height));
+		padding-top: var(--header-height);
+	}
+</style>
+
+<style is:global>
+	/* ============================================
+	   全局样式调整（Layout 特有）
+	   ============================================ */
+
+	/**
+	 * 滚动条美化
+	 */
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: var(--color-bg-primary);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--color-border);
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--color-border-light);
+	}
+
+	/**
+	 * 选中文字样式
+	 */
+	::selection {
+		background: var(--color-primary);
+		color: white;
+	}
+
+	::-moz-selection {
+		background: var(--color-primary);
+		color: white;
+	}
+
+	/**
+	 * 焦点状态样式（无障碍）
+	 */
+	:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	/**
+	 * 打印媒体查询
+	 */
+	@media print {
+		.main {
+			padding-top: 0;
+		}
+	}
+</style>

@@ -1,0 +1,13 @@
+---
+// src/pages/index.astro
+import { defaultLang } from '../i18n/config';
+
+// 这是一个纯重定向页面
+// 这种方式对 SEO 友好，且用户体验流畅
+---
+
+<meta http-equiv="refresh" content={`0;url=/${defaultLang}/`} />
+<script define:vars={{ defaultLang }}>
+  // 客户端 JS 辅助跳转（作为 meta refresh 的备份）
+  window.location.href = `/${defaultLang}/`;
+</script>

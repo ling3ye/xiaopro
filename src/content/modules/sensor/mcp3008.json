@@ -1,0 +1,13 @@
+{
+  "category": "sensor",
+  "brand": "Microchip",
+  "model": "MCP3008",
+  "alias": ["10位ADC", "10-bit ADC"],
+  "specs": {
+    "resolution": "10-bit",
+    "channels": "8",
+    "voltage": "2.7V - 5.5V",
+    "interface": "SPI",
+    "samplingRate": "200 kbps"
+  }
+}

@@ -1,0 +1,415 @@
+---
+/**
+ * 卡片组件 Card
+ *
+ * 通用卡片组件，用于展示文章、项目、产品等
+ * 支持多种布局和样式变体
+ *
+ * @component Card
+ *
+ * Props:
+ * @property {'article' | 'board' | 'module'} type - 卡片类型
+ * @property {string} title - 标题
+ * @property {string} description - 描述内容
+ * @property {string} image - 图片URL
+ * @property {string} link - 链接地址
+ * @property {string[]} tags - 标签列表
+ * @property {Date} date - 日期
+ * @property {'Easy' | 'Medium' | 'Hard'} difficulty - 难度（用于案例）
+ * @property {boolean} featured - 是否为特色卡片
+ * @property {string} brand - 品牌（用于硬件）
+ * @property {object} specs - 规格参数（用于硬件）
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import Tag from './Tag.astro';
+
+// 获取组件属性
+interface Props {
+  type?: 'article' | 'board' | 'module';
+  title: string;
+  description?: string;
+  image?: string;
+  link?: string;
+  tags?: string[];
+  date?: Date;
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
+  featured?: boolean;
+  brand?: string;
+  specs?: Record<string, string | number | boolean>;
+}
+
+const {
+  type = 'article',
+  title,
+  description = '',
+  image,
+  link,
+  tags = [],
+  date,
+  difficulty,
+  featured = false,
+  brand,
+  specs,
+} = Astro.props;
+
+// 格式化日期
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+// 难度颜色映射
+const difficultyColor: Record<string, string> = {
+  Easy: 'success',
+  Medium: 'warning',
+  Hard: 'error',
+};
+
+// 默认图片
+const defaultImage = '/placeholder-card.svg';
+
+// 使用包装器链接或直接链接
+const WrapperComponent = link ? 'a' : 'div';
+const wrapperProps = link
+  ? { href: link, class: 'card' }
+  : { class: 'card' };
+---
+
+<!-- 卡片容器 -->
+<WrapperComponent {...wrapperProps} class={[featured && 'card--featured'].filter(Boolean).join(' ')}>
+  <!-- 特色标记 -->
+  {featured && (
+    <div class="card__featured-badge">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </div>
+  )}
+
+  <!-- 图片区域 -->
+  {(image || defaultImage) && (
+    <div class="card__image">
+      <img src={image || defaultImage} alt={title} loading="lazy" />
+    </div>
+  )}
+
+  <!-- 内容区域 -->
+  <div class="card__content">
+    <!-- 头部：品牌/类型/日期 -->
+    <div class="card__header">
+      {brand && (
+        <span class="card__brand">{brand}</span>
+      )}
+      {date && (
+        <time class="card__date" datetime={date.toISOString()}>
+          {formatDate(date)}
+        </time>
+      )}
+      {difficulty && (
+        <Tag name={difficulty} variant={difficultyColor[difficulty]} size="sm" />
+      )}
+    </div>
+
+    <!-- 标题 -->
+    <h3 class="card__title">{title}</h3>
+
+    <!-- 描述 -->
+    {description && (
+      <p class="card__description">{description}</p>
+    )}
+
+    <!-- 规格参数（硬件卡片） -->
+    {specs && Object.keys(specs).length > 0 && (
+      <div class="card__specs">
+        {Object.entries(specs).slice(0, 3).map(([key, value]) => (
+          <div class="card__spec-item">
+            <span class="card__spec-key">{key}</span>
+            <span class="card__spec-value">{value}</span>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <!-- 标签 -->
+    {tags && tags.length > 0 && (
+      <div class="card__tags">
+        {tags.slice(0, 3).map(tag => (
+          <Tag name={tag} compact href={`/tags/${tag}`} />
+        ))}
+      </div>
+    )}
+
+    <!-- 底部操作 -->
+    <div class="card__footer">
+      <span class="card__action">
+        {type === 'article' && (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            {link ? '阅读更多' : '查看详情'}
+          </>
+        )}
+        {type === 'board' && (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+              <rect x="9" y="9" width="6" height="6"/>
+              <line x1="9" y1="1" x2="9" y2="4"/>
+              <line x1="15" y1="1" x2="15" y2="4"/>
+              <line x1="9" y1="20" x2="9" y2="23"/>
+              <line x1="15" y1="20" x2="15" y2="23"/>
+            </svg>
+            查看开发板
+          </>
+        )}
+        {type === 'module' && (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            查看模块
+          </>
+        )}
+      </span>
+    </div>
+  </div>
+</WrapperComponent>
+
+<style>
+  /* ============================================
+     卡片组件样式
+     ============================================ */
+
+  /* 卡片基础样式 */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+  }
+
+  /* 链接样式 */
+  .card[href] {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .card[href]:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* 特色卡片 */
+  .card--featured {
+    border-color: var(--color-primary);
+  }
+
+  .card--featured::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  }
+
+  /* ============================================
+     特色标记
+     ============================================ */
+  .card__featured-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    background: var(--color-warning);
+    border-radius: 50%;
+    color: white;
+    z-index: 1;
+    box-shadow: var(--shadow-md);
+  }
+
+  .card__featured-badge svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ============================================
+     图片区域
+     ============================================ */
+  .card__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--color-bg-tertiary);
+  }
+
+  .card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .card[href]:hover .card__image img {
+    transform: scale(1.05);
+  }
+
+  /* ============================================
+     内容区域
+     ============================================ */
+  .card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  /* 头部信息 */
+  .card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .card__brand {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+  }
+
+  .card__date {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+  }
+
+  /* 标题 */
+  .card__title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* 描述 */
+  .card__description {
+    flex: 1;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ============================================
+     规格参数
+     ============================================ */
+  .card__specs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+  }
+
+  .card__spec-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-xs);
+  }
+
+  .card__spec-key {
+    color: var(--color-text-tertiary);
+  }
+
+  .card__spec-value {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  /* ============================================
+     标签区域
+     ============================================ */
+  .card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: auto;
+  }
+
+  /* ============================================
+     底部操作
+     ============================================ */
+  .card__footer {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .card__action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-primary);
+    transition: opacity var(--transition-fast);
+  }
+
+  .card[href]:hover .card__action {
+    opacity: 0.8;
+  }
+
+  .card__action svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+
+  /* 小屏幕 */
+  @media (max-width: 639px) {
+    .card__description {
+      -webkit-line-clamp: 2;
+    }
+  }
+
+  /* 大屏幕 */
+  @media (min-width: 1024px) {
+    .card--featured {
+      grid-column: span 2;
+    }
+
+    .card--featured .card__image {
+      aspect-ratio: 2 / 1;
+    }
+  }
+</style>

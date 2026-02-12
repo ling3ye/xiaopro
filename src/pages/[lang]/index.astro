@@ -1,0 +1,550 @@
+---
+/**
+ * 首页
+ *
+ * 网站首页，展示最新教程、案例、推荐硬件等内容
+ * 首页文章限制显示 10 条
+ *
+ * @route /[lang]/
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../utils/i18n';
+import { languages } from '../../i18n/config';
+import type { SupportedLocale } from '../../i18n/config';
+
+// 获取语言参数
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => {
+    return { params: { lang } };
+  });
+}
+
+const { lang } = Astro.params;
+
+// 获取翻译函数
+const t = useTranslations(lang as SupportedLocale);
+
+// 获取文章数据（限制 10 条）
+const experiments = await getCollection('experiments', ({ id }) => {
+  return id.startsWith(`${lang}/`);
+});
+const solutions = await getCollection('solutions', ({ id }) => {
+  return id.startsWith(`${lang}/`);
+});
+
+// 获取开发板数据
+const boards = await getCollection('boards');
+
+// 辅助函数：安全获取文章日期
+function getArticleDate(article: any): number {
+  return 'date' in article.data && article.data.date instanceof Date
+    ? article.data.date.getTime()
+    : 0;
+}
+
+// 按日期排序，限制 10 条
+const allArticles = [...experiments, ...solutions]
+  .sort((a, b) => getArticleDate(b) - getArticleDate(a))
+  .slice(0, 10);
+
+// 特色文章（最新 2 篇）
+const featuredArticles = allArticles.slice(0, 2);
+
+// 其他文章
+const recentArticles = allArticles.slice(2, 10);
+
+// 当前语言（用于链接构建）
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+
+// 构建结构化数据 (Schema.org)
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'XIAOPRO',
+  description: t('home.hero.description'),
+  url: `https://xiaopro.com/${lang}/`,
+  inLanguage: lang,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `https://xiaopro.com/${lang}/search?q={search_term_string}`
+    },
+    'query-input': 'required name=search_term_string'
+  }
+};
+---
+
+<Layout
+  title={t('nav.home')}
+  lang={lang}
+  currentPath={`/${lang}/`}
+  structuredData={structuredData}
+>
+  <!-- Hero 区域 -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <h1 class="hero__title">{t('home.hero.title')}</h1>
+        <p class="hero__description">
+          {t('home.hero.description')}
+        </p>
+        <div class="hero__actions">
+          <a href={getLocalizedPath('/experiments', currentLocale)} class="btn btn--primary">
+            {t('home.hero.startLearning')}
+          </a>
+          <a href={getLocalizedPath('/boards', currentLocale)} class="btn btn--secondary">
+            {t('home.hero.exploreHardware')}
+          </a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <div class="hero__circuit">
+          <svg viewBox="0 0 400 300" fill="none">
+            <!-- 电路板背景 -->
+            <rect x="20" y="20" width="360" height="260" rx="10" stroke="#00d4ff" stroke-width="1" opacity="0.3"/>
+            <!-- 芯片 -->
+            <rect x="150" y="100" width="100" height="100" rx="5" stroke="#00d4ff" stroke-width="2" fill="none"/>
+            <circle cx="200" cy="150" r="30" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+            <!-- 引脚 -->
+            {Array.from({ length: 4 }).map((_, i) => (
+              <>
+                <line x1={150} y1={120 + i * 20} x2={120} y2={120 + i * 20} stroke="#00d4ff" stroke-width="2"/>
+                <line x1={250} y1={120 + i * 20} x2={280} y2={120 + i * 20} stroke="#00d4ff" stroke-width="2"/>
+              </>
+            ))}
+            <!-- 装饰元件 -->
+            <circle cx="80" cy="150" r="15" stroke="#00ff88" stroke-width="2" fill="none"/>
+            <rect x="310" y="135" width="30" height="30" stroke="#ffaa00" stroke-width="2" fill="none" rx="3"/>
+            <!-- 连线 -->
+            <path d="M95 150 L120 150" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+            <path d="M280 150 L310 150" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 特色内容 -->
+  {featuredArticles.length > 0 && (
+    <section class="featured">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">{t('home.featured')}</h2>
+          <a href={getLocalizedPath('/solutions', currentLocale)} class="section__link">
+            {t('home.viewAll')}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"/>
+              <path d="M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+        <div class="featured__grid">
+          {featuredArticles.map(article => (
+            <Card
+              type="article"
+              title={article.data.title}
+              description={article.data.intro}
+              link={getLocalizedPath(`/${article.collection}/${article.id}`, currentLocale)}
+              tags={[article.collection === 'experiments' ? '教程' : '案例']}
+              date={('date' in article.data ? article.data.date as Date : undefined)}
+              featured={true}
+              image={article.data.image}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- 最新内容 -->
+  {recentArticles.length > 0 && (
+    <section class="recent">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">{t('home.recent')}</h2>
+          <a href={getLocalizedPath('/experiments', currentLocale)} class="section__link">
+            {t('home.viewAll')}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"/>
+              <path d="M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+        <div class="recent__grid">
+          {recentArticles.map(article => (
+            <Card
+              type="article"
+              title={article.data.title}
+              description={article.data.intro}
+              link={getLocalizedPath(`/${article.collection}/${article.id}`, currentLocale)}
+              tags={[article.collection === 'experiments' ? '教程' : '案例']}
+              date={('date' in article.data ? article.data.date as Date : undefined)}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- 热门硬件 -->
+  <section class="hardware">
+    <div class="container">
+      <div class="section__header">
+        <h2 class="section__title">{t('home.popularHardware')}</h2>
+        <div class="section__tabs">
+          <button class="section__tab section__tab--active">开发板</button>
+        </div>
+      </div>
+      <div class="hardware__grid">
+        {boards.slice(0, 6).map(board => (
+          <Card
+            type="board"
+            title={board.data.model}
+            description={`${board.data.brand} - ${Object.entries(board.data.specs || {})
+              .slice(0, 2)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(', ')}`}
+            link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
+            brand={board.data.brand}
+            specs={board.data.specs}
+            image={board.data.image}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部 CTA -->
+  <section class="cta">
+    <div class="container cta__inner">
+      <h2 class="cta__title">{t('home.cta.title')}</h2>
+      <p class="cta__description">
+        {t('home.cta.description')}
+      </p>
+      <a href={getLocalizedPath('/experiments', currentLocale)} class="btn btn--primary btn--large">
+        {t('home.cta.button')}
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ============================================
+     Hero 区域样式
+     ============================================ */
+  .hero {
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-3xl) 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 背景装饰 */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--color-primary-light) 0%, transparent 70%);
+    opacity: 0.3;
+    animation: heroGlow 8s ease-in-out infinite;
+  }
+
+  @keyframes heroGlow {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+
+  .hero__content {
+    z-index: 1;
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero__description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2xl);
+    max-width: 500px;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .hero__visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero__circuit {
+    width: 100%;
+    max-width: 400px;
+    animation: circuitFloat 6s ease-in-out infinite;
+  }
+
+  @keyframes circuitFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* ============================================
+     按钮样式
+     ============================================ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .btn--primary {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .btn--primary:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .btn--secondary {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn--secondary:hover {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-border-light);
+  }
+
+  .btn--large {
+    padding: 16px 32px;
+    font-size: var(--text-lg);
+  }
+
+  /* ============================================
+     区块通用样式
+     ============================================ */
+  .featured,
+  .recent,
+  .hardware,
+  .cta {
+    padding: var(--space-3xl) 0;
+  }
+
+  .section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section__title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .section__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-primary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: gap var(--transition-fast);
+  }
+
+  .section__link:hover {
+    gap: var(--space-sm);
+  }
+
+  .section__link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .section__tabs {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .section__tab {
+    padding: 8px 16px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .section__tab:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text-primary);
+  }
+
+  .section__tab--active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+
+  /* ============================================
+     特色内容网格
+     ============================================ */
+  .featured__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 768px) {
+    .featured__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============================================
+     最新内容网格
+     ============================================ */
+  .recent__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  @media (max-width: 1200px) {
+    .recent__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .recent__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============================================
+     硬件网格
+     ============================================ */
+  .hardware__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  @media (max-width: 1400px) {
+    .hardware__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .hardware__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hardware__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hardware__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============================================
+     CTA 区域
+     ============================================ */
+  .cta {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .cta__inner {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta__title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+  }
+
+  .cta__description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2xl);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+  @media (min-width: 768px) {
+    .hero__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .hero__actions {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .featured__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

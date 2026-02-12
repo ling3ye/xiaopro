@@ -1,0 +1,14 @@
+{
+  "brand": "STMicroelectronics",
+  "model": "STM32F411CE Black Pill",
+  "specs": {
+    "cpu": "Arm Cortex-M4",
+    "frequency": "100MHz",
+    "flash": "512KB",
+    "sram": "128KB",
+    "wifi": false,
+    "bluetooth": false
+  },
+  "keywords": ["stm32", "arm", "fpu", "industrial"],
+  "officialUrl": "https://www.st.com/resource/en/datasheet/stm32f411ce.pdf"
+}

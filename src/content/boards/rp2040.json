@@ -1,0 +1,14 @@
+{
+  "brand": "Raspberry Pi",
+  "model": "Raspberry Pi Pico W",
+  "specs": {
+    "cpu": "RP2040 Dual-core Arm Cortex-M0+",
+    "frequency": "133MHz",
+    "flash": "2MB",
+    "sram": "264KB",
+    "wifi": true,
+    "bluetooth": false
+  },
+  "keywords": ["rp2040", "pio", "micropython", "beginner"],
+  "officialUrl": "https://datasheets.raspberrypi.com/picow/pico-w-datasheet.pdf"
+}

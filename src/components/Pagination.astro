@@ -1,0 +1,322 @@
+---
+/**
+ * 分页组件 Pagination
+ *
+ * 用于列表页的分页导航
+ *
+ * @component Pagination
+ *
+ * Props:
+ * @property {number} currentPage - 当前页码
+ * @property {number} totalPages - 总页数
+ * @property {string} baseUrl - 基础URL（不含页码）
+ * @property {Function} getUrl - 生成URL的函数，接收页码参数
+ *
+ * @example
+ * <Pagination
+ *   currentPage={1}
+ *   totalPages={10}
+ *   baseUrl="/solutions"
+ *   getUrl={(page) => `/solutions?page=${page}`}
+ * />
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  getUrl: (page: number) => string;
+}
+
+const { currentPage, totalPages, baseUrl, getUrl } = Astro.props;
+
+// 计算显示的页码范围
+const getPageRange = () => {
+  const range: number[] = [];
+  const maxVisible = 7; // 最多显示7个页码
+
+  if (totalPages <= maxVisible) {
+    // 总页数少，显示全部
+    for (let i = 1; i <= totalPages; i++) {
+      range.push(i);
+    }
+  } else {
+    // 总页数多，显示部分页码
+    let startPage = Math.max(1, currentPage - 3);
+    let endPage = Math.min(totalPages, currentPage + 3);
+
+    // 调整范围以显示足够的页码
+    if (endPage - startPage + 1 < maxVisible) {
+      if (startPage === 1) {
+        endPage = Math.min(totalPages, startPage + maxVisible - 1);
+      } else {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      range.push(i);
+    }
+  }
+
+  return range;
+};
+
+const pageRange = getPageRange();
+const showFirstEllipsis = pageRange[0] > 2;
+const showLastEllipsis = pageRange[pageRange.length - 1] < totalPages - 1;
+---
+
+<!-- 分页导航 -->
+<nav class="pagination" aria-label="分页导航">
+  <!-- 上一页 -->
+  {currentPage > 1 && (
+    <a
+      href={getUrl(currentPage - 1)}
+      class="pagination__btn pagination__btn--prev"
+      aria-label="上一页"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      <span class="pagination__btn-text">上一页</span>
+    </a>
+  )}
+
+  <!-- 页码列表 -->
+  <ol class="pagination__list">
+    <!-- 第一页 -->
+    {pageRange[0] !== 1 && (
+      <li class="pagination__item">
+        <a
+          href={getUrl(1)}
+          class="pagination__link"
+          aria-current={currentPage === 1 ? 'page' : undefined}
+        >
+          1
+        </a>
+      </li>
+    )}
+
+    <!-- 前省略号 -->
+    {showFirstEllipsis && (
+      <li class="pagination__item pagination__item--ellipsis" aria-hidden="true">
+        ...
+      </li>
+    )}
+
+    <!-- 页码 -->
+    {pageRange.map((page) => (
+      <li class="pagination__item">
+        <a
+          href={getUrl(page)}
+          class={`pagination__link ${page === currentPage ? 'pagination__link--active' : ''}`}
+          aria-current={page === currentPage ? 'page' : undefined}
+        >
+          {page}
+        </a>
+      </li>
+    ))}
+
+    <!-- 后省略号 -->
+    {showLastEllipsis && (
+      <li class="pagination__item pagination__item--ellipsis" aria-hidden="true">
+        ...
+      </li>
+    )}
+
+    <!-- 最后一页 -->
+    {pageRange[pageRange.length - 1] !== totalPages && (
+      <li class="pagination__item">
+        <a
+          href={getUrl(totalPages)}
+          class="pagination__link"
+          aria-current={currentPage === totalPages ? 'page' : undefined}
+        >
+          {totalPages}
+        </a>
+      </li>
+    )}
+  </ol>
+
+  <!-- 下一页 -->
+  {currentPage < totalPages && (
+    <a
+      href={getUrl(currentPage + 1)}
+      class="pagination__btn pagination__btn--next"
+      aria-label="下一页"
+    >
+      <span class="pagination__btn-text">下一页</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </a>
+  )}
+
+  <!-- 页码信息 -->
+  <div class="pagination__info">
+    第 {currentPage} / {totalPages} 页
+  </div>
+</nav>
+
+<style>
+  /* ============================================
+     分页容器
+     ============================================ */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    margin-top: var(--space-3xl);
+    padding: var(--space-xl) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* ============================================
+     分页按钮（上一页/下一页）
+     ============================================ */
+  .pagination__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    font-size: var(--text-sm);
+  }
+
+  .pagination__btn:hover {
+    background: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    border-color: var(--color-primary);
+  }
+
+  .pagination__btn--prev {
+    flex-direction: row-reverse;
+  }
+
+  .pagination__btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .pagination__btn-text {
+    display: none;
+  }
+
+  /* ============================================
+     分页列表
+     ============================================ */
+  .pagination__list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: var(--space-xs);
+  }
+
+  /* ============================================
+     分页项
+     ============================================ */
+  .pagination__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .pagination__item--ellipsis {
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  /* ============================================
+     分页链接
+     ============================================ */
+  .pagination__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-width: 40px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination__link:hover {
+    background: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+  }
+
+  .pagination__link--active {
+    background: var(--color-primary);
+    color: white;
+    font-weight: 600;
+  }
+
+  .pagination__link--active:hover {
+    background: var(--color-primary-hover);
+  }
+
+  /* ============================================
+     分页信息
+     ============================================ */
+  .pagination__info {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+  @media (min-width: 640px) {
+    .pagination__btn-text {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .pagination {
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .pagination__list {
+      order: 2;
+    }
+
+    .pagination__btn--prev {
+      order: 1;
+    }
+
+    .pagination__btn--next {
+      order: 3;
+    }
+
+    .pagination__info {
+      order: 4;
+      width: 100%;
+      text-align: center;
+      margin-top: var(--space-sm);
+    }
+
+    .pagination__item {
+      min-width: 36px;
+      height: 36px;
+    }
+  }
+</style>

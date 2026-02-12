@@ -1,0 +1,14 @@
+{
+  "brand": "Espressif",
+  "model": "NodeMCU ESP8266",
+  "specs": {
+    "cpu": "L106 32-bit RISC",
+    "frequency": "80MHz",
+    "flash": "4MB",
+    "sram": "80KB",
+    "wifi": true,
+    "bluetooth": false
+  },
+  "keywords": ["wifi", "iot", "low-cost", "mqtt"],
+  "officialUrl": "https://www.espressif.com/en/products/socs/esp8266"
+}

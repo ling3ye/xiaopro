@@ -1,0 +1,870 @@
+---
+/**
+ * 外设模块 - 列表页和详情页
+ *
+ * 展示所有外设模块硬件信息，支持单个模块详情查看
+ * 支持多语言路由
+ *
+ * @route /[lang]/modules/[...path]
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
+import { languages } from '../../../i18n/config';
+import type { SupportedLocale } from '../../../i18n/config';
+
+// 获取语言参数
+export async function getStaticPaths() {
+  const paths: any[] = [];
+
+  // 获取所有模块
+  const modules = await getCollection('modules');
+
+  for (const lang of Object.keys(languages)) {
+    // 列表页路径
+    paths.push({ params: { lang, path: undefined } });
+
+    // 详情页路径
+    modules.forEach((module) => {
+      paths.push({ params: { lang, path: module.id } });
+    });
+  }
+
+  return paths;
+}
+
+const { lang, path: id } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+const isListPage = !id;
+
+// 获取所有模块
+const allModules = await getCollection('modules');
+
+// 详情页：获取当前模块数据
+let module = null;
+let relatedExperiments: any[] = [];
+let relatedSolutions: any[] = [];
+let currentDoc = null;
+
+if (!isListPage) {
+  module = await getEntry('modules', id);
+  if (module) {
+    // 获取相关实验
+    relatedExperiments = await getCollection('experiments', (entry) => {
+      return 'moduleId' in entry.data && entry.data.moduleId === id;
+    });
+
+    // 获取相关方案
+    relatedSolutions = await getCollection('solutions', (entry) => {
+      return 'moduleIds' in entry.data &&
+             Array.isArray(entry.data.moduleIds) &&
+             entry.data.moduleIds.some((moduleRef: any) => {
+               return (moduleRef.id || String(moduleRef)) === id;
+             });
+    });
+
+    // 获取模块详细文档并筛选
+    const allModuleDocs = await getCollection('moduleDocs', (entry) => {
+      return 'moduleId' in entry.data && entry.data.moduleId;
+    });
+
+    // 根据模块ID和当前语言筛选文档
+    currentDoc = allModuleDocs.find((doc: any) => {
+      const docModuleId = (doc.data.moduleId as any).id || String(doc.data.moduleId);
+      return docModuleId === id && doc.id.startsWith(`${lang}/`);
+    });
+  }
+}
+
+// 按分类分组
+const modulesByCategory: Record<string, typeof allModules> = {
+  sensor: allModules.filter(m => m.data.category === 'sensor'),
+  display: allModules.filter(m => m.data.category === 'display'),
+  actuator: allModules.filter(m => m.data.category === 'actuator'),
+  communication: allModules.filter(m => m.data.category === 'communication'),
+  power: allModules.filter(m => m.data.category === 'power'),
+  other: allModules.filter(m => m.data.category === 'other'),
+};
+
+// 分类名称映射
+const categoryNames: Record<string, string> = {
+  sensor: '传感器',
+  display: '显示器',
+  actuator: '执行器',
+  communication: '通信模块',
+  power: '电源模块',
+  other: '其他',
+};
+
+// 分类图标
+const categoryIcons: Record<string, string> = {
+  sensor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+  display: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+  actuator: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+  communication: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>`,
+  power: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+  other: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+};
+
+// 面包屑导航项类型
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  current?: boolean;
+}
+
+const breadcrumbItems: BreadcrumbItem[] = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.modules'), href: getLocalizedPath('/modules', currentLocale) },
+];
+
+if (!isListPage && module) {
+  breadcrumbItems.push({
+    label: module.data.model,
+    current: true
+  });
+}
+
+// 构建结构化数据
+let structuredData: any = null;
+
+if (!isListPage && module) {
+  // 模块详情页的结构化数据
+  const moduleSpecs = module.data.specs ? Object.entries(module.data.specs).map(([k, v]) => `${k}: ${v}`).join(', ') : '';
+  structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: module.data.model,
+    brand: module.data.brand ? {
+      '@type': 'Brand',
+      name: module.data.brand
+    } : undefined,
+    description: moduleSpecs || `${module.data.model} 模块`,
+    image: module.data.image ? `https://xiaopro.com${module.data.image}` : undefined,
+    category: module.data.category
+  };
+}
+
+// 动态 meta description
+const pageDescription = !isListPage && module
+  ? (module.data.specs ? Object.entries(module.data.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${module.data.model} 模块的详细规格参数与使用说明`)
+  : '各类传感器、显示器、执行器等模块的详细介绍，为您的项目选择合适的模块。';
+---
+
+<Layout
+  title={isListPage ? t('nav.modules') : module?.data.model}
+  description={pageDescription}
+  lang={lang}
+  currentPath={`/${lang}/modules/${id || ''}`}
+  image={!isListPage && module?.data.image ? module.data.image : undefined}
+  structuredData={structuredData}
+>
+  <!-- 面包屑导航 -->
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <!-- 列表页 -->
+  {isListPage && (
+    <section class="category-page">
+      <div class="container">
+        <!-- 页头 -->
+        <header class="category-header">
+          <h1 class="category-title">{t('nav.modules')}</h1>
+          <p class="category-description">
+            各类外设模块硬件介绍与规格参数，找到适合您项目的模块。
+          </p>
+          <div class="category-stats">
+            <span class="stat-item">
+              <span class="stat-value">{allModules.length}</span>
+              <span class="stat-label">个模块</span>
+            </span>
+          </div>
+        </header>
+
+        <!-- 按分类展示 -->
+        {Object.entries(modulesByCategory).map(([category, modules]) =>
+          modules.length > 0 && (
+            <section class="category-section" id={category}>
+              <div class="category-section-header">
+                <span class="category-icon" set:html={categoryIcons[category]} />
+                <h2 class="category-section-title">{categoryNames[category] || category}</h2>
+                <span class="category-count">{modules.length}</span>
+              </div>
+              <div class="module-grid">
+                {modules.map(mod => (
+                  <Card
+                    type="module"
+                    title={mod.data.model}
+                    description={mod.data.brand ? `${mod.data.brand} - ${mod.data.category}` : mod.data.category}
+                    link={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}
+                    brand={mod.data.brand}
+                    specs={mod.data.specs}
+                  />
+                ))}
+              </div>
+            </section>
+          )
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- 详情页 -->
+  {!isListPage && module && (
+    <section class="module-detail">
+      <div class="container">
+        <!-- 模块头部 -->
+        <header class="module-header">
+          <div class="module-category">
+            <span class="category-icon small" set:html={categoryIcons[module.data.category]} />
+            <span class="category-name">{categoryNames[module.data.category]}</span>
+          </div>
+          {module.data.brand && (
+            <div class="module-brand">{module.data.brand}</div>
+          )}
+          <h1 class="module-title">{module.data.model}</h1>
+          {module.data.alias && module.data.alias.length > 0 && (
+            <div class="module-alias">
+              <span class="alias-label">别名：</span>
+              {module.data.alias.map((alias, i) => (
+                <>
+                  <span class="alias-item">{alias}</span>
+                  {i < module.data.alias!.length - 1 && <span class="alias-separator">、</span>}
+                </>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <div class="module-layout">
+          <!-- 主内容区 -->
+          <main class="module-main">
+            <!-- 详细说明文档 -->
+            {currentDoc && (
+              <section class="module-section">
+                <h2 class="section-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  详细说明
+                </h2>
+                <div class="doc-content prose" set:html={currentDoc.rendered?.html} />
+              </section>
+            )}
+
+            <!-- 官方资源 -->
+            {(module.data.officialUrl || module.data.datasheet) && (
+              <section class="module-section">
+                <h2 class="section-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                  官方资源
+                </h2>
+                <div class="resources-list">
+                  {module.data.officialUrl && (
+                    <a href={module.data.officialUrl} target="_blank" rel="noopener noreferrer" class="resource-link">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                      官方文档
+                    </a>
+                  )}
+                  {module.data.datasheet && (
+                    <a href={module.data.datasheet} target="_blank" rel="noopener noreferrer" class="resource-link">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/>
+                        <line x1="9" y1="15" x2="15" y2="15"/>
+                      </svg>
+                      数据手册 (Datasheet)
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
+
+            <!-- 规格参数 -->
+            {module.data.specs && Object.keys(module.data.specs).length > 0 && (
+              <section class="module-section">
+                <h2 class="section-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="3" y1="9" x2="21" y2="9"/>
+                    <line x1="9" y1="21" x2="9" y2="9"/>
+                  </svg>
+                  规格参数
+                </h2>
+                <div class="specs-grid">
+                  {Object.entries(module.data.specs).map(([key, value]) => (
+                    <div class="spec-item">
+                      <span class="spec-key">{key}</span>
+                      <span class="spec-value">{String(value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </main>
+
+          <!-- 侧边栏 -->
+          <aside class="module-sidebar">
+            <!-- 相关实验 -->
+            {relatedExperiments.length > 0 && (
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                  相关实验
+                  <span class="count-badge">{relatedExperiments.length}</span>
+                </h3>
+                <div class="related-list">
+                  {relatedExperiments.slice(0, 5).map(exp => (
+                    <a
+                      href={getLocalizedPath(`/experiments/${exp.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
+                      class="related-item"
+                    >
+                      <span class="related-title">{exp.data.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- 相关方案 -->
+            {relatedSolutions.length > 0 && (
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  相关方案
+                  <span class="count-badge">{relatedSolutions.length}</span>
+                </h3>
+                <div class="related-list">
+                  {relatedSolutions.slice(0, 5).map(sol => (
+                    <a
+                      href={getLocalizedPath(`/solutions/${sol.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
+                      class="related-item"
+                    >
+                      <span class="related-title">{sol.data.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- 未找到页面 -->
+  {!isListPage && !module && (
+    <section class="not-found">
+      <div class="container">
+        <h1>未找到该模块</h1>
+        <a href={getLocalizedPath('/modules', currentLocale)} class="btn">返回模块列表</a>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  /* ============================================
+     分类页样式
+     ============================================ */
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-error) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+  }
+
+  .category-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-error);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .category-section {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+  }
+
+  .category-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+  }
+
+  .category-icon.small {
+    width: 20px;
+    height: 20px;
+  }
+
+  .category-section-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .category-count {
+    margin-left: auto;
+    padding: 4px 12px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-tertiary);
+    font-size: var(--text-sm);
+  }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  /* ============================================
+     模块详情页样式
+     ============================================ */
+  .module-detail {
+    padding: var(--space-3xl) 0;
+  }
+
+  .module-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .module-category {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 6px 16px;
+    background: var(--color-error-light);
+    color: var(--color-error);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+  }
+
+  .category-name {
+    text-transform: capitalize;
+  }
+
+  .module-brand {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+  }
+
+  .module-title {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .module-alias {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .alias-label {
+    font-weight: 500;
+  }
+
+  .alias-item {
+    color: var(--color-text-tertiary);
+  }
+
+  .alias-separator {
+    color: var(--color-border);
+  }
+
+  .module-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+  }
+
+  .module-section {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .section-title svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+  }
+
+  /* ============================================
+     文档内容样式
+     ============================================ */
+  .doc-content {
+    padding: var(--space-lg);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .doc-content :global(h1),
+  .doc-content :global(h2),
+  .doc-content :global(h3) {
+    font-weight: 600;
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .doc-content :global(h2) {
+    font-size: var(--text-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .doc-content :global(h3) {
+    font-size: var(--text-base);
+  }
+
+  .doc-content :global(p) {
+    margin-bottom: var(--space-md);
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+  }
+
+  .doc-content :global(ul),
+  .doc-content :global(ol) {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .doc-content :global(li) {
+    margin-bottom: var(--space-sm);
+    line-height: 1.6;
+  }
+
+  .doc-content :global(ul li) {
+    list-style-type: disc;
+  }
+
+  .doc-content :global(ol li) {
+    list-style-type: decimal;
+  }
+
+  .doc-content :global(code) {
+    padding: 2px 6px;
+    background: var(--color-bg-tertiary);
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+    color: var(--color-error);
+  }
+
+  .doc-content :global(pre) {
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+  }
+
+  .doc-content :global(pre code) {
+    padding: 0;
+    background: none;
+  }
+
+  .doc-content :global(a) {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .doc-content :global(a:hover) {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+  }
+
+  .doc-content :global(blockquote) {
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    padding-left: var(--space-lg);
+    border-left: 4px solid var(--color-primary);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  .doc-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-md) 0;
+  }
+
+  .doc-content :global(th),
+  .doc-content :global(td) {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .doc-content :global(th) {
+    background: var(--color-bg-tertiary);
+    font-weight: 600;
+  }
+
+  /* ============================================
+     资源链接样式
+     ============================================ */
+  .resources-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .resource-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast);
+  }
+
+  .resource-link:hover {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+  }
+
+  .resource-link svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .spec-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    gap: var(--space-sm);
+  }
+
+  .spec-key {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .spec-value {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  /* ============================================
+     侧边栏样式
+     ============================================ */
+  .module-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .sidebar-section {
+    padding: var(--space-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .sidebar-title svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .count-badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+  }
+
+  .related-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .related-item {
+    display: block;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .related-item:hover {
+    background: var(--color-bg-tertiary);
+  }
+
+  .related-title {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .related-item:hover .related-title {
+    color: var(--color-primary);
+  }
+
+  /* ============================================
+     未找到页面样式
+     ============================================ */
+  .not-found {
+    padding: var(--space-5xl) 0;
+    text-align: center;
+  }
+
+  .not-found h1 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xl);
+    color: var(--color-text-secondary);
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--color-error);
+    color: white;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .btn:hover {
+    background: var(--color-error-hover);
+    transform: translateY(-2px);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+  @media (min-width: 1024px) {
+    .module-layout {
+      grid-template-columns: 1fr 320px;
+    }
+
+    .module-sidebar {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-lg));
+    }
+  }
+</style>

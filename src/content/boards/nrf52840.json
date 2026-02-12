@@ -1,0 +1,14 @@
+{
+  "brand": "Nordic Semiconductor",
+  "model": "nRF52840 Dongle",
+  "specs": {
+    "cpu": "Arm Cortex-M4F",
+    "frequency": "64MHz",
+    "flash": "1MB",
+    "sram": "256KB",
+    "wifi": false,
+    "bluetooth": "5.0"
+  },
+  "keywords": ["ble", "zigbee", "thread", "wireless"],
+  "officialUrl": "https://www.nordicsemi.com/Products/nRF52840"
+}

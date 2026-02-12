@@ -1,0 +1,619 @@
+---
+/**
+ * 开发板 - 列表页和详情页
+ *
+ * 展示所有开发板硬件信息，支持单个开发板详情查看
+ * 支持多语言路由
+ *
+ * @route /[lang]/boards/[...path]
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
+import { languages } from '../../../i18n/config';
+import type { SupportedLocale } from '../../../i18n/config';
+import type { CollectionEntry } from 'astro:content';
+
+// 获取语言参数
+export async function getStaticPaths() {
+  const paths: any[] = [];
+
+  // 获取所有开发板
+  const boards = await getCollection('boards');
+
+  for (const lang of Object.keys(languages)) {
+    // 列表页路径
+    paths.push({ params: { lang, path: undefined } });
+
+    // 详情页路径
+    boards.forEach((board) => {
+      paths.push({ params: { lang, path: board.id } });
+    });
+  }
+
+  return paths;
+}
+
+const { lang, path: id } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+const isListPage = !id;
+
+// 获取所有开发板
+const allBoards = await getCollection('boards');
+
+// 详情页：获取当前开发板数据
+let board: CollectionEntry<'boards'> | undefined = undefined;
+let relatedExperiments: CollectionEntry<'experiments'>[] = [];
+let relatedSolutions: CollectionEntry<'solutions'>[] = [];
+
+if (!isListPage) {
+  board = await getEntry('boards', id);
+  if (board) {
+    // 获取相关文章
+    relatedExperiments = await getCollection('experiments', (entry) => {
+      return 'boardId' in entry.data && entry.data.boardId === id;
+    });
+
+    relatedSolutions = await getCollection('solutions', (entry) => {
+      return 'boardId' in entry.data && entry.data.boardId === id;
+    });
+  }
+}
+
+// 面包屑导航
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.boards'), href: getLocalizedPath('/boards', currentLocale) },
+];
+
+if (!isListPage && board) {
+  breadcrumbItems.push({
+    label: board.data.model,
+    href: getLocalizedPath(`/boards/${id}`, currentLocale)
+  });
+}
+
+// 构建结构化数据
+let structuredData: any = null;
+
+if (!isListPage && board) {
+  // 开发板详情页的结构化数据
+  const boardSpecs = board.data.specs ? Object.entries(board.data.specs).map(([k, v]) => `${k}: ${v}`).join(', ') : '';
+  structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: board.data.model,
+    brand: {
+      '@type': 'Brand',
+      name: board.data.brand
+    },
+    description: boardSpecs || `${board.data.brand} ${board.data.model} 开发板`,
+    image: board.data.image ? `https://xiaopro.com${board.data.image}` : undefined
+  };
+}
+
+// 动态 meta description
+const pageDescription = !isListPage && board
+  ? (board.data.specs ? Object.entries(board.data.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${board.data.brand} ${board.data.model} 开发板的详细规格参数与使用说明`)
+  : '各类主流开发板硬件介绍与规格参数，为您的项目选择合适的开发板。';
+---
+
+<Layout
+  title={isListPage ? t('nav.boards') : board?.data.model}
+  description={pageDescription}
+  lang={lang}
+  currentPath={`/${lang}/boards/${id || ''}`}
+  image={!isListPage && board?.data.image ? board.data.image : undefined}
+  structuredData={structuredData}
+>
+  <!-- 面包屑导航 -->
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <!-- 列表页 -->
+  {isListPage && (
+    <section class="category-page">
+      <div class="container">
+        <!-- 页头 -->
+        <header class="category-header">
+          <h1 class="category-title">{t('nav.boards')}</h1>
+          <p class="category-description">
+            各类主流开发板硬件介绍与规格参数，为您的项目选择合适的开发板。
+          </p>
+          <div class="category-stats">
+            <span class="stat-item">
+              <span class="stat-value">{allBoards.length}</span>
+              <span class="stat-label">个开发板</span>
+            </span>
+          </div>
+        </header>
+
+        <!-- 品牌筛选（简单实现） -->
+        <div class="filter-bar">
+          <button class="filter-btn filter-btn--active">全部</button>
+          {Array.from(new Set(allBoards.map(b => b.data.brand))).map(brand => (
+            <button class="filter-btn">{brand}</button>
+          ))}
+        </div>
+
+        <!-- 开发板列表 -->
+        <div class="board-grid">
+          {allBoards.map(board => (
+            <Card
+              type="board"
+              title={board.data.model}
+              description={`${board.data.brand} - ${Object.entries(board.data.specs || {})
+                .slice(0, 2)
+                .map(([k, v]) => `${k}: ${v}`)
+                .join(', ')}`}
+              link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
+              brand={board.data.brand}
+              specs={board.data.specs}
+              image={board.data.image}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- 详情页 -->
+  {!isListPage && board && (
+    <section class="board-detail">
+      <div class="container">
+        <!-- 开发板头部 -->
+        <header class="board-header">
+          <div class="board-badge">{board.data.brand}</div>
+          <h1 class="board-title">{board.data.model}</h1>
+          {board.data.officialUrl && (
+            <a
+              href={board.data.officialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="board-link"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+              官方文档
+            </a>
+          )}
+        </header>
+
+        <div class="board-layout">
+          <!-- 主内容区 -->
+          <main class="board-main">
+            <!-- 规格参数 -->
+            <section class="board-section">
+              <h2 class="section-title">规格参数</h2>
+              <div class="specs-grid">
+                {Object.entries(board.data.specs || {}).map(([key, value]) => (
+                  <div class="spec-item">
+                    <span class="spec-key">{key}</span>
+                    <span class="spec-value">{String(value)}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <!-- 关键词标签 -->
+            {board.data.keywords && board.data.keywords.length > 0 && (
+              <section class="board-section">
+                <h2 class="section-title">相关标签</h2>
+                <div class="keywords-list">
+                  {board.data.keywords.map(keyword => (
+                    <a href={`/tags/${keyword}`} class="keyword-tag">
+                      {keyword}
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
+          </main>
+
+          <!-- 侧边栏 -->
+          <aside class="board-sidebar">
+            <!-- 相关实验 -->
+            {relatedExperiments.length > 0 && (
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                  相关实验
+                  <span class="count-badge">{relatedExperiments.length}</span>
+                </h3>
+                <div class="related-list">
+                  {relatedExperiments.slice(0, 5).map(exp => (
+                    <a
+                      href={getLocalizedPath(`/experiments/${exp.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
+                      class="related-item"
+                    >
+                      <span class="related-title">{exp.data.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- 相关方案 -->
+            {relatedSolutions.length > 0 && (
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  相关方案
+                  <span class="count-badge">{relatedSolutions.length}</span>
+                </h3>
+                <div class="related-list">
+                  {relatedSolutions.slice(0, 5).map(sol => (
+                    <a
+                      href={getLocalizedPath(`/solutions/${sol.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
+                      class="related-item"
+                    >
+                      <span class="related-title">{sol.data.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- 未找到页面 -->
+  {!isListPage && !board && (
+    <section class="not-found">
+      <div class="container">
+        <h1>未找到该开发板</h1>
+        <a href={getLocalizedPath('/boards', currentLocale)} class="btn">返回开发板列表</a>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  /* ============================================
+     分类页样式
+     ============================================ */
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-warning) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+  }
+
+  .category-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-warning);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .filter-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text-primary);
+  }
+
+  .filter-btn--active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+
+  .board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  /* ============================================
+     开发板详情页样式
+     ============================================ */
+  .board-detail {
+    padding: var(--space-3xl) 0;
+  }
+
+  .board-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .board-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+  }
+
+  .board-title {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .board-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 8px 16px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .board-link:hover {
+    background: var(--color-bg-elevated);
+  }
+
+  .board-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .board-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+  }
+
+  .board-section {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .section-title svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .spec-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    gap: var(--space-sm);
+  }
+
+  .spec-key {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .spec-value {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .keywords-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .keyword-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .keyword-tag:hover {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  /* ============================================
+     侧边栏样式
+     ============================================ */
+  .board-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .sidebar-section {
+    padding: var(--space-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .sidebar-title svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .count-badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+  }
+
+  .related-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .related-item {
+    display: block;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .related-item:hover {
+    background: var(--color-bg-tertiary);
+  }
+
+  .related-title {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .related-item:hover .related-title {
+    color: var(--color-primary);
+  }
+
+  /* ============================================
+     未找到页面样式
+     ============================================ */
+  .not-found {
+    padding: var(--space-5xl) 0;
+    text-align: center;
+  }
+
+  .not-found h1 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xl);
+    color: var(--color-text-secondary);
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--color-warning);
+    color: white;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .btn:hover {
+    background: var(--color-warning-hover);
+    transform: translateY(-2px);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+  @media (min-width: 1024px) {
+    .board-layout {
+      grid-template-columns: 1fr 320px;
+    }
+
+    .board-sidebar {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-lg));
+    }
+  }
+</style>

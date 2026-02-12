@@ -1,0 +1,205 @@
+---
+/**
+ * 面包屑导航组件 Breadcrumb
+ *
+ * 显示当前页面的导航路径，帮助用户了解位置并返回上级页面
+ * 支持自定义样式和分隔符
+ *
+ * @component Breadcrumb
+ *
+ * Props:
+ * @property {BreadcrumbItem[]} items - 面包屑项列表
+ * @property {'slash' | 'arrow' | 'dot'} separator - 分隔符样式
+ *
+ * @example
+ * <Breadcrumb
+ *   items={[
+ *     { label: '首页', href: '/' },
+ *     { label: '开发板', href: '/boards' },
+ *     { label: 'ESP32-C3', current: true }
+ *   ]}
+ * />
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+// 面包屑项类型定义
+interface BreadcrumbItem {
+  /** 显示文本 */
+  label: string;
+  /** 链接地址 */
+  href?: string;
+  /** 是否为当前页 */
+  current?: boolean;
+  /** 图标（可选） */
+  icon?: string;
+}
+
+// 获取组件属性
+interface Props {
+  items: BreadcrumbItem[];
+  separator?: 'slash' | 'arrow' | 'dot';
+}
+
+const { items, separator = 'slash' } = Astro.props;
+
+// 分隔符图标
+const separatorIcons: Record<string, string> = {
+  slash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 5l8 7-8 7"/></svg>`,
+  arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`,
+  dot: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="2"/></svg>`,
+};
+
+// 构建面包屑结构化数据 (Schema.org BreadcrumbList)
+const breadcrumbStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: item.href ? `https://xiaopro.com${item.href}` : undefined
+  }))
+};
+---
+
+<!-- 面包屑导航 -->
+<nav class="breadcrumb" aria-label="面包屑导航">
+  <!-- 结构化数据 -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbStructuredData)} is:inline />
+
+  <ol class="breadcrumb__list">
+    {items.map((item, index) => {
+      const isLast = index === items.length - 1;
+      const isCurrent = item.current ?? isLast;
+
+      return (
+        <li class={`breadcrumb__item ${isCurrent ? 'breadcrumb__item--current' : ''}`}>
+          {!isCurrent && item.href ? (
+            <>
+              <a href={item.href} class="breadcrumb__link">
+                {item.icon && (
+                  <span class="breadcrumb__icon" set:html={item.icon} />
+                )}
+                <span class="breadcrumb__label">{item.label}</span>
+              </a>
+              {!isLast && (
+                <span class="breadcrumb__separator" aria-hidden="true">
+                  <span set:html={separatorIcons[separator]} />
+                </span>
+              )}
+            </>
+          ) : (
+            <>
+              <span class="breadcrumb__link breadcrumb__link--disabled">
+                {item.icon && (
+                  <span class="breadcrumb__icon" set:html={item.icon} />
+                )}
+                <span class="breadcrumb__label">{item.label}</span>
+              </span>
+            </>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  /* ============================================
+     面包屑导航组件样式
+     ============================================ */
+
+  /* 面包屑容器 */
+  .breadcrumb {
+    padding: var(--space-sm) 0;
+  }
+
+  .breadcrumb__list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: var(--space-sm);
+  }
+
+  /* ============================================
+     面包屑项
+     ============================================ */
+  .breadcrumb__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-sm);
+  }
+
+  .breadcrumb__item--current .breadcrumb__label {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+
+  /* ============================================
+     面包屑链接
+     ============================================ */
+  .breadcrumb__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb__link:hover {
+    color: var(--color-primary);
+  }
+
+  .breadcrumb__link--disabled {
+    color: var(--color-text-secondary);
+    cursor: default;
+  }
+
+  .breadcrumb__link--disabled:hover {
+    color: var(--color-text-secondary);
+  }
+
+  /* 面包屑图标 */
+  .breadcrumb__icon {
+    display: flex;
+    align-items: center;
+  }
+
+  /* ============================================
+     分隔符
+     ============================================ */
+  .breadcrumb__separator {
+    display: flex;
+    align-items: center;
+    color: var(--color-border);
+    opacity: 0.5;
+  }
+
+  .breadcrumb__separator svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+
+  /* 小屏幕隐藏中间项 */
+  @media (max-width: 639px) {
+    .breadcrumb__item:not(:first-child):not(:last-child):not(:nth-last-child(2)) {
+      display: none;
+    }
+
+    /* 添加省略号指示 */
+    .breadcrumb__list:not(:has(.breadcrumb__item--current:nth-child(2))) .breadcrumb__item:first-child::after {
+      content: '...';
+      margin-left: var(--space-sm);
+      color: var(--color-text-tertiary);
+    }
+  }
+</style>

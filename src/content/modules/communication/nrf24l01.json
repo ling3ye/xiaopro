@@ -1,0 +1,13 @@
+{
+  "category": "communication",
+  "brand": "Nordic Semiconductor",
+  "model": "nRF24L01+",
+  "alias": ["2.4G无线模块", "2.4GHz Transceiver"],
+  "specs": {
+    "voltage": "1.9V - 3.6V",
+    "frequency": "2.4GHz ISM",
+    "range": "100m (open area)",
+    "dataRate": "250Kbps - 2Mbps",
+    "interface": "SPI"
+  }
+}

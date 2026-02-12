@@ -1,0 +1,13 @@
+{
+  "category": "power",
+  "brand": "Generic",
+  "model": "LiPo 18650 Battery Shield",
+  "alias": ["锂电池管理", "Battery Shield"],
+  "specs": {
+    "voltage": "3.7V",
+    "capacity": "2500mAh",
+    "output": "5V (boost)",
+    "charging": "5V USB-C",
+    "protection": "Overcharge/Overdischarge"
+  }
+}

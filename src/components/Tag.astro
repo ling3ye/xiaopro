@@ -1,0 +1,294 @@
+---
+/**
+ * 标签组件 Tag
+ *
+ * 显示文章、项目等的分类标签
+ * 支持多种尺寸和样式变体
+ *
+ * @component Tag
+ *
+ * Props:
+ * @property {string} name - 标签名称
+ * @property {'default' | 'primary' | 'success' | 'warning' | 'error'} variant - 样式变体
+ * @property {'sm' | 'md' | 'lg'} size - 尺寸
+ * @property {boolean} compact - 紧凑模式
+ * @property {boolean} removable - 可移除
+ * @property {string} href - 链接地址（可选）
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+// 获取组件属性
+interface Props {
+  name: string;
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'error';
+  size?: 'sm' | 'md' | 'lg';
+  compact?: boolean;
+  removable?: boolean;
+  href?: string;
+}
+
+const {
+  name,
+  variant = 'default',
+  size = 'md',
+  compact = false,
+  removable = false,
+  href,
+} = Astro.props;
+
+// 标签移除事件
+const onRemove = removable ? 'onTagRemove(event)' : '';
+---
+
+<!-- 标签容器 -->
+{href ? (
+  <a
+    href={href}
+    class={[
+      'tag',
+      `tag--${variant}`,
+      `tag--${size}`,
+      compact && 'tag--compact',
+    ].filter(Boolean).join(' ')}
+  >
+    <span class="tag__name">{name}</span>
+  </a>
+) : (
+  <span
+    class={[
+      'tag',
+      `tag--${variant}`,
+      `tag--${size}`,
+      compact && 'tag--compact',
+      removable && 'tag--removable',
+    ].filter(Boolean).join(' ')}
+    data-tag-name={name}
+    onClick={onRemove}
+  >
+    <span class="tag__name">{name}</span>
+    {removable && (
+      <button
+        class="tag__remove"
+        type="button"
+        aria-label={`移除 ${name} 标签`}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    )}
+  </span>
+)}
+
+<!-- 标签移除脚本 -->
+{removable && (
+  <script>
+    // 处理标签移除事件
+    function onTagRemove(event: Event) {
+      const target = event.currentTarget as HTMLElement;
+      const tagName = target?.dataset.tagName;
+
+      if (tagName) {
+        // 触发自定义事件
+        const customEvent = new CustomEvent('tag:remove', {
+          detail: { tagName },
+          bubbles: true,
+        });
+        target.dispatchEvent(customEvent);
+      }
+    }
+
+    // 全局暴露
+    (window as any).onTagRemove = onTagRemove;
+  </script>
+)}
+
+<style>
+  /* ============================================
+     标签组件样式
+     ============================================ */
+
+  /* 标签基础样式 */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 4px 10px;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+    cursor: default;
+  }
+
+  /* 链接样式 */
+  .tag[href] {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* 可移除状态 */
+  .tag--removable {
+    cursor: pointer;
+  }
+
+  .tag--removable:hover .tag__remove {
+    opacity: 1;
+  }
+
+  /* ============================================
+     尺寸变体
+     ============================================ */
+  .tag--sm {
+    padding: 2px 8px;
+    font-size: var(--text-xs);
+  }
+
+  .tag--md {
+    padding: 4px 10px;
+    font-size: var(--text-sm);
+  }
+
+  .tag--lg {
+    padding: 6px 14px;
+    font-size: var(--text-base);
+  }
+
+  /* 紧凑模式 */
+  .tag--compact {
+    padding: 2px 8px;
+    font-size: var(--text-xs);
+  }
+
+  /* ============================================
+     样式变体
+     ============================================ */
+
+  /* 默认样式 */
+  .tag--default {
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  .tag--default[href]:hover,
+  .tag--default--removable:hover {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-border-light);
+    color: var(--color-text-primary);
+  }
+
+  /* 主色调 */
+  .tag--primary {
+    background: var(--color-primary-light);
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .tag--primary[href]:hover,
+  .tag--primary--removable:hover {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  /* 成功/绿色 */
+  .tag--success {
+    background: var(--color-success-light);
+    border: 1px solid var(--color-success);
+    color: var(--color-success);
+  }
+
+  .tag--success[href]:hover,
+  .tag--success--removable:hover {
+    background: var(--color-success);
+    color: white;
+  }
+
+  /* 警告/橙色 */
+  .tag--warning {
+    background: var(--color-warning-light);
+    border: 1px solid var(--color-warning);
+    color: var(--color-warning);
+  }
+
+  .tag--warning[href]:hover,
+  .tag--warning--removable:hover {
+    background: var(--color-warning);
+    color: white;
+  }
+
+  /* 错误/红色 */
+  .tag--error {
+    background: var(--color-error-light);
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+  }
+
+  .tag--error[href]:hover,
+  .tag--error--removable:hover {
+    background: var(--color-error);
+    color: white;
+  }
+
+  /* ============================================
+     标签内容
+     ============================================ */
+  .tag__name {
+    flex-shrink: 0;
+  }
+
+  /* 移除按钮 */
+  .tag__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .tag__remove:hover {
+    opacity: 1;
+  }
+
+  .tag__remove svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* ============================================
+     标签组
+     ============================================ */
+  .tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  .tag-group--compact {
+    gap: 4px;
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+
+  /* 小屏幕下调整间距 */
+  @media (max-width: 639px) {
+    .tag-group {
+      gap: var(--space-xs);
+    }
+  }
+</style>

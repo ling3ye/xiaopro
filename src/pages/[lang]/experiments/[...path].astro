@@ -1,0 +1,745 @@
+---
+/**
+ * 基础实验 - 列表页和详情页
+ *
+ * 展示所有基础实验教程，支持单个实验详情查看
+ * 支持多语言路由
+ *
+ * @route /[lang]/experiments/[...path]
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
+import { languages } from '../../../i18n/config';
+import type { SupportedLocale } from '../../../i18n/config';
+
+// 获取语言参数
+export async function getStaticPaths() {
+  const paths: any[] = [];
+  const ITEMS_PER_PAGE = 12;
+
+  // 获取所有实验
+  const allExperiments = await getCollection('experiments');
+
+  // 获取所有分类（从实验路径中提取）
+  const categories = new Set<string>();
+  allExperiments.forEach(({ id }) => {
+    const pathParts = id.split('/');
+    if (pathParts.length >= 2) {
+      categories.add(pathParts[0]);
+    }
+  });
+
+  // 为每种语言生成路径
+  for (const lang of Object.keys(languages)) {
+    // 过滤该语言的实验（路径格式：category/zh-cn/article.md）
+    const experiments = allExperiments.filter(({ id }) => id.includes(`/${lang}/`));
+
+    // 生成全局列表分页路径
+    const totalItems = experiments.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+
+    for (let page = 1; page <= totalPages; page++) {
+      const pagePath = page === 1 ? undefined : `page/${page}`;
+      paths.push({ params: { lang, path: pagePath } });
+    }
+
+    // 为每个分类生成分页路径
+    for (const category of categories) {
+      const categoryExperiments = experiments.filter(({ id }) => id.startsWith(`${category}/`));
+      const categoryTotalPages = Math.ceil(categoryExperiments.length / ITEMS_PER_PAGE) || 1;
+
+      for (let page = 1; page <= categoryTotalPages; page++) {
+        if (page === 1) {
+          // 第1页路径为 category
+          paths.push({ params: { lang, path: category } });
+        } else {
+          // 其他页路径为 category/page/2
+          paths.push({ params: { lang, path: `${category}/page/${page}` } });
+        }
+      }
+    }
+
+    // 详情页路径（格式：category/slug）
+    experiments.forEach((experiment) => {
+      const pathParts = experiment.id.split('/');
+      const category = pathParts[0]; // 第1部分是分类 (esp32, arduino, etc.)
+      const slug = pathParts[pathParts.length - 1].replace(/\.md$/, '');
+      paths.push({ params: { lang, path: `${category}/${slug}` } });
+    });
+  }
+
+  return paths;
+}
+
+const { lang, path: slug } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+// 解析路径：判断页面类型
+// slug 格式可能是：
+// - undefined: 全局第1页列表
+// - page/2, page/3 等：全局其他页列表
+// - esp32: 分类第1页列表
+// - esp32/page/2 等：分类其他页列表
+// - esp32/esp32-servo 等：详情页（分类/slug）
+
+// 获取所有可用分类
+const allExperiments = await getCollection('experiments', ({ id }) => {
+  return id.includes(`/${lang}/`);
+});
+const categories = new Set<string>();
+allExperiments.forEach(({ id }) => {
+  const pathParts = id.split('/');
+  if (pathParts.length >= 2) {
+    categories.add(pathParts[0]);
+  }
+});
+
+// 判断页面类型
+let pageType: 'global-list' | 'category-list' | 'detail' = 'global-list';
+let currentCategory = '';
+let currentSlug = '';
+let currentPage = 1;
+
+if (!slug) {
+  // 空路径：全局第1页
+  pageType = 'global-list';
+} else if (slug.startsWith('page/')) {
+  // page/2 等：全局其他页
+  pageType = 'global-list';
+  const pageNum = slug.replace('page/', '');
+  currentPage = Number(pageNum) || 1;
+} else {
+  const pathParts = slug.split('/');
+  if (pathParts.length === 1) {
+    // esp32: 分类第1页列表
+    pageType = 'category-list';
+    currentCategory = pathParts[0];
+  } else if (pathParts.length === 2 && pathParts[1].startsWith('page/')) {
+    // esp32/page/2: 分类其他页
+    pageType = 'category-list';
+    currentCategory = pathParts[0];
+    const pageNum = pathParts[1].replace('page/', '');
+    currentPage = Number(pageNum) || 1;
+  } else {
+    // esp32/esp32-servo: 详情页
+    pageType = 'detail';
+    currentCategory = pathParts[0];
+    currentSlug = pathParts[pathParts.length - 1];
+  }
+}
+
+// 分页配置
+const ITEMS_PER_PAGE = 12;
+
+// 根据页面类型过滤实验
+let filteredExperiments = allExperiments;
+let totalPages = 1;
+
+if (pageType === 'category-list' && currentCategory) {
+  // 过滤该分类的实验
+  filteredExperiments = allExperiments.filter(({ id }) => id.startsWith(`${currentCategory}/`));
+} else {
+  // 全局列表：显示所有实验
+  filteredExperiments = allExperiments;
+}
+
+// 计算分页
+const totalItems = filteredExperiments.length;
+totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+const endIndex = startIndex + ITEMS_PER_PAGE;
+const currentExperiments = filteredExperiments.slice(startIndex, endIndex);
+
+// 详情页：获取当前文章数据
+let experiment = null;
+let board = null;
+let module = null;
+
+if (pageType === 'detail' && currentCategory && currentSlug) {
+  // 使用 category 和 slug 查找实验（路径格式：category/zh-cn/article.md）
+  experiment = allExperiments.find(({ id }) => id.startsWith(`${currentCategory}/${lang}/`) && id.endsWith(`/${currentSlug}.md`));
+  if (experiment) {
+    // 解析关联的开发板和模块
+    if ('boardId' in experiment.data && experiment.data.boardId) {
+      const boardId = (experiment.data.boardId as any).id || String(experiment.data.boardId);
+      board = await getEntry('boards', boardId);
+    }
+    if ('moduleId' in experiment.data && experiment.data.moduleId) {
+      const moduleId = (experiment.data.moduleId as any).id || String(experiment.data.moduleId);
+      module = await getEntry('modules', moduleId);
+    }
+  }
+}
+
+// 面包屑导航
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.experiments'), href: getLocalizedPath('/experiments', currentLocale) },
+];
+
+if (pageType === 'category-list' && currentCategory) {
+  // 分类列表页：添加分类
+  breadcrumbItems.push({
+    label: currentCategory.toUpperCase(),
+    current: true
+  } as any);
+} else if (pageType === 'detail' && experiment && currentCategory) {
+  // 详情页：添加分类和文章标题
+  breadcrumbItems.push({
+    label: currentCategory.toUpperCase(),
+    href: getLocalizedPath(`/experiments/${currentCategory}`, currentLocale)
+  });
+  breadcrumbItems.push({
+    label: experiment.data.title,
+    current: true
+  } as any);
+}
+
+// 构建结构化数据
+let structuredData: any = null;
+
+if (pageType === 'detail' && experiment) {
+  // 文章详情页的结构化数据
+  structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: experiment.data.title,
+    description: experiment.data.intro || '',
+    image: experiment.data.image ? `https://xiaopro.com${experiment.data.image}` : undefined,
+    datePublished: experiment.data.date ? (experiment.data.date as Date).toISOString() : undefined,
+    author: {
+      '@type': 'Organization',
+      name: 'XIAOPRO'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'XIAOPRO',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://xiaopro.com/logo.png'
+      }
+    }
+  };
+}
+
+// 动态 meta description
+const pageDescription = pageType === 'detail' && experiment
+  ? experiment.data.intro || '探索硬件开发的无限可能，从基础教程到高级案例，一站式学习平台'
+  : (currentCategory ? `${currentCategory.toUpperCase()} 开发板的基础实验教程，适合初学者入门学习。` : '单个开发板配合单个模块的基础实验教程，适合初学者入门学习。');
+
+// 分页页面的 robots 设置
+const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
+---
+
+<Layout
+  title={pageType === 'detail' ? experiment?.data.title : (currentCategory ? `${currentCategory.toUpperCase()} - ${t('nav.experiments')}` : t('nav.experiments'))}
+  description={pageDescription}
+  lang={lang}
+  currentPath={`/${lang}/experiments/${slug || ''}`}
+  image={pageType === 'detail' && experiment?.data.image ? experiment.data.image : undefined}
+  robots={robotsMeta}
+  structuredData={structuredData}
+>
+  <!-- 面包屑导航 -->
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <!-- 列表页（全局或分类） -->
+  {pageType !== 'detail' && (
+    <section class="category-page">
+      <div class="container">
+        <!-- 页头 -->
+        <header class="category-header">
+          <h1 class="category-title">{currentCategory ? currentCategory.toUpperCase() : t('nav.experiments')}</h1>
+          <p class="category-description">
+            {currentCategory ? `${currentCategory.toUpperCase()} 开发板的基础实验教程，适合初学者入门学习。` : '单个开发板配合单个模块的基础实验教程，适合初学者入门学习。'}
+          </p>
+          <div class="category-stats">
+            <span class="stat-item">
+              <span class="stat-value">{startIndex + 1}-{Math.min(endIndex, totalItems)}</span>
+              <span class="stat-label">/ 共 {totalItems} 个实验</span>
+            </span>
+          </div>
+        </header>
+
+        <!-- 实验列表 -->
+        <div class="experiment-grid">
+          {currentExperiments.map(experiment => {
+            // 提取分类和文件名（路径格式：category/zh-cn/article.md）
+            const category = experiment.id.split('/')[0];
+            const slug = experiment.id.replace('.md', '').split('/').pop();
+            return (
+              <Card
+                type="article"
+                title={experiment.data.title}
+                description={experiment.data.intro}
+                link={getLocalizedPath(`/experiments/${category}/${slug}`, currentLocale)}
+                tags={['教程']}
+                date={('date' in experiment.data ? experiment.data.date as Date : undefined)}
+                image={experiment.data.image}
+              />
+            );
+          })}
+        </div>
+
+        <!-- 分页 -->
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            baseUrl={currentCategory ? getLocalizedPath(`/experiments/${currentCategory}`, currentLocale) : getLocalizedPath('/experiments', currentLocale)}
+            getUrl={(page) => currentCategory
+              ? getLocalizedPath(page === 1 ? `/experiments/${currentCategory}` : `/experiments/${currentCategory}/page/${page}`, currentLocale)
+              : getLocalizedPath(page === 1 ? '/experiments' : `/experiments/page/${page}`, currentLocale)}
+          />
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- 详情页 -->
+  {pageType === 'detail' && experiment && (
+    <section class="article-detail">
+      <div class="container article-layout">
+        <!-- 主内容区 -->
+        <main class="article-main">
+          <!-- 文章头部 -->
+          <header class="article-header">
+            <div class="article-meta">
+              <span class="article-tag">教程</span>
+              {board && (
+                <span class="article-board">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2"/>
+                    <rect x="9" y="9" width="6" height="6"/>
+                  </svg>
+                  {board.data.brand} {board.data.model}
+                </span>
+              )}
+              {module && (
+                <span class="article-module">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                  </svg>
+                  {module.data.model}
+                </span>
+              )}
+            </div>
+            <h1 class="article-title">{experiment.data.title}</h1>
+            {experiment.data.intro && (
+              <p class="article-intro">{experiment.data.intro}</p>
+            )}
+          </header>
+
+          <!-- 文章内容 -->
+          <div class="article-content prose" set:html={experiment.rendered?.html} />
+        </main>
+
+        <!-- 侧边栏 -->
+        <aside class="article-sidebar">
+          <!-- 相关实验 -->
+          <div class="sidebar-section">
+            <h3 class="sidebar-title">相关实验</h3>
+            <div class="related-list">
+              {allExperiments
+                .filter(e => e.id !== experiment?.id)
+                .slice(0, 5)
+                .map(related => {
+                  const relatedCategory = related.id.split('/')[0];
+                  const relatedSlug = related.id.replace('.md', '').split('/').pop();
+                  return (
+                    <a
+                      href={getLocalizedPath(`/experiments/${relatedCategory}/${relatedSlug}`, currentLocale)}
+                      class="related-item"
+                    >
+                      <span class="related-title">{related.data.title}</span>
+                    </a>
+                  );
+                })}
+            </div>
+          </div>
+
+          <!-- 使用的硬件 -->
+          {board && (
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">使用的开发板</h3>
+              <a
+                href={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
+                class="hardware-card"
+              >
+                <div class="hardware-info">
+                  <span class="hardware-brand">{board.data.brand}</span>
+                  <span class="hardware-model">{board.data.model}</span>
+                </div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"/>
+                  <path d="M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+          )}
+
+          {module && (
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">使用的模块</h3>
+              <a
+                href={getLocalizedPath(`/modules/${module.id}`, currentLocale)}
+                class="hardware-card"
+              >
+                <div class="hardware-info">
+                  <span class="hardware-brand">{module.data.brand || ''}</span>
+                  <span class="hardware-model">{module.data.model}</span>
+                </div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"/>
+                  <path d="M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+          )}
+        </aside>
+      </div>
+    </section>
+  )}
+
+  <!-- 未找到页面 -->
+  {pageType === 'detail' && !experiment && (
+    <section class="not-found">
+      <div class="container">
+        <h1>未找到该实验</h1>
+        <a href={getLocalizedPath('/experiments', currentLocale)} class="btn">返回实验列表</a>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  /* ============================================
+     分类页样式
+     ============================================ */
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+  }
+
+  .category-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .experiment-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  @media (max-width: 1200px) {
+    .experiment-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .experiment-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============================================
+     文章详情页样式
+     ============================================ */
+  .article-detail {
+    padding: var(--space-3xl) 0;
+  }
+
+  .article-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+  }
+
+  .article-header {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .article-tag {
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: 600;
+  }
+
+  .article-board,
+  .article-module {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+  }
+
+  .article-board svg,
+  .article-module svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .article-title {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .article-intro {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .article-content {
+    padding: var(--space-xl) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .article-content :global(h2) {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-primary);
+  }
+
+  .article-content :global(h3) {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .article-content :global(p) {
+    margin-bottom: var(--space-md);
+    line-height: 1.8;
+  }
+
+  .article-content :global(code) {
+    padding: 2px 6px;
+    background: var(--color-bg-tertiary);
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+  }
+
+  .article-content :global(pre) {
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+  }
+
+  .article-content :global(pre code) {
+    padding: 0;
+    background: none;
+  }
+
+  /* ============================================
+     侧边栏样式
+     ============================================ */
+  .article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .sidebar-section {
+    padding: var(--space-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .sidebar-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .related-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .related-item {
+    display: block;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .related-item:hover {
+    background: var(--color-bg-tertiary);
+  }
+
+  .related-title {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .related-item:hover .related-title {
+    color: var(--color-primary);
+  }
+
+  .hardware-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .hardware-card:hover {
+    background: var(--color-bg-elevated);
+    transform: translateX(4px);
+  }
+
+  .hardware-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .hardware-brand {
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+  }
+
+  .hardware-model {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .hardware-card svg {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-tertiary);
+  }
+
+  /* ============================================
+     未找到页面样式
+     ============================================ */
+  .not-found {
+    padding: var(--space-5xl) 0;
+    text-align: center;
+  }
+
+  .not-found h1 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xl);
+    color: var(--color-text-secondary);
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .btn:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+  @media (min-width: 1024px) {
+    .article-layout {
+      grid-template-columns: 1fr 320px;
+    }
+
+    .article-sidebar {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-lg));
+    }
+  }
+</style>

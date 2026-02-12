@@ -1,0 +1,12 @@
+{
+  "category": "actuator",
+  "brand": "Generic",
+  "model": "DC Motor TT",
+  "alias": ["直流减速电机", "Gear Motor"],
+  "specs": {
+    "voltage": "3V - 6V",
+    "noLoadSpeed": "200 RPM",
+    "torque": "1.5 kg·cm",
+    "current": "150mA (no load)"
+  }
+}

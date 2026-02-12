@@ -1,0 +1,495 @@
+---
+/**
+ * 页头组件 Header
+ *
+ * 网站顶部导航栏，包含 Logo、导航菜单、语言切换和搜索功能
+ *
+ * @component Header
+ *
+ * Props:
+ * @property {string} lang - 当前语言代码
+ * @property {string} currentPath - 当前页面路径
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import { getLangFromUrl, useTranslations, getLocalizedPath } from '../utils/i18n';
+
+// 获取组件属性
+interface Props {
+  lang?: string;
+  currentPath?: string;
+}
+
+const { lang = 'zh-cn', currentPath = '/' } = Astro.props;
+
+// 获取翻译函数
+const t = useTranslations(lang);
+
+// 导航菜单配置
+const navItems = [
+  { key: 'home', path: '/' },
+  { key: 'boards', path: '/boards' },
+  { key: 'modules', path: '/modules' },
+  { key: 'experiments', path: '/experiments' },
+  { key: 'solutions', path: '/solutions' },
+];
+
+// 语言选项
+const languages = [
+  { code: 'zh-cn', name: '简体中文' },
+  { code: 'zh-tw', name: '繁體中文' },
+  { code: 'en', name: 'English' },
+  { code: 'ja', name: '日本語' },
+];
+
+// 移动端菜单状态
+let isMobileMenuOpen = false;
+
+/**
+ * 切换移动端菜单
+ */
+function toggleMobileMenu() {
+  isMobileMenuOpen = !isMobileMenuOpen;
+}
+---
+
+<!-- 页头容器 -->
+<header class="header">
+  <div class="container header__inner">
+    <!-- Logo 区域 -->
+    <a href={getLocalizedPath('/', lang)} class="header__logo">
+      <svg class="header__logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 4L4 14V34L24 44L44 34V14L24 4Z" stroke="#00d4ff" stroke-width="2" fill="none"/>
+        <path d="M24 14V34M14 19L24 24L34 19" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="4" fill="#00d4ff"/>
+      </svg>
+      <span class="header__logo-text">XIAOPRO</span>
+    </a>
+
+    <!-- 桌面端导航 -->
+    <nav class="header__nav header__nav--desktop">
+      <ul class="header__nav-list">
+        {navItems.map(item => (
+          <li class="header__nav-item">
+            <a
+              href={getLocalizedPath(item.path, lang)}
+              class={`header__nav-link ${currentPath === getLocalizedPath(item.path, lang) ? 'header__nav-link--active' : ''}`}
+            >
+              {t(`nav.${item.key}`)}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- 右侧工具栏 -->
+    <div class="header__tools">
+      <!-- 搜索按钮 -->
+      <button class="header__tool-btn header__tool-btn--search" aria-label="搜索">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <!-- 语言切换器 -->
+      <div class="header__lang-switcher">
+        <button class="header__lang-btn" aria-label="切换语言">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span class="header__lang-code">{lang.toUpperCase()}</span>
+        </button>
+        <!-- 语言下拉菜单 -->
+        <div class="header__lang-dropdown">
+          {languages.map(langOption => (
+            <a
+              href={getLocalizedPath((currentPath?.replace(`/${lang}`, '') ?? '/') as string, langOption.code)}
+              class={`header__lang-option ${langOption.code === lang ? 'header__lang-option--active' : ''}`}
+            >
+              {langOption.name}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- 移动端菜单按钮 -->
+      <button
+        class="header__mobile-toggle"
+        aria-label="菜单"
+        aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
+        onClick={`toggleMobileMenu()`}
+      >
+        <span class="header__hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 移动端导航菜单 -->
+  <nav
+    class={`header__mobile-nav ${isMobileMenuOpen ? 'header__mobile-nav--open' : ''}`}
+    aria-hidden={!isMobileMenuOpen}
+  >
+    <ul class="header__mobile-nav-list">
+      {navItems.map(item => (
+        <li class="header__mobile-nav-item">
+          <a
+            href={getLocalizedPath(item.path, lang)}
+            class={`header__mobile-nav-link ${currentPath === getLocalizedPath(item.path, lang) ? 'header__mobile-nav-link--active' : ''}`}
+            onClick={`isMobileMenuOpen = false`}
+          >
+            {t(`nav.${item.key}`)}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<!-- 移动端菜单脚本 -->
+<script>
+  // 移动端菜单状态
+  let isMenuOpen = false;
+
+  function toggleMobileMenu() {
+    isMenuOpen = !isMenuOpen;
+    const nav = document.querySelector('.header__mobile-nav');
+    const toggle = document.querySelector('.header__mobile-toggle');
+    const hamburger = document.querySelector('.header__hamburger');
+
+    if (isMenuOpen) {
+      nav?.classList.add('header__mobile-nav--open');
+      toggle?.classList.add('header__mobile-toggle--open');
+      hamburger?.classList.add('header__hamburger--active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      nav?.classList.remove('header__mobile-nav--open');
+      toggle?.classList.remove('header__mobile-toggle--open');
+      hamburger?.classList.remove('header__hamburger--active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // 全局暴露
+  (window as any).toggleMobileMenu = toggleMobileMenu;
+</script>
+
+<style>
+  /* ============================================
+     页头组件样式
+     ============================================ */
+
+  /* 页头容器 */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    background: rgba(10, 14, 20, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-border);
+    transition: all var(--transition-base);
+  }
+
+  /* 页头内部容器 */
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+  }
+
+  /* ============================================
+     Logo 样式
+     ============================================ */
+  .header__logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .header__logo:hover {
+    opacity: 0.8;
+  }
+
+  .header__logo-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+  }
+
+  .header__logo-text {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: 0.5px;
+  }
+
+  /* ============================================
+     桌面端导航
+     ============================================ */
+  .header__nav--desktop {
+    display: none;
+  }
+
+  .header__nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    list-style: none;
+  }
+
+  .header__nav-link {
+    position: relative;
+    padding: var(--space-sm) 0;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+  }
+
+  .header__nav-link:hover {
+    color: var(--color-primary);
+  }
+
+  .header__nav-link--active {
+    color: var(--color-primary);
+  }
+
+  .header__nav-link--active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
+  }
+
+  /* ============================================
+     右侧工具栏
+     ============================================ */
+  .header__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .header__tool-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+  }
+
+  .header__tool-btn:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-primary);
+  }
+
+  .header__tool-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ============================================
+     语言切换器
+     ============================================ */
+  .header__lang-switcher {
+    position: relative;
+  }
+
+  .header__lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 var(--space-sm);
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .header__lang-btn:hover {
+    background: var(--color-bg-elevated);
+  }
+
+  .header__lang-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .header__lang-code {
+    font-family: 'Fira Code', monospace;
+  }
+
+  .header__lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--transition-fast);
+    overflow: hidden;
+  }
+
+  .header__lang-switcher:hover .header__lang-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .header__lang-option {
+    display: block;
+    padding: var(--space-sm) var(--space-md);
+    color: var(--color-text-secondary);
+    transition: background var(--transition-fast);
+  }
+
+  .header__lang-option:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .header__lang-option--active {
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+  }
+
+  /* ============================================
+     移动端菜单按钮
+     ============================================ */
+  .header__mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+  }
+
+  .header__hamburger {
+    position: relative;
+    width: 24px;
+    height: 20px;
+  }
+
+  .header__hamburger span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-text-primary);
+    transition: all var(--transition-fast);
+  }
+
+  .header__hamburger span:first-child {
+    top: 0;
+  }
+
+  .header__hamburger span:nth-child(2) {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .header__hamburger span:last-child {
+    bottom: 0;
+  }
+
+  /* 激活状态的汉堡菜单 */
+  .header__hamburger--active span:first-child {
+    transform: rotate(45deg);
+    top: 50%;
+  }
+
+  .header__hamburger--active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .header__hamburger--active span:last-child {
+    transform: rotate(-45deg);
+    bottom: 50%;
+  }
+
+  /* ============================================
+     移动端导航菜单
+     ============================================ */
+  .header__mobile-nav {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-bg-primary);
+    transform: translateX(100%);
+    transition: transform var(--transition-base);
+    overflow-y: auto;
+  }
+
+  .header__mobile-nav--open {
+    transform: translateX(0);
+  }
+
+  .header__mobile-nav-list {
+    padding: var(--space-lg);
+    list-style: none;
+  }
+
+  .header__mobile-nav-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header__mobile-nav-link {
+    display: block;
+    padding: var(--space-md) 0;
+    color: var(--color-text-primary);
+    font-size: var(--text-lg);
+    transition: color var(--transition-fast);
+  }
+
+  .header__mobile-nav-link:hover {
+    color: var(--color-primary);
+  }
+
+  .header__mobile-nav-link--active {
+    color: var(--color-primary);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+
+  /* 平板及以上显示桌面导航 */
+  @media (min-width: 768px) {
+    .header__nav--desktop {
+      display: block;
+    }
+
+    .header__mobile-toggle {
+      display: none;
+    }
+  }
+</style>

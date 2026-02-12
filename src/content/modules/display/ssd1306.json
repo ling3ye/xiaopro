@@ -1,0 +1,10 @@
+{
+  "category": "display",
+  "model": "SSD1306 OLED 0.96",
+  "specs": {
+    "resolution": "128x64",
+    "interface": "I2C"
+  },
+  "officialUrl": "https://www.solomon-systech.com/product/oled-display-driver-ic/ssd1306/",
+  "datasheet": "https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"
+}

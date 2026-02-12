@@ -1,0 +1,457 @@
+---
+/**
+ * 侧边栏组件 Sidebar
+ *
+ * 网站侧边栏，显示导航、分类、标签、最新文章等
+ * 可用于文章详情页、列表页等
+ *
+ * @component Sidebar
+ *
+ * Props:
+ * @property {string} lang - 当前语言代码
+ * @property {string} currentPath - 当前页面路径
+ * @property {'experiments' | 'solutions'} type - 内容类型
+ * @property {string[]} tags - 当前文章的标签列表（可选）
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import { useTranslations, getLocalizedPath } from '../utils/i18n';
+import { getCollection } from 'astro:content';
+import Tag from './Tag.astro';
+
+// 获取组件属性
+interface Props {
+  lang?: string;
+  currentPath?: string;
+  type?: 'experiments' | 'solutions' | 'boards' | 'modules';
+  tags?: string[];
+}
+
+const { lang = 'zh-cn', currentPath = '/', type = 'experiments', tags = [] } = Astro.props;
+
+// 获取翻译函数
+const t = useTranslations(lang);
+
+// 获取文章数据
+let articles = [];
+if (type === 'experiments' || type === 'solutions') {
+  articles = await getCollection(type);
+  // 按日期排序
+  articles.sort((a, b) => new Date(b.data.date || 0) - new Date(a.data.date || 0));
+}
+
+// 获取开发板数据
+let boards = [];
+if (type === 'experiments' || type === 'solutions' || type === 'boards') {
+  boards = await getCollection('boards');
+}
+
+// 获取模块数据
+let modules = [];
+if (type === 'experiments' || type === 'solutions' || type === 'modules') {
+  modules = await getCollection('modules');
+}
+
+// 最新文章（取前5篇）
+const recentArticles = articles.slice(0, 5);
+
+// 分类配置
+const categories = [
+  { key: 'all', path: '/' },
+  { key: 'beginner', path: '/beginner' },
+  { key: 'intermediate', path: '/intermediate' },
+  { key: 'advanced', path: '/advanced' },
+];
+
+// 模块分类
+const moduleCategories = [
+  { key: 'sensor', label: '传感器' },
+  { key: 'display', label: '显示' },
+  { key: 'actuator', label: '执行器' },
+  { key: 'communication', label: '通信' },
+  { key: 'power', label: '电源' },
+  { key: 'other', label: '其他' },
+];
+---
+
+<!-- 侧边栏容器 -->
+<aside class="sidebar">
+  <!-- 导航部分 -->
+  <section class="sidebar__section">
+    <h3 class="sidebar__title">
+      <svg class="sidebar__title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      {t('sidebar.navigation')}
+    </h3>
+    <nav class="sidebar__nav">
+      <ul class="sidebar__nav-list">
+        <li class="sidebar__nav-item">
+          <a
+            href={getLocalizedPath('/', lang)}
+            class={`sidebar__nav-link ${currentPath === getLocalizedPath('/', lang) ? 'sidebar__nav-link--active' : ''}`}
+          >
+            {t('nav.home')}
+          </a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a
+            href={getLocalizedPath('/boards', lang)}
+            class={`sidebar__nav-link ${currentPath?.includes('/boards') ? 'sidebar__nav-link--active' : ''}`}
+          >
+            {t('nav.boards')}
+          </a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a
+            href={getLocalizedPath('/modules', lang)}
+            class={`sidebar__nav-link ${currentPath?.includes('/modules') ? 'sidebar__nav-link--active' : ''}`}
+          >
+            {t('nav.modules')}
+          </a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a
+            href={getLocalizedPath('/experiments', lang)}
+            class={`sidebar__nav-link ${currentPath?.includes('/experiments') ? 'sidebar__nav-link--active' : ''}`}
+          >
+            {t('nav.experiments')}
+          </a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a
+            href={getLocalizedPath('/solutions', lang)}
+            class={`sidebar__nav-link ${currentPath?.includes('/solutions') ? 'sidebar__nav-link--active' : ''}`}
+          >
+            {t('nav.solutions')}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+
+  <!-- 最新文章 -->
+  {recentArticles.length > 0 && (
+    <section class="sidebar__section">
+      <h3 class="sidebar__title">
+        <svg class="sidebar__title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        {t('sidebar.recentArticles')}
+      </h3>
+      <ul class="sidebar__list">
+        {recentArticles.map(article => (
+          <li class="sidebar__list-item">
+            <a
+              href={article.slug}
+              class="sidebar__list-link"
+            >
+              <span class="sidebar__list-title">{article.data.title}</span>
+              <time class="sidebar__list-date" datetime={article.data.date?.toISOString()}>
+                {new Date(article.data.date || Date.now()).toLocaleDateString(lang)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- 文章标签 -->
+  {tags && tags.length > 0 && (
+    <section class="sidebar__section">
+      <h3 class="sidebar__title">
+        <svg class="sidebar__title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+          <line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
+        {t('sidebar.tags')}
+      </h3>
+      <div class="sidebar__tags">
+        {tags.map(tag => <Tag name={tag} compact />)}
+      </div>
+    </section>
+  )}
+
+  <!-- 热门开发板 -->
+  {boards.length > 0 && (
+    <section class="sidebar__section">
+      <h3 class="sidebar__title">
+        <svg class="sidebar__title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+          <rect x="9" y="9" width="6" height="6"/>
+          <line x1="9" y1="1" x2="9" y2="4"/>
+          <line x1="15" y1="1" x2="15" y2="4"/>
+          <line x1="9" y1="20" x2="9" y2="23"/>
+          <line x1="15" y1="20" x2="15" y2="23"/>
+          <line x1="20" y1="9" x2="23" y2="9"/>
+          <line x1="20" y1="14" x2="23" y2="14"/>
+          <line x1="1" y1="9" x2="4" y2="9"/>
+          <line x1="1" y1="14" x2="4" y2="14"/>
+        </svg>
+        {t('sidebar.popularBoards')}
+      </h3>
+      <ul class="sidebar__list sidebar__list--compact">
+        {boards.slice(0, 5).map(board => (
+          <li class="sidebar__list-item">
+            <a
+              href={getLocalizedPath(`/boards/${board.id}`, lang)}
+              class="sidebar__list-link sidebar__list-link--inline"
+            >
+              <span class="sidebar__board-brand">{board.data.brand}</span>
+              <span class="sidebar__board-model">{board.data.model}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- 模块分类 -->
+  {modules.length > 0 && (
+    <section class="sidebar__section">
+      <h3 class="sidebar__title">
+        <svg class="sidebar__title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        {t('sidebar.moduleCategories')}
+      </h3>
+      <ul class="sidebar__category-list">
+        {moduleCategories.map(cat => (
+          <li class="sidebar__category-item">
+            <a
+              href={getLocalizedPath(`/modules/${cat.key}`, lang)}
+              class="sidebar__category-link"
+            >
+              {cat.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</aside>
+
+<style>
+  /* ============================================
+     侧边栏组件样式
+     ============================================ */
+
+  /* 侧边栏容器 */
+  .sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  /* ============================================
+     侧边栏区块
+     ============================================ */
+  .sidebar__section {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+  }
+
+  /* 标题 */
+  .sidebar__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-md);
+  }
+
+  .sidebar__title-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-primary);
+  }
+
+  /* ============================================
+     导航列表
+     ============================================ */
+  .sidebar__nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar__nav-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sidebar__nav-item:last-child {
+    border-bottom: none;
+  }
+
+  .sidebar__nav-link {
+    display: block;
+    padding: var(--space-sm) 0;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .sidebar__nav-link:hover {
+    color: var(--color-primary);
+    padding-left: var(--space-sm);
+  }
+
+  .sidebar__nav-link--active {
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+
+  .sidebar__nav-link--active::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-right: var(--space-sm);
+    background: var(--color-primary);
+    border-radius: 50%;
+  }
+
+  /* ============================================
+     文章列表
+     ============================================ */
+  .sidebar__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar__list--compact {
+    gap: var(--space-xs);
+  }
+
+  .sidebar__list-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sidebar__list-item:last-child {
+    border-bottom: none;
+  }
+
+  .sidebar__list-link {
+    display: block;
+    padding: var(--space-sm) 0;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .sidebar__list-link:hover {
+    opacity: 0.8;
+  }
+
+  .sidebar__list--compact .sidebar__list-link {
+    padding: 4px 0;
+  }
+
+  .sidebar__list-link--inline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .sidebar__list-title {
+    display: block;
+    color: var(--color-text-primary);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .sidebar__list-date {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+  }
+
+  /* 开发板信息 */
+  .sidebar__board-brand {
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+
+  .sidebar__board-model {
+    color: var(--color-text-secondary);
+  }
+
+  /* ============================================
+     标签区域
+     ============================================ */
+  .sidebar__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  /* ============================================
+     分类列表
+     ============================================ */
+  .sidebar__category-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .sidebar__category-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .sidebar__category-link:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  /* ============================================
+     响应式设计
+     ============================================ */
+
+  /* 桌面端固定侧边栏 */
+  @media (min-width: 1024px) {
+    .sidebar {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-lg));
+      max-height: calc(100vh - var(--header-height) - var(--space-xl));
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 3px;
+    }
+  }
+</style>
