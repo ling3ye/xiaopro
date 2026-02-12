@@ -120,8 +120,7 @@ function toggleMobileMenu() {
       <button
         class="header__mobile-toggle"
         aria-label="菜单"
-        aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
-        onClick={`toggleMobileMenu()`}
+        aria-expanded="false"
       >
         <span class="header__hamburger">
           <span></span>
@@ -131,54 +130,84 @@ function toggleMobileMenu() {
       </button>
     </div>
   </div>
-
-  <!-- 移动端导航菜单 -->
-  <nav
-    class={`header__mobile-nav ${isMobileMenuOpen ? 'header__mobile-nav--open' : ''}`}
-    aria-hidden={!isMobileMenuOpen}
-  >
-    <ul class="header__mobile-nav-list">
-      {navItems.map(item => (
-        <li class="header__mobile-nav-item">
-          <a
-            href={getLocalizedPath(item.path, lang)}
-            class={`header__mobile-nav-link ${currentPath === getLocalizedPath(item.path, lang) ? 'header__mobile-nav-link--active' : ''}`}
-            onClick={`isMobileMenuOpen = false`}
-          >
-            {t(`nav.${item.key}`)}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
 </header>
+
+<!-- 移动端菜单遮罩层（必须在 header 外部，避免 backdrop-filter 影响 fixed 定位） -->
+<div class="header__mobile-overlay"></div>
+
+<!-- 移动端导航菜单 -->
+<nav class="header__mobile-nav">
+  <ul class="header__mobile-nav-list">
+    {navItems.map(item => (
+      <li class="header__mobile-nav-item">
+        <a
+          href={getLocalizedPath(item.path, lang)}
+          class={`header__mobile-nav-link ${currentPath === getLocalizedPath(item.path, lang) ? 'header__mobile-nav-link--active' : ''}`}
+        >
+          {t(`nav.${item.key}`)}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
 
 <!-- 移动端菜单脚本 -->
 <script>
-  // 移动端菜单状态
   let isMenuOpen = false;
 
   function toggleMobileMenu() {
     isMenuOpen = !isMenuOpen;
     const nav = document.querySelector('.header__mobile-nav');
+    const overlay = document.querySelector('.header__mobile-overlay');
     const toggle = document.querySelector('.header__mobile-toggle');
     const hamburger = document.querySelector('.header__hamburger');
 
     if (isMenuOpen) {
       nav?.classList.add('header__mobile-nav--open');
+      overlay?.classList.add('header__mobile-overlay--open');
       toggle?.classList.add('header__mobile-toggle--open');
       hamburger?.classList.add('header__hamburger--active');
+      toggle?.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     } else {
       nav?.classList.remove('header__mobile-nav--open');
+      overlay?.classList.remove('header__mobile-overlay--open');
       toggle?.classList.remove('header__mobile-toggle--open');
       hamburger?.classList.remove('header__hamburger--active');
+      toggle?.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     }
   }
 
-  // 全局暴露
-  (window as any).toggleMobileMenu = toggleMobileMenu;
+  function closeMobileMenu() {
+    if (isMenuOpen) {
+      toggleMobileMenu();
+    }
+  }
+
+  // 初始化事件监听
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenuEvents);
+  } else {
+    initMenuEvents();
+  }
+
+  function initMenuEvents() {
+    const toggleButton = document.querySelector('.header__mobile-toggle');
+    const overlay = document.querySelector('.header__mobile-overlay');
+    const mobileLinks = document.querySelectorAll('.header__mobile-nav-link');
+
+    // 菜单按钮点击事件
+    toggleButton?.addEventListener('click', toggleMobileMenu);
+
+    // 遮罩层点击事件
+    overlay?.addEventListener('click', closeMobileMenu);
+
+    // 菜单链接点击事件
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', closeMobileMenu);
+    });
+  }
 </script>
 
 <style>
@@ -435,22 +464,42 @@ function toggleMobileMenu() {
   }
 
   /* ============================================
+     移动端菜单遮罩层
+     ============================================ */
+  .header__mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: calc(var(--z-sticky) + 1);
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+  }
+
+  .header__mobile-overlay--open {
+    display: block;
+  }
+
+  /* ============================================
      移动端导航菜单
      ============================================ */
   .header__mobile-nav {
     position: fixed;
     top: var(--header-height);
-    left: 0;
     right: 0;
+    width: 100%;
+    max-width: 300px;
     bottom: 0;
+    z-index: calc(var(--z-sticky) + 2);
     background: var(--color-bg-primary);
-    transform: translateX(100%);
-    transition: transform var(--transition-base);
+    display: none;
+    flex-direction: column;
     overflow-y: auto;
   }
 
   .header__mobile-nav--open {
-    transform: translateX(0);
+    display: flex;
   }
 
   .header__mobile-nav-list {
