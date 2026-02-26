@@ -85,11 +85,33 @@ const solutions = defineCollection({
   }),
 });
 
-// 6. 导出集合注册
+// 6. 定义 Articles (博客文章) 集合 - 多维正交元数据法
+const articles = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    // 维度1: 领域 domain (单选，决定物理路由)
+    domain: z.enum(['ai', 'software', 'hardware', 'devops', 'life']),
+    // 维度2: 平台 platforms (数组，可选，支持跨平台)
+    platforms: z.array(z.enum(['mac', 'windows', 'linux', 'web', 'cross-platform'])).optional(),
+    // 维度3: 体裁 format (单选，决定阅读预期)
+    format: z.enum(['tutorial', 'prompt-list', 'opinion', 'cheatsheet', 'news']).default('tutorial'),
+    // 维度4: 硬件关联 relatedBoards (数组，可选，打通软硬件生态)
+    relatedBoards: z.array(reference('boards')).optional(),
+    // 基础元数据
+    date: z.date(),
+    intro: z.string().optional(),
+    image: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+
+// 7. 导出集合注册
 export const collections = {
   'boards': boards,
   'modules': modules,
   'moduleDocs': moduleDocs,
   'experiments': experiments,
   'solutions': solutions,
+  'articles': articles,
 };

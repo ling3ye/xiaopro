@@ -1,0 +1,141 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import Card from '../../../../components/Card.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { languages, type SupportedLocale } from '../../../../i18n/config';
+
+const DOMAIN = 'life';
+const DOMAIN_LABEL = '生活';
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+  for (const lang of Object.keys(languages)) {
+    paths.push({ params: { lang } });
+  }
+  return paths;
+}
+
+const { lang } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+const allArticles = await getCollection('articles', ({ id, data }) => {
+  if (!id.startsWith(`${lang}/`)) return false;
+  return data.domain === DOMAIN;
+});
+
+allArticles.sort((a, b) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const ITEMS_PER_PAGE = 12;
+const page = Number(Astro.url.searchParams.get('page') || '1') || 1;
+const startIndex = (page - 1) * ITEMS_PER_PAGE;
+const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
+  { label: DOMAIN_LABEL, current: true }
+];
+---
+<Layout
+  title={`${DOMAIN_LABEL} 文章 - ${t('nav.articles')}`}
+  description={`生活随笔文章，共 ${allArticles.length} 篇`}
+  lang={lang}
+  currentPath={`/${lang}/articles/${DOMAIN}`}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <section class="category-page">
+    <div class="container">
+      <header class="category-header">
+        <h1 class="category-title">{DOMAIN_LABEL}</h1>
+        <p class="category-description">生活随笔和技术之外的故事</p>
+        <div class="category-stats">
+          <span class="stat-item">
+            <span class="stat-value">{startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, allArticles.length)}</span>
+            <span class="stat-label">/ {allArticles.length}</span>
+          </span>
+        </div>
+      </header>
+
+      <div class="articles-grid">
+        {currentArticles.map(art => (
+          <Card
+            type="article"
+            title={art.data.title}
+            description={art.data.intro}
+            link={getLocalizedPath(`/articles/${DOMAIN}/${art.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
+            tags={art.data.tags}
+            date={art.data.date}
+            image={art.data.image}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+  }
+  .category-stats {
+    display: flex;
+    justify-content: center;
+  }
+  .stat-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+  }
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

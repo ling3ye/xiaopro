@@ -1,0 +1,394 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
+import { languages, type SupportedLocale } from '../../../i18n/config';
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+
+  for (const lang of Object.keys(languages)) {
+    paths.push({
+      params: { lang }
+    });
+  }
+
+  return paths;
+}
+
+const { lang } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+// 获取所有文章
+const allArticles = await getCollection('articles', ({ id }) =>
+  id.startsWith(`${lang}/`)
+);
+
+allArticles.sort((a, b) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// 提取所有筛选选项（用于服务端渲染）
+const allDomains = [...new Set(allArticles.map(a => a.data.domain))];
+const allPlatforms = [...new Set(allArticles.flatMap(a => a.data.platforms || []))];
+const allFormats = [...new Set(allArticles.map(a => a.data.format))];
+
+const ITEMS_PER_PAGE = 12;
+const page = Number(Astro.url.searchParams.get('page') || '1') || 1;
+const totalPages = Math.ceil(allArticles.length / ITEMS_PER_PAGE) || 1;
+const startIndex = (page - 1) * ITEMS_PER_PAGE;
+const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.articles'), current: true }
+];
+---
+<Layout
+  title={t('nav.articles')}
+  description={t('articles.description')}
+  lang={lang}
+  currentPath={`/${lang}/articles`}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <section class="category-page">
+    <div class="container">
+      <header class="category-header">
+        <h1 class="category-title">{t('nav.articles')}</h1>
+        <p class="category-description">{t('articles.description')}</p>
+        <div class="category-stats">
+          <span class="stat-item">
+            <span class="stat-value">{startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, allArticles.length)}</span>
+            <span class="stat-label">/ {allArticles.length}</span>
+          </span>
+        </div>
+      </header>
+
+      <!-- 筛选器 -->
+      <div class="filter-bar" id="filter-bar">
+        <div class="filter-group">
+          <label>{t('articles.domains')}</label>
+          <select id="filter-domain" data-filter="domain">
+            <option value="">{t('articles.all')}</option>
+            {allDomains.map(d => (
+              <option value={d}>{t(`articles.domain.${d}` as any)}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>{t('articles.platforms')}</label>
+          <select id="filter-platform" data-filter="platform">
+            <option value="">{t('articles.all')}</option>
+            {allPlatforms.map(p => (
+              <option value={p}>{t(`articles.platform.${p}` as any)}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>{t('articles.formats')}</label>
+          <select id="filter-format" data-filter="format">
+            <option value="">{t('articles.all')}</option>
+            {allFormats.map(f => (
+              <option value={f}>{t(`articles.format.${f}` as any)}</option>
+            ))}
+          </select>
+        </div>
+
+        <button id="reset-filters" class="reset-btn">{t('articles.reset')}</button>
+      </div>
+
+      <!-- 快捷链接 -->
+      <div class="quick-links">
+        <a href={getLocalizedPath('/articles/ai', currentLocale)} class="quick-link ai-link">{t('articles.quick.ai')}</a>
+        <a href={getLocalizedPath('/articles/platforms/mac', currentLocale)} class="quick-link mac-link">{t('articles.quick.macPlatform')}</a>
+        <a href={getLocalizedPath('/articles/formats/tutorial', currentLocale)} class="quick-link tutorial-link">{t('articles.quick.tutorial')}</a>
+        <a href={getLocalizedPath('/articles/formats/prompt-list', currentLocale)} class="quick-link prompt-link">{t('articles.quick.prompts')}</a>
+      </div>
+
+      <!-- 文章列表 -->
+      <div class="articles-grid" id="articles-grid">
+        {allArticles.map(article => (
+          <Card
+            type="article"
+            title={article.data.title}
+            description={article.data.intro}
+            link={getLocalizedPath(`/articles/${article.data.domain}/${article.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
+            tags={article.data.tags}
+            date={article.data.date}
+            image={article.data.image}
+            data-domain={article.data.domain}
+            data-platform={article.data.platforms?.join(',') || ''}
+            data-format={article.data.format}
+          />
+        ))}
+      </div>
+
+      <!-- 无结果提示 -->
+      <div id="no-results" class="no-results" style="display: none;">
+        <p>{t('articles.noResults')}</p>
+        <button id="show-all" class="btn-primary">{t('articles.showAll')}</button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // 客户端筛选逻辑
+  const filters = document.querySelectorAll('[data-filter]');
+  const cards = document.querySelectorAll('.card'); // 假设 Card 组件生成 .card 类
+  const noResults = document.getElementById('no-results');
+  const articlesGrid = document.getElementById('articles-grid');
+  const resetBtn = document.getElementById('reset-filters');
+  const showAllBtn = document.getElementById('show-all');
+
+  function applyFilters() {
+    const domain = document.getElementById('filter-domain').value;
+    const platform = document.getElementById('filter-platform').value;
+    const format = document.getElementById('filter-format').value;
+
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const cardDomain = card.dataset.domain;
+      const cardPlatforms = card.dataset.platform || '';
+      const cardFormat = card.dataset.format;
+
+      const matchDomain = !domain || cardDomain === domain;
+      const matchPlatform = !platform || cardPlatforms.includes(platform);
+      const matchFormat = !format || cardFormat === format;
+
+      const isMatch = matchDomain && matchPlatform && matchFormat;
+      card.style.display = isMatch ? 'block' : 'none';
+
+      if (isMatch) visibleCount++;
+    });
+
+    // 显示/隐藏无结果提示
+    noResults.style.display = visibleCount === 0 ? 'flex' : 'none';
+    articlesGrid.style.display = visibleCount === 0 ? 'none' : 'grid';
+  }
+
+  function resetFilters() {
+    document.getElementById('filter-domain').value = '';
+    document.getElementById('filter-platform').value = '';
+    document.getElementById('filter-format').value = '';
+    applyFilters();
+  }
+
+  filters.forEach(filter => filter.addEventListener('change', applyFilters));
+  resetBtn?.addEventListener('click', resetFilters);
+  showAllBtn?.addEventListener('click', resetFilters);
+</script>
+
+<style>
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+  }
+
+  .category-stats {
+    display: flex;
+    justify-content: center;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  /* 筛选器 */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: flex-end;
+    padding: var(--space-lg);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-xl);
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .filter-group label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .filter-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .filter-group select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  .reset-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .reset-btn:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  /* 快捷链接 */
+  .quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+  }
+
+  .quick-link {
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  .quick-link:hover {
+    transform: translateY(-1px);
+    border-color: var(--color-primary);
+  }
+
+  .quick-link.ai-link {
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+    color: white;
+    border: none;
+  }
+
+  .quick-link.mac-link {
+    color: #007AFF;
+    border-color: #007AFF40;
+  }
+
+  .quick-link.tutorial-link {
+    color: #10B981;
+    border-color: #10B98140;
+  }
+
+  .quick-link.prompt-link {
+    color: #F59E0B;
+    border-color: #F59E0B40;
+  }
+
+  /* 文章列表 */
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* 无结果 */
+  .no-results {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-3xl);
+    text-align: center;
+  }
+
+  .no-results p {
+    color: var(--color-text-tertiary);
+    font-size: var(--text-lg);
+  }
+
+  .btn-primary {
+    padding: 10px 24px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+</style>

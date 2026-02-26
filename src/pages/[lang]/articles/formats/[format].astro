@@ -1,0 +1,131 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import Card from '../../../../components/Card.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { languages, type SupportedLocale } from '../../../../i18n/config';
+
+const formatLabel = {
+  tutorial: '教程',
+  'prompt-list': '提示词清单',
+  opinion: '观点评论',
+  cheatsheet: '速查表',
+  news: '新闻'
+};
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+  // 在 getStaticPaths 内部定义 FORMATS
+  const FORMATS = ['tutorial', 'prompt-list', 'opinion', 'cheatsheet', 'news'] as const;
+
+  for (const lang of Object.keys(languages)) {
+    for (const format of FORMATS) {
+      paths.push({
+        params: { lang, format }
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { lang, format } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+// 按体裁筛选文章
+const allArticles = await getCollection('articles', ({ id, data }) => {
+  if (!id.startsWith(`${lang}/`)) return false;
+  return data.format === format;
+});
+
+allArticles.sort((a, b) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const ITEMS_PER_PAGE = 12;
+const page = Number(Astro.url.searchParams.get('page') || '1') || 1;
+const totalPages = Math.ceil(allArticles.length / ITEMS_PER_PAGE) || 1;
+const startIndex = (page - 1) * ITEMS_PER_PAGE;
+const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
+  { label: formatLabel[format as keyof typeof formatLabel], current: true }
+];
+---
+<Layout
+  title={`${formatLabel[format as keyof typeof formatLabel]} - ${t('nav.articles')}`}
+  description={`所有${formatLabel[format as keyof typeof formatLabel]}类型的文章`}
+  lang={lang}
+  currentPath={`/${lang}/articles/formats/${format}`}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <section class="category-page">
+    <div class="container">
+      <header class="category-header">
+        <h1 class="category-title">{formatLabel[format as keyof typeof formatLabel]}</h1>
+        <p class="category-description">共 {allArticles.length} 篇文章</p>
+      </header>
+
+      <div class="articles-grid">
+        {currentArticles.map(art => (
+          <Card
+            type="article"
+            title={art.data.title}
+            description={art.data.intro}
+            link={getLocalizedPath(`/articles/${art.data.domain}/${art.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
+            tags={art.data.tags}
+            date={art.data.date}
+            image={art.data.image}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+  }
+
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 1024px) {
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

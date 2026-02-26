@@ -1,0 +1,141 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import Card from '../../../../components/Card.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { languages, type SupportedLocale } from '../../../../i18n/config';
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+  // 在 getStaticPaths 内部定义 PLATFORMS
+  const PLATFORMS = ['mac', 'windows', 'linux', 'web', 'cross-platform'] as const;
+
+  for (const lang of Object.keys(languages)) {
+    for (const platform of PLATFORMS) {
+      paths.push({
+        params: { lang, platform }
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { lang, platform } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+// 核心过滤逻辑：筛选包含指定 platform 的文章
+const allArticles = await getCollection('articles', ({ id, data }) => {
+  if (!id.startsWith(`${lang}/`)) return false;
+  if (!data.platforms || data.platforms.length === 0) return false;
+  return data.platforms.includes(platform);
+});
+
+// 按日期降序排序
+allArticles.sort((a, b) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// 分页
+const ITEMS_PER_PAGE = 12;
+const page = Number(Astro.url.searchParams.get('page') || '1') || 1;
+const totalPages = Math.ceil(allArticles.length / ITEMS_PER_PAGE) || 1;
+const startIndex = (page - 1) * ITEMS_PER_PAGE;
+const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
+  { label: `${platform.toUpperCase()} 平台`, current: true }
+];
+
+const platformLabel = {
+  mac: 'Mac',
+  windows: 'Windows',
+  linux: 'Linux',
+  web: 'Web',
+  'cross-platform': '跨平台'
+}[platform] || platform;
+---
+<Layout
+  title={`${platformLabel} 平台文章 - ${t('nav.articles')}`}
+  description={`在 ${platformLabel} 平台上的所有技术文章和教程`}
+  lang={lang}
+  currentPath={`/${lang}/articles/platforms/${platform}`}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <section class="category-page">
+    <div class="container">
+      <header class="category-header">
+        <h1 class="category-title">{platformLabel} 平台</h1>
+        <p class="category-description">
+          共 {allArticles.length} 篇文章在 {platformLabel} 平台
+        </p>
+      </header>
+
+      <div class="articles-grid">
+        {currentArticles.map(art => (
+          <Card
+            type="article"
+            title={art.data.title}
+            description={art.data.intro}
+            link={getLocalizedPath(`/articles/${art.data.domain}/${art.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
+            tags={art.data.tags}
+            date={art.data.date}
+            image={art.data.image}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .category-page {
+    padding: var(--space-3xl) 0;
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .category-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
