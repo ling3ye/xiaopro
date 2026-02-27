@@ -9,13 +9,32 @@ const boards = defineCollection({
     brand: z.string(),
     // 必填：型号名称 (如 'ESP32-C3 DevKit')
     model: z.string(),
-    // 选填：硬件参数字典 (键值对)
-    // 使用 z.record 允许任意的 key，但 value 必须是 字符串、数字或布尔值
-    specs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+    // 选填：硬件参数字典 (支持多语言嵌套结构)
+    specs: z.union([
+      // 旧格式：平铺结构 Record<string, string | number | boolean>
+      z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+      // 新格式：多语言嵌套 { "zh-cn": {...}, "en": {...} }
+      z.object({
+        'zh-cn': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+        'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'en': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ja': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+      })
+    ]).optional(),
     // 选填：官方文档链接
     officialUrl: z.string().url().optional(),
-    // 选填：关键词 (用于未来的 AI 搜索优化)
-    keywords: z.array(z.string()).optional(),
+    // 选填：关键词 (支持多语言嵌套结构)
+    keywords: z.union([
+      // 旧格式：字符串数组
+      z.array(z.string()),
+      // 新格式：多语言嵌套 { "zh-cn": [...], "en": [...] }
+      z.object({
+        'zh-cn': z.array(z.string()),
+        'zh-tw': z.array(z.string()).optional(),
+        'en': z.array(z.string()).optional(),
+        'ja': z.array(z.string()).optional(),
+      })
+    ]).optional(),
     // 选填：缩略图 (相对于 public 目录的路径)
     image: z.string().optional(),
   }),
@@ -60,7 +79,15 @@ const experiments = defineCollection({
   }),
 });
 
-// 4. 定义 ModuleDocs (模块详细说明)
+// 4. 定义 BoardDocs (开发板详细说明)
+const boardDocs = defineCollection({
+  type: 'content', // Markdown/MDX 文件
+  schema: z.object({
+    boardId: reference('boards'), // 关联到开发板
+  }),
+});
+
+// 5. 定义 ModuleDocs (模块详细说明)
 const moduleDocs = defineCollection({
   type: 'content', // Markdown/MDX 文件
   schema: z.object({
@@ -68,7 +95,7 @@ const moduleDocs = defineCollection({
   }),
 });
 
-// 5. 定义 Solutions (实战方案 - 一对多)
+// 6. 定义 Solutions (实战方案 - 一对多)
 const solutions = defineCollection({
   type: 'content',
   schema: z.object({
@@ -110,6 +137,7 @@ const articles = defineCollection({
 export const collections = {
   'boards': boards,
   'modules': modules,
+  'boardDocs': boardDocs,
   'moduleDocs': moduleDocs,
   'experiments': experiments,
   'solutions': solutions,

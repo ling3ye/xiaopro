@@ -51,6 +51,10 @@ export const ui = {
     'home.cta.title': '准备好开始了吗？',
     'home.cta.description': '加入我们的社区，获取更多学习资源和项目灵感',
     'home.cta.button': '立即开始',
+    // 开发板相关翻译
+    'board.specs': '规格参数',
+    'board.relatedTags': '相关标签',
+    'board.officialDocs': '官方文档',
     // Footer 相关翻译
     'footer.description': '硬件开发教程与案例分享平台，探索硬件开发的无限可能',
     'footer.allRightsReserved': '版权所有',
@@ -131,6 +135,10 @@ export const ui = {
     'home.cta.title': '準備好開始了嗎？',
     'home.cta.description': '加入我們的社群，獲取更多學習資源和專案靈感',
     'home.cta.button': '立即開始',
+    // 開發板相關翻譯
+    'board.specs': '規格參數',
+    'board.relatedTags': '相關標籤',
+    'board.officialDocs': '官方文檔',
     // Domain labels (for faceted classification)
     'articles.domain.ai': 'AI',
     'articles.domain.software': '軟體',
@@ -176,6 +184,35 @@ export const ui = {
     'footer.privacy': '隱私政策',
     'footer.terms': '使用條款',
     'footer.contact': '聯絡我們',
+    // Domain labels (for faceted classification)
+    'articles.domain.ai': 'AI',
+    'articles.domain.software': '軟體',
+    'articles.domain.hardware': '硬體',
+    'articles.domain.devops': 'DevOps',
+    'articles.domain.life': '生活',
+    // Platform labels
+    'articles.platform.mac': 'Mac',
+    'articles.platform.windows': 'Windows',
+    'articles.platform.linux': 'Linux',
+    'articles.platform.web': 'Web',
+    'articles.platform.cross-platform': '跨平台',
+    // Format labels
+    'articles.format.tutorial': '教學',
+    'articles.format.prompt-list': '提示詞',
+    'articles.format.opinion': '觀點',
+    'articles.format.cheatsheet': '速查表',
+    'articles.format.news': '新聞',
+    'articles.domains': '領域',
+    'articles.all': '全部',
+    'articles.platforms': '平台',
+    'articles.formats': '格式',
+    'articles.reset': '重置',
+    'articles.noResults': '沒有找到匹配的文章',
+    'articles.showAll': '顯示全部',
+    'articles.quick.ai': 'AI',
+    'articles.quick.macPlatform': 'Mac 平台',
+    'articles.quick.tutorial': '教學',
+    'articles.quick.prompts': '提示詞',
   },
   'en': {
     'nav.home': 'Home',
@@ -211,6 +248,10 @@ export const ui = {
     'home.cta.title': 'Ready to Start?',
     'home.cta.description': 'Join our community for more resources and project inspiration',
     'home.cta.button': 'Get Started',
+    // Board 相关翻译
+    'board.specs': 'Specifications',
+    'board.relatedTags': 'Related Tags',
+    'board.officialDocs': 'Official Documentation',
     // Footer 相关翻译
     'footer.description': 'Hardware development tutorials and projects sharing platform, exploring infinite possibilities',
     'footer.allRightsReserved': 'All Rights Reserved',
@@ -291,7 +332,11 @@ export const ui = {
     'home.cta.title': '始める準備はできましたか？',
     'home.cta.description': 'コミュニティに参加して、より多くの学習リソースとプロジェクトのインスピレーションを入手',
     'home.cta.button': '今すぐ始める',
-    // Footer 相关翻译
+    // ボードウェア関連翻訳
+    'board.specs': '仕様',
+    'board.relatedTags': '関連タグ',
+    'board.officialDocs': '公式ドキュメント',
+    // Footer 関連翻訳
     'footer.description': 'ハードウェア開発チュートリアルとプロジェクト共有プラットフォーム、無限の可能性を探求',
     'footer.allRightsReserved': '全著作権所有',
     'footer.followUs': 'フォローする',

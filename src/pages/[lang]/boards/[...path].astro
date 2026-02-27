@@ -53,6 +53,7 @@ const allBoards = await getCollection('boards');
 let board: CollectionEntry<'boards'> | undefined = undefined;
 let relatedExperiments: CollectionEntry<'experiments'>[] = [];
 let relatedSolutions: CollectionEntry<'solutions'>[] = [];
+let currentDoc: any = null;
 
 if (!isListPage) {
   board = await getEntry('boards', id);
@@ -64,6 +65,17 @@ if (!isListPage) {
 
     relatedSolutions = await getCollection('solutions', (entry) => {
       return 'boardId' in entry.data && entry.data.boardId === id;
+    });
+
+    // 获取开发板详细文档并筛选
+    const allBoardDocs = await getCollection('boardDocs', (entry) => {
+      return 'boardId' in entry.data && entry.data.boardId;
+    });
+
+    // 根据开发板ID和当前语言筛选文档
+    currentDoc = allBoardDocs.find((doc: any) => {
+      const docBoardId = (doc.data.boardId as any).id || String(doc.data.boardId);
+      return docBoardId === id && doc.id.startsWith(`${lang}/`);
     });
   }
 }
@@ -85,9 +97,34 @@ if (!isListPage && board) {
 let structuredData: any = null;
 const siteUrl = Astro.site || 'https://lingflux.com';
 
+// 获取当前语言的 specs 和 keywords
+const getLocalizedSpecs = (specs: any) => {
+  if (!specs) return {};
+  // 如果 specs 已经是语言嵌套结构
+  if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
+    return specs[currentLocale] || specs['zh-cn'] || {};
+  }
+  // 如果 specs 是旧格式（平铺结构），直接返回
+  return specs;
+};
+
+const getLocalizedKeywords = (keywords: any) => {
+  if (!keywords) return [];
+  // 如果 keywords 是字符串数组（旧格式），直接返回
+  if (Array.isArray(keywords)) {
+    return keywords;
+  }
+  // 如果 keywords 是语言嵌套结构
+  if (typeof keywords === 'object' && !Array.isArray(keywords)) {
+    return keywords[currentLocale] || keywords['zh-cn'] || [];
+  }
+  return [];
+};
+
 if (!isListPage && board) {
+  const localizedSpecs = getLocalizedSpecs(board.data.specs);
   // 开发板详情页的结构化数据
-  const boardSpecs = board.data.specs ? Object.entries(board.data.specs).map(([k, v]) => `${k}: ${v}`).join(', ') : '';
+  const boardSpecs = localizedSpecs ? Object.entries(localizedSpecs).map(([k, v]) => `${k}: ${v}`).join(', ') : '';
   structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -103,7 +140,10 @@ if (!isListPage && board) {
 
 // 动态 meta description
 const pageDescription = !isListPage && board
-  ? (board.data.specs ? Object.entries(board.data.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${board.data.brand} ${board.data.model} 开发板的详细规格参数与使用说明`)
+  ? (() => {
+      const localizedSpecs = getLocalizedSpecs(board.data.specs);
+      return localizedSpecs ? Object.entries(localizedSpecs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${board.data.brand} ${board.data.model} 开发板的详细规格参数与使用说明`;
+    })()
   : '各类主流开发板硬件介绍与规格参数，为您的项目选择合适的开发板。';
 ---
 
@@ -128,12 +168,12 @@ const pageDescription = !isListPage && board
         <header class="category-header">
           <h1 class="category-title">{t('nav.boards')}</h1>
           <p class="category-description">
-            各类主流开发板硬件介绍与规格参数，为您的项目选择合适的开发板。
+            {t('footer.description')}
           </p>
           <div class="category-stats">
             <span class="stat-item">
               <span class="stat-value">{allBoards.length}</span>
-              <span class="stat-label">个开发板</span>
+              <span class="stat-label">{t('nav.boards')}</span>
             </span>
           </div>
         </header>
@@ -148,20 +188,23 @@ const pageDescription = !isListPage && board
 
         <!-- 开发板列表 -->
         <div class="board-grid">
-          {allBoards.map(board => (
-            <Card
-              type="board"
-              title={board.data.model}
-              description={`${board.data.brand} - ${Object.entries(board.data.specs || {})
-                .slice(0, 2)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join(', ')}`}
-              link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
-              brand={board.data.brand}
-              specs={board.data.specs}
-              image={board.data.image}
-            />
-          ))}
+          {allBoards.map(board => {
+            const localizedSpecs = getLocalizedSpecs(board.data.specs);
+            return (
+              <Card
+                type="board"
+                title={board.data.model}
+                description={`${board.data.brand} - ${Object.entries(localizedSpecs || {})
+                  .slice(0, 2)
+                  .map(([k, v]) => `${k}: ${v}`)
+                  .join(', ')}`}
+                link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
+                brand={board.data.brand}
+                specs={localizedSpecs}
+                image={board.data.image}
+              />
+            );
+          })}
         </div>
       </div>
     </section>
@@ -186,7 +229,7 @@ const pageDescription = !isListPage && board
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
               </svg>
-              官方文档
+              {t('board.officialDocs')}
             </a>
           )}
         </header>
@@ -196,9 +239,9 @@ const pageDescription = !isListPage && board
           <main class="board-main">
             <!-- 规格参数 -->
             <section class="board-section">
-              <h2 class="section-title">规格参数</h2>
+              <h2 class="section-title">{t('board.specs')}</h2>
               <div class="specs-grid">
-                {Object.entries(board.data.specs || {}).map(([key, value]) => (
+                {Object.entries(getLocalizedSpecs(board.data.specs) || {}).map(([key, value]) => (
                   <div class="spec-item">
                     <span class="spec-key">{key}</span>
                     <span class="spec-value">{String(value)}</span>
@@ -207,12 +250,22 @@ const pageDescription = !isListPage && board
               </div>
             </section>
 
-            <!-- 关键词标签 -->
-            {board.data.keywords && board.data.keywords.length > 0 && (
+            <!-- 开发板详细文档 -->
+            {currentDoc && (
               <section class="board-section">
-                <h2 class="section-title">相关标签</h2>
+                <div class="doc-content prose" set:html={currentDoc.rendered?.html} />
+              </section>
+            )}
+
+            <!-- 关键词标签 -->
+            {(() => {
+                const localizedKeywords = getLocalizedKeywords(board.data.keywords);
+                return localizedKeywords && localizedKeywords.length > 0;
+              })() && (
+              <section class="board-section">
+                <h2 class="section-title">{t('board.relatedTags')}</h2>
                 <div class="keywords-list">
-                  {board.data.keywords.map(keyword => (
+                  {getLocalizedKeywords(board.data.keywords).map((keyword: string) => (
                     <a href={`/tags/${keyword}`} class="keyword-tag">
                       {keyword}
                     </a>
@@ -441,6 +494,47 @@ const pageDescription = !isListPage && board
 
   .board-section {
     margin-bottom: var(--space-2xl);
+  }
+
+  .doc-content {
+    padding: var(--space-xl) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .doc-content :global(h2) {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-primary);
+  }
+
+  .doc-content :global(h3) {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .doc-content :global(p) {
+    margin-bottom: var(--space-md);
+    line-height: 1.8;
+  }
+
+  .doc-content :global(ul) {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+  }
+
+  .doc-content :global(li) {
+    margin-bottom: var(--space-xs);
+    line-height: 1.6;
+  }
+
+  .doc-content :global(strong) {
+    color: var(--color-primary);
+    font-weight: 600;
   }
 
   .section-title {
