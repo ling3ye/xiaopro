@@ -58,13 +58,19 @@ let currentDoc: any = null;
 if (!isListPage) {
   board = await getEntry('boards', id);
   if (board) {
-    // 获取相关文章
+    // 获取相关文章 - 只获取当前语言的文章
+    // boardId 是 reference 类型，需要比较其 id 属性
+    // 文章 id 格式：category/lang/slug.md，需要检查是否包含 /lang/
     relatedExperiments = await getCollection('experiments', (entry) => {
-      return 'boardId' in entry.data && entry.data.boardId === id;
+      const boardId = entry.data.boardId;
+      const boardIdStr = typeof boardId === 'object' && boardId !== null ? boardId.id : String(boardId);
+      return boardIdStr === id && entry.id.includes(`/${lang}/`);
     });
 
     relatedSolutions = await getCollection('solutions', (entry) => {
-      return 'boardId' in entry.data && entry.data.boardId === id;
+      const boardId = entry.data.boardId;
+      const boardIdStr = typeof boardId === 'object' && boardId !== null ? boardId.id : String(boardId);
+      return boardIdStr === id && entry.id.includes(`/${lang}/`);
     });
 
     // 获取开发板详细文档并筛选
@@ -288,18 +294,25 @@ const pageDescription = !isListPage && board
                     <line x1="16" y1="17" x2="8" y2="17"/>
                     <polyline points="10 9 9 9 8 9"/>
                   </svg>
-                  相关实验
+                  相关基础实验
                   <span class="count-badge">{relatedExperiments.length}</span>
                 </h3>
                 <div class="related-list">
-                  {relatedExperiments.slice(0, 5).map(exp => (
-                    <a
-                      href={getLocalizedPath(`/experiments/${exp.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
-                      class="related-item"
-                    >
-                      <span class="related-title">{exp.data.title}</span>
-                    </a>
-                  ))}
+                  {relatedExperiments.slice(0, 5).map(exp => {
+                    // 实验路径格式：category/zh-cn/slug.md
+                    // 需要提取 category 和 slug
+                    const pathParts = exp.id.split('/');
+                    const category = pathParts[0]; // esp32, arduino, etc.
+                    const slug = pathParts[pathParts.length - 1].replace(/\.md$/, '');
+                    return (
+                      <a
+                        href={getLocalizedPath(`/experiments/${category}/${slug}`, currentLocale)}
+                        class="related-item"
+                      >
+                        <span class="related-title">{exp.data.title}</span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             )}
