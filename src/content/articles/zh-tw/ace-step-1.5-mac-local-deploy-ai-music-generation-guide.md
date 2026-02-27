@@ -5,7 +5,7 @@ platforms: ["mac"]
 format: "tutorial"
 date: 2026-02-23
 intro: "在自己的 Mac 上完全免費、離線運行 AI 音樂生成模型 ACE-Step 1.5，Apple 芯片加速，全程只需幾行命令。"
-image: "https://img.lingflux.com/ace-step-1.5-mac-local-deploy-ai-music-generation-guide-cc.png"
+image: "https://img.lingflux.com/ace-step-1.5-mac-local-deploy-ai-music-generation-guide-ccc.png"
 tags: ["AI", "Mac", "音樂生成", "ACE-Step", "本地部署"]
 ---
 

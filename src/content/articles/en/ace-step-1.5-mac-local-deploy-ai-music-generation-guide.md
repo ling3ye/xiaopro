@@ -5,7 +5,7 @@ platforms: ["mac"]
 format: "tutorial"
 date: 2026-02-23
 intro: "Deploy the ACE-Step 1.5 AI music generation model entirely offline on your Mac. Apple Silicon optimized, no subscription required — just a few terminal commands."
-image: "https://img.lingflux.com/ace-step-1.5-mac-local-deploy-ai-music-generation-guide-cc.png"
+image: "https://img.lingflux.com/ace-step-1.5-mac-local-deploy-ai-music-generation-guide-ccc.png"
 tags: ["AI", "Mac", "Music Generation", "ACE-Step", "Local Deployment"]
 ---
 
