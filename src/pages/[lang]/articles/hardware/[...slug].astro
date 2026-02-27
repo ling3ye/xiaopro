@@ -51,16 +51,17 @@ const breadcrumbItems = [
   { label: article.data.title, current: true }
 ];
 
+const siteUrl = Astro.site || 'https://lingflux.com';
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: article.data.title,
   description: article.data.intro || '',
-  image: article.data.image ? `https://xiaopro.com${article.data.image}` : undefined,
+  image: article.data.image ? new URL(article.data.image, siteUrl).href : undefined,
   datePublished: (article.data.date as Date).toISOString(),
   articleSection: DOMAIN,
-  author: { '@type': 'Organization', name: 'XIAOPRO' },
-  publisher: { '@type': 'Organization', name: 'XIAOPRO' }
+  author: { '@type': 'Organization', name: 'LINGFLUX' },
+  publisher: { '@type': 'Organization', name: 'LINGFLUX' }
 };
 ---
 <Layout

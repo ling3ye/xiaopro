@@ -62,19 +62,22 @@ const recentArticles = allArticles.slice(2, 10);
 // 当前语言（用于链接构建）
 const currentLocale: SupportedLocale = lang as SupportedLocale;
 
+// 获取站点 URL
+const siteUrl = Astro.site || 'https://lingflux.com';
+
 // 构建结构化数据 (Schema.org)
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'XIAOPRO',
+  name: 'LINGFLUX',
   description: t('home.hero.description'),
-  url: `https://xiaopro.com/${lang}/`,
+  url: new URL(`/${lang}/`, siteUrl).href,
   inLanguage: lang,
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `https://xiaopro.com/${lang}/search?q={search_term_string}`
+      urlTemplate: new URL(`/${lang}/search?q={search_term_string}`, siteUrl).href
     },
     'query-input': 'required name=search_term_string'
   }

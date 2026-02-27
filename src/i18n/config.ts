@@ -35,6 +35,8 @@ export const ui = {
     'articles.notFound': '未找到该文章',
     'articles.backToList': '返回文章列表',
     'meta.author': '创客宝库',
+    // 网站口号
+    'site.slogan': '焊接灵感，连接世界',
     'ui.search': '搜索...',
     'ui.toc': '本页目录',
     'ui.related': '相关硬件',
@@ -113,6 +115,8 @@ export const ui = {
     'articles.notFound': '未找到該文章',
     'articles.backToList': '返回文章列表',
     'meta.author': '創客寶庫',
+    // 網站口號
+    'site.slogan': '焊接靈感，連接世界',
     'ui.search': '搜尋...',
     'ui.toc': '本頁目錄',
     'ui.related': '相關硬體',
@@ -156,6 +160,22 @@ export const ui = {
     'articles.quick.macPlatform': 'Mac 平台',
     'articles.quick.tutorial': '教學',
     'articles.quick.prompts': '提示詞',
+    // Footer related translations
+    'footer.description': '硬體開發教程與案例分享平台，探索硬體開發的無限可能',
+    'footer.allRightsReserved': '版權所有',
+    'footer.followUs': '關注我們',
+    'footer.resources': '資源',
+    'footer.documentation': '文檔',
+    'footer.tutorials': '教程',
+    'footer.examples': '示例',
+    'footer.community': '社群',
+    'footer.legal': '法律資訊',
+    'footer.forum': '論壇',
+    'footer.github': 'GitHub',
+    'footer.discord': 'Discord',
+    'footer.privacy': '隱私政策',
+    'footer.terms': '使用條款',
+    'footer.contact': '聯絡我們',
   },
   'en': {
     'nav.home': 'Home',
@@ -175,6 +195,8 @@ export const ui = {
     'articles.notFound': 'Article not found',
     'articles.backToList': 'Back to Articles',
     'meta.author': 'Helloworld',
+    // Site slogan
+    'site.slogan': 'Soldering Ideas, Bridging Worlds',
     'ui.search': 'Search...',
     'ui.toc': 'On this page',
     'ui.related': 'Related Hardware',
@@ -253,6 +275,8 @@ export const ui = {
     'articles.notFound': '記事が見つかりません',
     'articles.backToList': '記事一覧に戻る',
     'meta.author': 'Helloworld',
+    // サイトスローガン
+    'site.slogan': 'はんだ付けのアイデア、世界をつなぐ',
     'ui.search': '検索...',
     'ui.toc': '目次',
     'ui.related': '関連ハードウェア',

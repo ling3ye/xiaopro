@@ -148,7 +148,6 @@ if (!isListPage && module) {
       name: module.data.brand
     } : undefined,
     description: moduleSpecs || `${module.data.model} 模块`,
-    image: module.data.image ? `https://xiaopro.com${module.data.image}` : undefined,
     category: module.data.category
   };
 }
@@ -164,7 +163,6 @@ const pageDescription = !isListPage && module
   description={pageDescription}
   lang={lang}
   currentPath={`/${lang}/modules/${id || ''}`}
-  image={!isListPage && module?.data.image ? module.data.image : undefined}
   structuredData={structuredData}
 >
   <!-- 面包屑导航 -->

@@ -44,6 +44,9 @@ interface Props {
 
 const { items, separator = 'slash' } = Astro.props;
 
+// 获取站点 URL
+const siteUrl = Astro.site || 'https://lingflux.com';
+
 // 分隔符图标
 const separatorIcons: Record<string, string> = {
   slash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 5l8 7-8 7"/></svg>`,
@@ -59,7 +62,7 @@ const breadcrumbStructuredData = {
     '@type': 'ListItem',
     position: index + 1,
     name: item.label,
-    item: item.href ? `https://xiaopro.com${item.href}` : undefined
+    item: item.href ? new URL(item.href, siteUrl).href : undefined
   }))
 };
 ---

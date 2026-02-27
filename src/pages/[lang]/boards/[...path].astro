@@ -83,6 +83,7 @@ if (!isListPage && board) {
 
 // 构建结构化数据
 let structuredData: any = null;
+const siteUrl = Astro.site || 'https://lingflux.com';
 
 if (!isListPage && board) {
   // 开发板详情页的结构化数据
@@ -96,7 +97,7 @@ if (!isListPage && board) {
       name: board.data.brand
     },
     description: boardSpecs || `${board.data.brand} ${board.data.model} 开发板`,
-    image: board.data.image ? `https://xiaopro.com${board.data.image}` : undefined
+    image: board.data.image ? new URL(board.data.image, siteUrl).href : undefined
   };
 }
 

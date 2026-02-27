@@ -206,6 +206,7 @@ if (pageType === 'category-list' && currentCategory) {
 
 // 构建结构化数据
 let structuredData: any = null;
+const siteUrl = Astro.site || 'https://lingflux.com';
 
 if (pageType === 'detail' && experiment) {
   // 文章详情页的结构化数据
@@ -214,18 +215,18 @@ if (pageType === 'detail' && experiment) {
     '@type': 'TechArticle',
     headline: experiment.data.title,
     description: experiment.data.intro || '',
-    image: experiment.data.image ? `https://xiaopro.com${experiment.data.image}` : undefined,
+    image: experiment.data.image ? new URL(experiment.data.image, siteUrl).href : undefined,
     datePublished: experiment.data.date ? (experiment.data.date as Date).toISOString() : undefined,
     author: {
       '@type': 'Organization',
-      name: 'XIAOPRO'
+      name: 'LINGFLUX'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'XIAOPRO',
+      name: 'LINGFLUX',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://xiaopro.com/logo.png'
+        url: new URL('/logo.png', siteUrl).href
       }
     }
   };
