@@ -80,6 +80,11 @@ const structuredData = {
     <div class="container article-layout">
       <main class="article-main">
         <header class="article-header">
+          {article.data.image && (
+            <div class="article-cover">
+              <img src={article.data.image} alt={article.data.title} loading="eager" />
+            </div>
+          )}
           <div class="article-meta">
             <span class="meta-badge domain-badge">{DOMAIN_LABEL}</span>
             <span class="meta-badge format-badge">{article.data.format}</span>
@@ -137,6 +142,19 @@ const structuredData = {
     .article-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-lg)); }
   }
   .article-header { margin-bottom: var(--space-2xl); }
+  .article-cover {
+    width: 100%;
+    margin-bottom: var(--space-xl);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  .article-cover img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
   .article-meta {
     display: flex;
     flex-wrap: wrap;
