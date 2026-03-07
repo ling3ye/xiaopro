@@ -502,7 +502,24 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
 
   .article-content {
     padding: var(--space-xl) 0;
+    padding-left: 0;
+    padding-right: 0;
     border-top: 1px solid var(--color-border);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* 限制文章内容的最大宽度以提高可读性 */
+  @media (min-width: 768px) {
+    .article-content {
+      max-width: 700px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .article-content {
+      max-width: 800px;
+    }
   }
 
   .article-content :global(h2) {

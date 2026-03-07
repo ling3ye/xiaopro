@@ -567,7 +567,24 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
 
   .article-content {
     padding: var(--space-xl) 0;
+    padding-left: 0;
+    padding-right: 0;
     border-top: 1px solid var(--color-border);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* 限制文章内容的最大宽度以提高可读性 */
+  @media (min-width: 768px) {
+    .article-content {
+      max-width: 700px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .article-content {
+      max-width: 800px;
+    }
   }
 
   .article-content :global(h2) {
@@ -597,6 +614,7 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
     border-radius: 4px;
     font-family: 'Fira Code', monospace;
     font-size: 0.9em;
+    word-break: break-word;
   }
 
   .article-content :global(pre) {
@@ -610,6 +628,65 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
   .article-content :global(pre code) {
     padding: 0;
     background: none;
+  }
+
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .article-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-lg) 0;
+    font-size: var(--text-sm);
+    overflow-x: auto;
+    display: block;
+  }
+
+  .article-content :global(table th),
+  .article-content :global(table td) {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    border: 1px solid var(--color-border);
+  }
+
+  .article-content :global(table th) {
+    font-weight: 600;
+    background: var(--color-bg-tertiary);
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin: var(--space-md) 0;
+    padding-left: var(--space-lg);
+  }
+
+  .article-content :global(li) {
+    margin-bottom: var(--space-xs);
+  }
+
+  .article-content :global(blockquote) {
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    padding-left: var(--space-lg);
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+
+  .article-content :global(a) {
+    color: var(--color-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+
+  .article-content :global(a:hover) {
+    color: var(--color-primary-hover);
+    border-bottom-color: var(--color-primary-hover);
   }
 
   /* ============================================
@@ -734,6 +811,39 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
   /* ============================================
      响应式设计
      ============================================ */
+  /* 移动端优化 */
+  @media (max-width: 767px) {
+    .article-header {
+      text-align: left;
+    }
+
+    .article-meta {
+      justify-content: flex-start;
+    }
+
+    .article-title {
+      font-size: 1.75rem;
+    }
+
+    .article-intro {
+      font-size: var(--text-base);
+    }
+
+    /* 在移动端移除文章内容的额外padding，依赖container的padding */
+    .article-content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  /* 平板及以上 */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .article-layout {
+      gap: var(--space-2xl);
+    }
+  }
+
+  /* 桌面端显示侧边栏 */
   @media (min-width: 1024px) {
     .article-layout {
       grid-template-columns: 1fr 320px;
