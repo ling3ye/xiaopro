@@ -3,6 +3,7 @@
   "category": "display",
   "model": "ILI9341",
   "alias": ["TFT屏幕", "2.4寸TFT", "240x320屏幕"],
+  "image": "https://img.lingflux.com/2026/03/8216c7bb4d5d1483333091846fc5a2bb.png",
   "specs": {
     "分辨率": "240x320",
     "尺寸": "2.4英寸",

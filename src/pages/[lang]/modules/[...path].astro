@@ -204,6 +204,7 @@ const pageDescription = !isListPage && module
                     title={mod.data.model}
                     description={mod.data.brand ? `${mod.data.brand} - ${mod.data.category}` : mod.data.category}
                     link={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}
+                    image={mod.data.image}
                     brand={mod.data.brand}
                     specs={mod.data.specs}
                   />
@@ -239,6 +240,11 @@ const pageDescription = !isListPage && module
                   {i < module.data.alias!.length - 1 && <span class="alias-separator">、</span>}
                 </>
               ))}
+            </div>
+          )}
+          {module.data.image && (
+            <div class="module-image">
+              <img src={module.data.image} alt={`${module.data.model} ${module.data.brand || ''}`} />
             </div>
           )}
         </header>
@@ -551,6 +557,18 @@ const pageDescription = !isListPage && module
 
   .alias-separator {
     color: var(--color-border);
+  }
+
+  .module-image {
+    max-width: 400px;
+    margin: var(--space-lg) auto 0;
+  }
+
+  .module-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
   }
 
   .module-layout {

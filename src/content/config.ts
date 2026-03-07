@@ -57,6 +57,8 @@ const modules = defineCollection({
     officialUrl: z.string().url().optional(),
     // 选填：数据手册链接
     datasheet: z.string().url().optional(),
+    // 选填：缩略图
+    image: z.string().optional(),
   }),
 });
 
