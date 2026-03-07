@@ -97,14 +97,14 @@ const modulesByCategory: Record<string, typeof allModules> = {
   other: allModules.filter(m => m.data.category === 'other'),
 };
 
-// 分类名称映射
+// 分类名称映射（使用多语言）
 const categoryNames: Record<string, string> = {
-  sensor: '传感器',
-  display: '显示器',
-  actuator: '执行器',
-  communication: '通信模块',
-  power: '电源模块',
-  other: '其他',
+  sensor: t('module.category.sensor'),
+  display: t('module.category.display'),
+  actuator: t('module.category.actuator'),
+  communication: t('module.category.communication'),
+  power: t('module.category.power'),
+  other: t('module.category.other'),
 };
 
 // 分类图标
@@ -157,8 +157,8 @@ if (!isListPage && module) {
 
 // 动态 meta description
 const pageDescription = !isListPage && module
-  ? (module.data.specs ? Object.entries(module.data.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${module.data.model} 模块的详细规格参数与使用说明`)
-  : '各类传感器、显示器、执行器等模块的详细介绍，为您的项目选择合适的模块。';
+  ? (module.data.specs ? Object.entries(module.data.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : t('module.detailDescription').replace('{model}', module.data.model))
+  : t('module.listDescription');
 ---
 
 <Layout
@@ -181,12 +181,12 @@ const pageDescription = !isListPage && module
         <header class="category-header">
           <h1 class="category-title">{t('nav.modules')}</h1>
           <p class="category-description">
-            各类外设模块硬件介绍与规格参数，找到适合您项目的模块。
+            {t('module.listDescription')}
           </p>
           <div class="category-stats">
             <span class="stat-item">
               <span class="stat-value">{allModules.length}</span>
-              <span class="stat-label">个模块</span>
+              <span class="stat-label">{t('module.modulesCount')}</span>
             </span>
           </div>
         </header>
@@ -236,7 +236,7 @@ const pageDescription = !isListPage && module
           <h1 class="module-title">{module.data.model}</h1>
           {module.data.alias && module.data.alias.length > 0 && (
             <div class="module-alias">
-              <span class="alias-label">别名：</span>
+              <span class="alias-label">{t('module.alias')}</span>
               {module.data.alias.map((alias, i) => (
                 <>
                   <span class="alias-item">{alias}</span>
@@ -264,7 +264,7 @@ const pageDescription = !isListPage && module
                     <line x1="3" y1="9" x2="21" y2="9"/>
                     <line x1="9" y1="21" x2="9" y2="9"/>
                   </svg>
-                  规格参数
+                  {t('module.specs')}
                 </h2>
                 <div class="specs-grid">
                   {Object.entries(module.data.specs).map(([key, value]) => (
@@ -285,7 +285,7 @@ const pageDescription = !isListPage && module
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                   </svg>
-                  官方资源
+                  {t('module.officialResources')}
                 </h2>
                 <div class="resources-list">
                   {module.data.officialUrl && (
@@ -295,7 +295,7 @@ const pageDescription = !isListPage && module
                         <polyline points="15 3 21 3 21 9"/>
                         <line x1="10" y1="14" x2="21" y2="3"/>
                       </svg>
-                      官方文档
+                      {t('module.officialDocs')}
                     </a>
                   )}
                   {module.data.datasheet && (
@@ -305,7 +305,7 @@ const pageDescription = !isListPage && module
                         <line x1="12" y1="18" x2="12" y2="12"/>
                         <line x1="9" y1="15" x2="15" y2="15"/>
                       </svg>
-                      数据手册 (Datasheet)
+                      {t('module.datasheet')}
                     </a>
                   )}
                 </div>
@@ -320,7 +320,7 @@ const pageDescription = !isListPage && module
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
                   </svg>
-                  详细说明
+                  {t('module.detailedDescription')}
                 </h2>
                 <div class="doc-content prose" set:html={currentDoc.rendered?.html} />
               </section>
@@ -340,7 +340,7 @@ const pageDescription = !isListPage && module
                     <line x1="16" y1="17" x2="8" y2="17"/>
                     <polyline points="10 9 9 9 8 9"/>
                   </svg>
-                  相关实验
+                  {t('module.relatedExperiments')}
                   <span class="count-badge">{relatedExperiments.length}</span>
                 </h3>
                 <div class="related-list">
@@ -368,7 +368,7 @@ const pageDescription = !isListPage && module
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
                   </svg>
-                  相关方案
+                  {t('module.relatedSolutions')}
                   <span class="count-badge">{relatedSolutions.length}</span>
                 </h3>
                 <div class="related-list">
@@ -393,8 +393,8 @@ const pageDescription = !isListPage && module
   {!isListPage && !module && (
     <section class="not-found">
       <div class="container">
-        <h1>未找到该模块</h1>
-        <a href={getLocalizedPath('/modules', currentLocale)} class="btn">返回模块列表</a>
+        <h1>{t('module.notFound')}</h1>
+        <a href={getLocalizedPath('/modules', currentLocale)} class="btn">{t('module.backToList')}</a>
       </div>
     </section>
   )}
