@@ -1,7 +1,7 @@
 ---
 title: "ESP32で8ビットパラレルバスを使用してILI9341ディスプレイを駆動する"
 boardId: esp32
-moduleId: ili9341
+moduleId: display/ili9341
 category: esp32
 date: 2026-02-27
 intro: "ESP32を使用して8ビットパラレルバスでILI9341ディスプレイを駆動する方法を詳しく紹介します。SPIシリアル駆動と比較して、非常に高いリフレッシュレートを提供し、動的なコンテンツの表示に最適です。"

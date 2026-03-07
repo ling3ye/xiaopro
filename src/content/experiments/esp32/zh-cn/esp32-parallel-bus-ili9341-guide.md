@@ -1,7 +1,7 @@
 ---
 title: "ESP32 通过 8位并行总线驱动 ILI9341 屏幕"
 boardId: esp32
-moduleId: ili9341
+moduleId: display/ili9341
 category: esp32
 date: 2026-02-27
 intro: "详细介绍如何使用 ESP32 通过 8位并行总线驱动 ILI9341 屏幕，相比 SPI 串行驱动提供极高的刷新率，适合显示动态画面。"

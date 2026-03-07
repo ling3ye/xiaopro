@@ -1,7 +1,7 @@
 ---
 title: "ESP32 Driving ILI9341 Display via 8-bit Parallel Bus"
 boardId: esp32
-moduleId: ili9341
+moduleId: display/ili9341
 category: esp32
 date: 2026-02-27
 intro: "A detailed guide on using ESP32 to drive ILI9341 display via 8-bit parallel bus, providing extremely high refresh rates compared to SPI serial driving, perfect for displaying dynamic content."
