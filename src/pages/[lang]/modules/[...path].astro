@@ -60,7 +60,8 @@ if (!isListPage) {
     // 获取相关实验
     relatedExperiments = await getCollection('experiments', (entry) => {
       return 'moduleId' in entry.data &&
-             (entry.data.moduleId.id || String(entry.data.moduleId)) === id;
+             (entry.data.moduleId.id || String(entry.data.moduleId)) === id &&
+             entry.id.includes(`/${lang}/`);
     });
 
     // 获取相关方案
@@ -69,7 +70,8 @@ if (!isListPage) {
              Array.isArray(entry.data.moduleIds) &&
              entry.data.moduleIds.some((moduleRef: any) => {
                return (moduleRef.id || String(moduleRef)) === id;
-             });
+             }) &&
+             entry.id.startsWith(`${lang}/`);
     });
 
     // 获取模块详细文档并筛选
