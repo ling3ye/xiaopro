@@ -617,17 +617,29 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
     word-break: break-word;
   }
 
+  /* 代码块样式 - 基于 GitHub 和常见最佳实践 */
   .article-content :global(pre) {
-    margin: var(--space-md) 0;
+    display: block;
     padding: var(--space-md);
+    margin: var(--space-md) 0;
     background: var(--color-bg-tertiary);
     border-radius: var(--radius-md);
     overflow-x: auto;
+    overflow-y: hidden;
+    width: auto;
+    max-width: 100%;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
   }
 
   .article-content :global(pre code) {
+    display: block;
     padding: 0;
-    background: none;
+    background: transparent;
+    white-space: pre;
+    width: max-content;
+    min-width: 100%;
+    border-radius: 0;
   }
 
   .article-content :global(img) {
@@ -637,12 +649,19 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
   }
 
   .article-content :global(table) {
+    display: block;
     width: 100%;
+    max-width: 100%;
     border-collapse: collapse;
     margin: var(--space-lg) 0;
     font-size: var(--text-sm);
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .article-content :global(table tbody) {
     display: block;
+    min-width: max-content;
   }
 
   .article-content :global(table th),
@@ -809,9 +828,8 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
   }
 
   /* ============================================
-     响应式设计
+     响应式设计 - 移动端代码块修复
      ============================================ */
-  /* 移动端优化 */
   @media (max-width: 767px) {
     .article-header {
       text-align: left;
@@ -829,10 +847,45 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
       font-size: var(--text-base);
     }
 
-    /* 在移动端移除文章内容的额外padding，依赖container的padding */
     .article-content {
       padding-left: 0;
       padding-right: 0;
+    }
+
+    /* 移动端代码块样式 - 强制限制宽度 */
+    .article-content :global(pre) {
+      width: 100% !important;
+      max-width: 100% !important;
+      max-width: calc(100vw - 32px) !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      margin-left: calc(-1 * var(--space-md)) !important;
+      margin-right: calc(-1 * var(--space-md)) !important;
+      padding-left: var(--space-md) !important;
+      padding-right: var(--space-md) !important;
+    }
+
+    .article-content :global(pre code) {
+      width: max-content !important;
+      min-width: 100% !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      display: block !important;
+    }
+
+    /* 移动端表格样式 */
+    .article-content :global(table) {
+      width: 100% !important;
+      max-width: 100% !important;
+      max-width: calc(100vw - 32px) !important;
+      overflow-x: auto !important;
+      display: block !important;
+      -webkit-overflow-scrolling: touch !important;
+      margin-left: calc(-1 * var(--space-md)) !important;
+      margin-right: calc(-1 * var(--space-md)) !important;
     }
   }
 
