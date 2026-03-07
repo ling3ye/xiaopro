@@ -344,14 +344,18 @@ const pageDescription = !isListPage && module
                   <span class="count-badge">{relatedExperiments.length}</span>
                 </h3>
                 <div class="related-list">
-                  {relatedExperiments.slice(0, 5).map(exp => (
-                    <a
-                      href={getLocalizedPath(`/experiments/${exp.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
-                      class="related-item"
-                    >
-                      <span class="related-title">{exp.data.title}</span>
-                    </a>
-                  ))}
+                  {relatedExperiments.slice(0, 5).map(exp => {
+                    const category = exp.id.split('/')[0];
+                    const slug = exp.id.replace('.md', '').split('/').pop();
+                    return (
+                      <a
+                        href={getLocalizedPath(`/experiments/${category}/${slug}`, currentLocale)}
+                        class="related-item"
+                      >
+                        <span class="related-title">{exp.data.title}</span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -370,7 +374,7 @@ const pageDescription = !isListPage && module
                 <div class="related-list">
                   {relatedSolutions.slice(0, 5).map(sol => (
                     <a
-                      href={getLocalizedPath(`/solutions/${sol.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
+                      href={getLocalizedPath(`/solutions/${sol.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
                       class="related-item"
                     >
                       <span class="related-title">{sol.data.title}</span>
