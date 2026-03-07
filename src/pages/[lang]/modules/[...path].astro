@@ -59,7 +59,8 @@ if (!isListPage) {
   if (module) {
     // 获取相关实验
     relatedExperiments = await getCollection('experiments', (entry) => {
-      return 'moduleId' in entry.data && entry.data.moduleId === id;
+      return 'moduleId' in entry.data &&
+             (entry.data.moduleId.id || String(entry.data.moduleId)) === id;
     });
 
     // 获取相关方案
