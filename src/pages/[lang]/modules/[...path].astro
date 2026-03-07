@@ -141,7 +141,18 @@ let structuredData: any = null;
 
 if (!isListPage && module) {
   // 模块详情页的结构化数据
-  const moduleSpecs = module.data.specs ? Object.entries(module.data.specs).map(([k, v]) => `${k}: ${v}`).join(', ') : '';
+  let moduleSpecs = '';
+  if (module.data.specs) {
+    // 判断 specs 是否是多语言结构
+    if ('zh-cn' in module.data.specs && typeof module.data.specs['zh-cn'] === 'object') {
+      // 多语言结构
+      const localizedSpecs = (module.data.specs as Record<string, any>)[lang] || (module.data.specs as Record<string, any>)['zh-cn'] || {};
+      moduleSpecs = Object.entries(localizedSpecs).map(([k, v]) => `${k}: ${v}`).join(', ');
+    } else {
+      // 旧格式平铺结构
+      moduleSpecs = Object.entries(module.data.specs).map(([k, v]) => `${k}: ${v}`).join(', ');
+    }
+  }
   structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -157,8 +168,42 @@ if (!isListPage && module) {
 
 // 动态 meta description
 const pageDescription = !isListPage && module
-  ? (module.data.specs ? Object.entries(module.data.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : t('module.detailDescription').replace('{model}', module.data.model))
+  ? (() => {
+      if (module.data.specs) {
+        let specsEntries: [string, any][] = [];
+        // 判断 specs 是否是多语言结构
+        if ('zh-cn' in module.data.specs && typeof module.data.specs['zh-cn'] === 'object') {
+          const localizedSpecs = (module.data.specs as Record<string, any>)[lang] || (module.data.specs as Record<string, any>)['zh-cn'] || {};
+          specsEntries = Object.entries(localizedSpecs).slice(0, 3);
+        } else {
+          specsEntries = Object.entries(module.data.specs).slice(0, 3);
+        }
+        return specsEntries.map(([k, v]) => `${k}: ${v}`).join(', ');
+      }
+      return t('module.detailDescription').replace('{model}', module.data.model);
+    })()
   : t('module.listDescription');
+
+// 获取当前语言的 specs（支持多语言）
+const getLocalizedSpecs = (specs: any, locale: string): Record<string, string | number | boolean> => {
+  if (!specs) return {};
+  // 判断是否是多语言结构
+  if ('zh-cn' in specs && typeof specs['zh-cn'] === 'object') {
+    return specs[locale] || specs['zh-cn'] || {};
+  }
+  return specs;
+};
+
+// 获取当前语言的 keywords（支持多语言）
+const getLocalizedKeywords = (keywords: any, locale: string): string[] => {
+  if (!keywords) return [];
+  // 判断是否是多语言结构
+  if (Array.isArray(keywords)) {
+    return keywords;
+  }
+  // 多语言结构
+  return keywords[locale] || keywords['zh-cn'] || [];
+};
 ---
 
 <Layout
@@ -234,15 +279,21 @@ const pageDescription = !isListPage && module
             <div class="module-brand">{module.data.brand}</div>
           )}
           <h1 class="module-title">{module.data.model}</h1>
-          {module.data.alias && module.data.alias.length > 0 && (
+          {(() => {
+            const keywords = getLocalizedKeywords(module.data.keywords, lang);
+            return keywords && keywords.length > 0;
+          })() && (
             <div class="module-alias">
               <span class="alias-label">{t('module.alias')}</span>
-              {module.data.alias.map((alias, i) => (
-                <>
-                  <span class="alias-item">{alias}</span>
-                  {i < module.data.alias!.length - 1 && <span class="alias-separator">、</span>}
-                </>
-              ))}
+              {getLocalizedKeywords(module.data.keywords, lang).map((keyword, i) => {
+                const keywords = getLocalizedKeywords(module.data.keywords, lang);
+                return (
+                  <>
+                    <span class="alias-item">{keyword}</span>
+                    {i < keywords.length - 1 && <span class="alias-separator">、</span>}
+                  </>
+                );
+              })}
             </div>
           )}
           {module.data.image && (
@@ -256,7 +307,10 @@ const pageDescription = !isListPage && module
           <!-- 主内容区 -->
           <main class="module-main">
             <!-- 规格参数 -->
-            {module.data.specs && Object.keys(module.data.specs).length > 0 && (
+            {(() => {
+              const localizedSpecs = getLocalizedSpecs(module.data.specs, lang);
+              return Object.keys(localizedSpecs).length > 0;
+            })() && (
               <section class="module-section">
                 <h2 class="section-title">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -267,7 +321,7 @@ const pageDescription = !isListPage && module
                   {t('module.specs')}
                 </h2>
                 <div class="specs-grid">
-                  {Object.entries(module.data.specs).map(([key, value]) => (
+                  {Object.entries(getLocalizedSpecs(module.data.specs, lang)).map(([key, value]) => (
                     <div class="spec-item">
                       <span class="spec-key">{key}</span>
                       <span class="spec-value">{String(value)}</span>

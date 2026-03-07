@@ -23,7 +23,6 @@ moduleId: display/ili9341
 | Name | Parameter |
 |------|-----------|
 | Display Color | RGB 65K |
-| SKU | MAR2406 |
 | Size | 2.4 inch |
 | Type | TFT |
 | Driver Chip | ILI9341 |

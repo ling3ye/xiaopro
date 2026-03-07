@@ -49,10 +49,30 @@ const modules = defineCollection({
     category: z.enum(['sensor', 'display', 'actuator', 'communication', 'power', 'other']),
     // 必填：型号 (如 'DHT11', 'SSD1306')
     model: z.string(),
-    // 选填：别名 (如 ['温湿度传感器', 'Temperature Sensor'])
-    alias: z.array(z.string()).optional(),
-    // 选填：参数
-    specs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+    // 选填：硬件参数字典 (支持多语言嵌套结构)
+    specs: z.union([
+      // 旧格式：平铺结构 Record<string, string | number | boolean>
+      z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+      // 新格式：多语言嵌套 { "zh-cn": {...}, "en": {...} }
+      z.object({
+        'zh-cn': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+        'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'en': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ja': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+      })
+    ]).optional(),
+    // 选填：关键词 (支持多语言嵌套结构)
+    keywords: z.union([
+      // 旧格式：字符串数组
+      z.array(z.string()),
+      // 新格式：多语言嵌套 { "zh-cn": [...], "en": [...] }
+      z.object({
+        'zh-cn': z.array(z.string()),
+        'zh-tw': z.array(z.string()).optional(),
+        'en': z.array(z.string()).optional(),
+        'ja': z.array(z.string()).optional(),
+      })
+    ]).optional(),
     // 选填：官方文档链接
     officialUrl: z.string().url().optional(),
     // 选填：数据手册链接
