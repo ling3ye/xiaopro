@@ -19,12 +19,15 @@
  * @property {boolean} featured - 是否为特色卡片
  * @property {string} brand - 品牌（用于硬件）
  * @property {object} specs - 规格参数（用于硬件）
+ * @property {string} locale - 语言代码（用于多语言）
  *
  * @author Claude Code
  * @version 1.0.0
  */
 
 import Tag from './Tag.astro';
+import { useTranslations } from '../utils/i18n';
+import type { SupportedLocale } from '../i18n/config';
 
 // 获取组件属性
 interface Props {
@@ -39,6 +42,7 @@ interface Props {
   featured?: boolean;
   brand?: string;
   specs?: Record<string, string | number | boolean>;
+  locale?: SupportedLocale;
 }
 
 const {
@@ -53,7 +57,11 @@ const {
   featured = false,
   brand,
   specs,
+  locale = 'zh-cn',
 } = Astro.props;
+
+// 获取翻译函数
+const t = useTranslations(locale);
 
 // 格式化日期
 const formatDate = (date: Date) => {
@@ -155,7 +163,7 @@ const wrapperProps = link
               <polyline points="15 3 21 3 21 9"/>
               <line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
-            {link ? '阅读更多' : '查看详情'}
+            {link ? t('card.readMore') : t('card.viewDetails')}
           </>
         )}
         {type === 'board' && (
@@ -168,7 +176,7 @@ const wrapperProps = link
               <line x1="9" y1="20" x2="9" y2="23"/>
               <line x1="15" y1="20" x2="15" y2="23"/>
             </svg>
-            查看开发板
+            {t('card.viewBoard')}
           </>
         )}
         {type === 'module' && (
@@ -178,7 +186,7 @@ const wrapperProps = link
               <line x1="8" y1="21" x2="16" y2="21"/>
               <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
-            查看模块
+            {t('card.viewModule')}
           </>
         )}
       </span>

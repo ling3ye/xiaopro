@@ -150,7 +150,7 @@ const pageDescription = !isListPage && board
       const localizedSpecs = getLocalizedSpecs(board.data.specs);
       return localizedSpecs ? Object.entries(localizedSpecs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${board.data.brand} ${board.data.model} 开发板的详细规格参数与使用说明`;
     })()
-  : '各类主流开发板硬件介绍与规格参数，为您的项目选择合适的开发板。';
+  : t('board.listDescription');
 ---
 
 <Layout
@@ -186,7 +186,7 @@ const pageDescription = !isListPage && board
 
         <!-- 品牌筛选（简单实现） -->
         <div class="filter-bar">
-          <button class="filter-btn filter-btn--active">全部</button>
+          <button class="filter-btn filter-btn--active">{t('board.all')}</button>
           {Array.from(new Set(allBoards.map(b => b.data.brand))).map(brand => (
             <button class="filter-btn">{brand}</button>
           ))}
@@ -208,6 +208,7 @@ const pageDescription = !isListPage && board
                 brand={board.data.brand}
                 specs={localizedSpecs}
                 image={board.data.image}
+                locale={currentLocale}
               />
             );
           })}
@@ -294,7 +295,7 @@ const pageDescription = !isListPage && board
                     <line x1="16" y1="17" x2="8" y2="17"/>
                     <polyline points="10 9 9 9 8 9"/>
                   </svg>
-                  相关基础实验
+                  {t('board.relatedExperiments')}
                   <span class="count-badge">{relatedExperiments.length}</span>
                 </h3>
                 <div class="related-list">
@@ -324,8 +325,11 @@ const pageDescription = !isListPage && board
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
                   </svg>
-                  相关方案
+                  {t('board.relatedSolutions')}
                   <span class="count-badge">{relatedSolutions.length}</span>
                 </h3>
                 <div class="related-list">
@@ -350,8 +354,8 @@ const pageDescription = !isListPage && board
   {!isListPage && !board && (
     <section class="not-found">
       <div class="container">
-        <h1>未找到该开发板</h1>
-        <a href={getLocalizedPath('/boards', currentLocale)} class="btn">返回开发板列表</a>
+        <h1>{t('board.notFound')}</h1>
+        <a href={getLocalizedPath('/boards', currentLocale)} class="btn">{t('board.backToList')}</a>
       </div>
     </section>
   )}

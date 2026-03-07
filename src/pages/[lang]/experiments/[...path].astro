@@ -54,10 +54,10 @@ export async function getStaticPaths() {
     // 为每个分类生成分页路径
     for (const category of categories) {
       const categoryExperiments = experiments.filter(({ id }) => id.startsWith(`${category}/`));
-      const categoryTotalPages = Math.ceil(categoryExperiments.length / ITEMS_PER_PAGE) || 1;
+      const categoryTotalPages = Math.ceil(categoryExperiments.length / ITEMS_PER_PAGE) ||1;
 
       for (let page = 1; page <= categoryTotalPages; page++) {
-        if (page === 1) {
+        if (page ===1) {
           // 第1页路径为 category
           paths.push({ params: { lang, path: category } });
         } else {
@@ -116,7 +116,7 @@ if (!slug) {
   // page/2 等：全局其他页
   pageType = 'global-list';
   const pageNum = slug.replace('page/', '');
-  currentPage = Number(pageNum) || 1;
+  currentPage = Number(pageNum) ||1;
 } else {
   const pathParts = slug.split('/');
   if (pathParts.length === 1) {
@@ -128,7 +128,7 @@ if (!slug) {
     pageType = 'category-list';
     currentCategory = pathParts[0];
     const pageNum = pathParts[1].replace('page/', '');
-    currentPage = Number(pageNum) || 1;
+    currentPage = Number(pageNum) ||1;
   } else {
     // esp32/esp32-servo: 详情页
     pageType = 'detail';
@@ -235,7 +235,7 @@ if (pageType === 'detail' && experiment) {
 // 动态 meta description
 const pageDescription = pageType === 'detail' && experiment
   ? experiment.data.intro || '探索硬件开发的无限可能，从基础教程到高级案例，一站式学习平台'
-  : (currentCategory ? `${currentCategory.toUpperCase()} 开发板的基础实验教程，适合初学者入门学习。` : '单个开发板配合单个模块的基础实验教程，适合初学者入门学习。');
+  : (currentCategory ? t('experiments.categoryDescription').replace('{category}', currentCategory.toUpperCase()) : t('experiments.listDescription'));
 
 // 分页页面的 robots 设置
 const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
@@ -263,12 +263,12 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
         <header class="category-header">
           <h1 class="category-title">{currentCategory ? currentCategory.toUpperCase() : t('nav.experiments')}</h1>
           <p class="category-description">
-            {currentCategory ? `${currentCategory.toUpperCase()} 开发板的基础实验教程，适合初学者入门学习。` : '单个开发板配合单个模块的基础实验教程，适合初学者入门学习。'}
+            {currentCategory ? t('experiments.categoryDescription').replace('{category}', currentCategory.toUpperCase()) : t('experiments.listDescription')}
           </p>
           <div class="category-stats">
             <span class="stat-item">
               <span class="stat-value">{startIndex + 1}-{Math.min(endIndex, totalItems)}</span>
-              <span class="stat-label">/ 共 {totalItems} 个实验</span>
+              <span class="stat-label">/ {t('experiments.totalItems').replace('{count}', String(totalItems))}</span>
             </span>
           </div>
         </header>
@@ -285,9 +285,10 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
                 title={experiment.data.title}
                 description={experiment.data.intro}
                 link={getLocalizedPath(`/experiments/${category}/${slug}`, currentLocale)}
-                tags={['教程']}
+                tags={[t('experiments.tutorial')]}
                 date={('date' in experiment.data ? experiment.data.date as Date : undefined)}
                 image={experiment.data.image}
+                locale={currentLocale}
               />
             );
           })}
@@ -317,7 +318,7 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
           <!-- 文章头部 -->
           <header class="article-header">
             <div class="article-meta">
-              <span class="article-tag">教程</span>
+              <span class="article-tag">{t('experiments.tutorial')}</span>
               {board && (
                 <span class="article-board">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -352,7 +353,7 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
         <aside class="article-sidebar">
           <!-- 相关实验 -->
           <div class="sidebar-section">
-            <h3 class="sidebar-title">相关实验</h3>
+            <h3 class="sidebar-title">{t('experiments.related')}</h3>
             <div class="related-list">
               {allExperiments
                 .filter(e => e.id !== experiment?.id)
@@ -375,7 +376,7 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
           <!-- 使用的硬件 -->
           {board && (
             <div class="sidebar-section">
-              <h3 class="sidebar-title">使用的开发板</h3>
+              <h3 class="sidebar-title">{t('experiments.usedBoard')}</h3>
               <a
                 href={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
                 class="hardware-card"
@@ -394,7 +395,7 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
 
           {module && (
             <div class="sidebar-section">
-              <h3 class="sidebar-title">使用的模块</h3>
+              <h3 class="sidebar-title">{t('experiments.usedModule')}</h3>
               <a
                 href={getLocalizedPath(`/modules/${module.id}`, currentLocale)}
                 class="hardware-card"
@@ -419,8 +420,8 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
   {pageType === 'detail' && !experiment && (
     <section class="not-found">
       <div class="container">
-        <h1>未找到该实验</h1>
-        <a href={getLocalizedPath('/experiments', currentLocale)} class="btn">返回实验列表</a>
+        <h1>{t('experiments.notFound')}</h1>
+        <a href={getLocalizedPath('/experiments', currentLocale)} class="btn">{t('experiments.backToList')}</a>
       </div>
     </section>
   )}

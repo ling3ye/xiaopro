@@ -254,7 +254,8 @@ const getLocalizedKeywords = (keywords: any, locale: string): string[] => {
                     link={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}
                     image={mod.data.image}
                     brand={mod.data.brand}
-                    specs={mod.data.specs}
+                    specs={getLocalizedSpecs(mod.data.specs, lang)}
+                    locale={currentLocale}
                   />
                 ))}
               </div>

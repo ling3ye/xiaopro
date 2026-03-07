@@ -165,10 +165,11 @@ const structuredData = {
                 title={article.data.title}
                 description={article.data.intro}
                 link={link}
-                tags={[article.collection === 'experiments' ? '教程' : '案例']}
+                tags={[article.collection === 'experiments' ? t('nav.experiments') : t('nav.solutions')]}
                 date={('date' in article.data ? article.data.date as Date : undefined)}
                 featured={true}
                 image={article.data.image}
+                locale={currentLocale}
               />
             );
           })}
@@ -208,8 +209,9 @@ const structuredData = {
                 title={article.data.title}
                 description={article.data.intro}
                 link={link}
-                tags={[article.collection === 'experiments' ? '教程' : '案例']}
+                tags={[article.collection === 'experiments' ? t('nav.experiments') : t('nav.solutions')]}
                 date={('date' in article.data ? article.data.date as Date : undefined)}
+                locale={currentLocale}
               />
             );
           })}
@@ -224,7 +226,7 @@ const structuredData = {
       <div class="section__header">
         <h2 class="section__title">{t('home.popularHardware')}</h2>
         <div class="section__tabs">
-          <button class="section__tab section__tab--active">开发板</button>
+          <button class="section__tab section__tab--active">{t('nav.boards')}</button>
         </div>
       </div>
       <div class="hardware__grid">
@@ -240,6 +242,7 @@ const structuredData = {
             brand={board.data.brand}
             specs={board.data.specs}
             image={board.data.image}
+            locale={currentLocale}
           />
         ))}
       </div>
