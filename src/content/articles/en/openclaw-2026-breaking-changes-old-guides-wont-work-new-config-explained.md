@@ -3,7 +3,7 @@ title: "OpenClaw Setup Guide｜From Installation to Browser Control - Everything
 domain: ai
 platforms: ["mac"]
 format: "tutorial"
-date: 2026-02-23
+date: 2026-03-06
 intro: "Ever installed OpenClaw and couldn't get it to do anything? This author personally experienced 10 uninstallations and reinstallations, thoroughly figuring out OpenClaw 2026.3.2's configuration logic—from API integration, custom providers, to enabling browser control and file read/write permissions, every step includes screenshots and commands. Suitable for macOS users, beginners getting started, and experienced users who've been burned by old guides."
 image: "https://img.lingflux.com/2026/03/015705fbca42171bdf09fabe9220b546.webp"
 tags: ["openclaw config guide", "openclaw 2026 setup", "openclaw tools profile", "OpenClaw configuration tutorial", "OpenClaw permission settings", "OpenClaw latest version"]
