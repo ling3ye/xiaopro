@@ -65,7 +65,15 @@ const t = useTranslations(locale);
 
 // 格式化日期
 const formatDate = (date: Date) => {
-  return date.toLocaleDateString('zh-CN', {
+  // 将项目语言代码映射到 JavaScript 支持的区域代码
+  const localeMap: Record<SupportedLocale, string> = {
+    'zh-cn': 'zh-CN',
+    'zh-tw': 'zh-TW',
+    'en': 'en-US',
+    'ja': 'ja-JP',
+  };
+
+  return date.toLocaleDateString(localeMap[locale], {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
