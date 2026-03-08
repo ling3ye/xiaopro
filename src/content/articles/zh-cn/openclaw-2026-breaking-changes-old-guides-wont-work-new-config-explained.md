@@ -4,7 +4,7 @@ domain: ai
 platforms: ["mac"]
 format: "tutorial"
 date: 2026-02-23
-intro: "在自己的 Mac 上完全免费、离线运行 AI 音乐生成模型 ACE-Step 1.5，Apple 芯片加速，全程只需几行命令。"
+intro: "你有没有试过装完 OpenClaw 什么都干不了？本文作者亲历10次卸载重装，彻底摸透了 OpenClaw 2026.3.2 版本的配置逻辑——从 API 接入、自定义服务商，到开放浏览器控制、文件读写权限，每一步都有截图和命令对照。适合 macOS 用户、新手入坑，以及被旧教程坑过的老用户。"
 image: "https://img.lingflux.com/2026/03/015705fbca42171bdf09fabe9220b546.webp"
 tags: ["openclaw config guide", "openclaw 2026 setup", "openclaw tools profile", "OpenClaw 配置教程", "OpenClaw 权限设置", "OpenClaw 最新版本"]
 ---

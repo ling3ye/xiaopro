@@ -4,7 +4,7 @@ domain: ai
 platforms: ["mac"]
 format: "tutorial"
 date: 2026-02-23
-intro: "Mac上でAI音楽生成モデルACE-Step 1.5を完全無料かつオフラインで実行。Appleシリコンによる加速、数行のコマンドのみで完了。"
+intro: "OpenClawをインストールしたのに何もできないことになったことはありますか？筆者は10回ものアンインストールと再インストールを経験し、OpenClaw 2026.3.2の設定ロジックを完全に理解しました——API接続、カスタムプロバイダー、ブラウザ制御の有効化、ファイルの読み書き権限まで、すべての手順にスクリーンショットとコマンドが含まれています。macOSユーザー、初心者、古いガイドに困惑した経験ユーザーに最適です。"
 image: "https://img.lingflux.com/2026/03/015705fbca42171bdf09fabe9220b546.webp"
 tags: ["openclaw config guide", "openclaw 2026 setup", "openclaw tools profile", "OpenClaw 設定チュートリアル", "OpenClaw 権限設定", "OpenClaw 最新バージョン"]
 ---
