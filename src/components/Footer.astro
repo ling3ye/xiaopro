@@ -2,7 +2,7 @@
 /**
  * 页脚组件 Footer
  *
- * 网站底部区域，包含社交媒体、版权信息
+ * 网站底部区域，包含品牌信息、友情链接、社交媒体、版权信息
  *
  * @component Footer
  *
@@ -10,7 +10,7 @@
  * @property {string} lang - 当前语言代码
  *
  * @author Claude Code
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 import { useTranslations, getLocalizedPath } from '../utils/i18n';
@@ -40,18 +40,24 @@ const socialLinks = [
   },
 ];
 
+// 友情链接配置
+const friendLinks = [
+  {
+    name: 'lingshunLAB',
+    url: 'https://www.lingshunlab.com',
+  },
+];
+
 // 社交媒体图标 SVG
 const socialIcons: Record<string, string> = {
   'GitHub': `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`,
-  'Twitter': `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 007.557 2.209c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>`,
-  'Discord': `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.5152.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 01.0785-.0095c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785-.0095c.1202.0943.2517.1923.3718.2914a.077.077 0 01-.0066.1276c.1258-.099.246-.1981.3728-.2924a.0743.0743 0 01-.0076.1277c.1258-.099.246-.1981.3728-.2924a.077.077 0 01.0066.1276c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 01-.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.076.076 0 00-.0313-.0552c.5004-5.177.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00-.0313-.0552c.5004-5.177.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.4189 1.3332-.9555-2.4189 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1568 2.4189 1.2108 0 2.1757 1.0952 2.1568 2.4189 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>`,
   'YouTube': `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
 };
 ---
 
 <footer class="footer">
-  <!-- 品牌信息 -->
-  <div class="footer__content">
+  <div class="footer__inner">
+    <!-- 品牌信息 -->
     <div class="footer__brand">
       <a href={getLocalizedPath('/', lang)} class="footer__logo">
         <svg class="footer__logo-icon" viewBox="0 0 48 48" fill="none">
@@ -66,9 +72,23 @@ const socialIcons: Record<string, string> = {
       </p>
     </div>
 
+    <!-- 友情链接 -->
+    <div class="footer__section">
+      <h3 class="footer__heading">{t('footer.links')}</h3>
+      <ul class="footer__link-list">
+        {friendLinks.map(link => (
+          <li>
+            <a href={link.url} class="footer__link" target="_blank" rel="noopener noreferrer">
+              {link.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
     <!-- 社交媒体 -->
-    <div class="footer__social">
-      <h3 class="footer__title">{t('footer.followUs')}</h3>
+    <div class="footer__section">
+      <h3 class="footer__heading">{t('footer.followUs')}</h3>
       <div class="footer__social-links">
         {socialLinks.map(social => (
           <a
@@ -84,55 +104,51 @@ const socialIcons: Record<string, string> = {
       </div>
     </div>
   </div>
-</footer>
 
-<!-- 版权信息 -->
-<div class="footer__bottom">
-  <div class="container">
+  <!-- 版权信息 -->
+  <div class="footer__bottom">
     <p class="footer__copyright">
       &copy; {currentYear} LINGFLUX. {t('footer.allRightsReserved')}
     </p>
-    <div class="footer__badges">
-      <span class="footer__badge">Built with Astro</span>
-      <span class="footer__badge">Open Source</span>
-    </div>
   </div>
-</div>
+</footer>
 
 <style>
   /* ============================================
      页脚组件样式
      ============================================ */
 
-  /* 页脚容器 */
   .footer {
     background: var(--color-bg-secondary);
     border-top: 1px solid var(--color-border);
   }
 
-  /* 内容区域 */
-  .footer__content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2xl);
-    padding: var(--space-3xl) 0;
+  .footer__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px 40px;
   }
 
-  /* 品牌信息 */
+  /* 三栏网格布局 */
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  /* 品牌区域 */
   .footer__brand {
     display: flex;
-    align-items: center;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 16px;
   }
 
   .footer__logo {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     text-decoration: none;
-    transition: opacity var(--transition-fast);
+    transition: opacity 0.2s ease;
   }
 
   .footer__logo:hover {
@@ -140,43 +156,64 @@ const socialIcons: Record<string, string> = {
   }
 
   .footer__logo-icon {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     color: var(--color-primary);
   }
 
   .footer__logo-text {
-    font-size: var(--text-xl);
+    font-size: 18px;
     font-weight: 700;
     color: var(--color-text-primary);
   }
 
   .footer__description {
     color: var(--color-text-secondary);
-    text-align: center;
-    max-width: 300px;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 280px;
   }
 
-  /* 社交媒体 */
-  .footer__social {
+  /* 通用区块样式 */
+  .footer__section {
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
+    gap: 16px;
   }
 
-  .footer__title {
-    font-size: var(--text-sm);
+  .footer__heading {
+    font-size: 14px;
     font-weight: 600;
-    color: var(--color-text-tertiary);
+    color: var(--color-text-primary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
+  /* 友情链接列表 */
+  .footer__link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer__link {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer__link:hover {
+    color: var(--color-primary);
+  }
+
+  /* 社交媒体链接 */
   .footer__social-links {
     display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 12px;
   }
 
   .footer__social-link {
@@ -185,10 +222,10 @@ const socialIcons: Record<string, string> = {
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-md);
+    border-radius: 50%;
     background: var(--color-bg-tertiary);
     color: var(--color-text-secondary);
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
   }
 
   .footer__social-link:hover {
@@ -202,50 +239,55 @@ const socialIcons: Record<string, string> = {
     height: 20px;
   }
 
-  /* 底部信息 */
+  /* 底部版权 */
   .footer__bottom {
     border-top: 1px solid var(--color-border);
-    padding: var(--space-lg) 0;
+    padding: 20px 24px;
+    text-align: center;
   }
 
   .footer__copyright {
     color: var(--color-text-tertiary);
-    font-size: var(--text-sm);
-    text-align: center;
-  }
-
-  .footer__badges {
-    display: flex;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .footer__badge {
-    padding: 4px 12px;
-    border-radius: var(--radius-lg);
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-tertiary);
-    font-size: var(--text-xs);
-    font-weight: 500;
+    font-size: 13px;
   }
 
   /* ============================================
      响应式设计
      ============================================ */
 
-  /* 平板 */
+  /* 平板 - 两栏布局 */
   @media (min-width: 640px) {
-    .footer__content {
+    .footer__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer__brand {
+      grid-column: 1 / -1;
       flex-direction: row;
-    justify-content: space-between;
-    gap: var(--space-2xl);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer__description {
+      max-width: 400px;
     }
   }
 
-  @media (min-width: 768px) {
-    .footer__content {
-      gap: var(--space-3xl);
+  /* 桌面 - 三栏布局 */
+  @media (min-width: 900px) {
+    .footer__inner {
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 60px;
+    }
+
+    .footer__brand {
+      grid-column: 1 / 2;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .footer__description {
+      max-width: 280px;
     }
   }
 </style>
