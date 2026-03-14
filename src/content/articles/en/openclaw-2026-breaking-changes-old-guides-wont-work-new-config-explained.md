@@ -23,7 +23,9 @@ This update frequency is really dense. Especially when I tested the latest versi
 
 I like OpenClaw because it can operate browsers and manipulate system files, which of course brings many security issues, so it must be used with caution. To raise this little lobster well, you need to spend some time learning how to configure it.
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/flZj-SpTJmQ?si=Jn8A8xWZ-jIZQCeo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
 
 ## Before You Start: Do You Have Enough API Balance?
 

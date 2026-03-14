@@ -23,7 +23,9 @@ tags: ["openclaw config guide", "openclaw 2026 setup", "openclaw tools profile",
 
 私はOpenClawがブラウザを操作でき、システムファイルを操作できるのが気に入っています。もちろん、これには多くのセキュリティ問題が伴うため、注意して使用する必要があります。この小さなロブスターをうまく飼育するには、設定方法を学ぶために時間をかける必要があります。
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/flZj-SpTJmQ?si=Jn8A8xWZ-jIZQCeo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
 
 ## 開始する前に：API残高は十分ですか？
 

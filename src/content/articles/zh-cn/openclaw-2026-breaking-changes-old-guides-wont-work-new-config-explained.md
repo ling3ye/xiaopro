@@ -23,7 +23,9 @@ tags: ["openclaw config guide", "openclaw 2026 setup", "openclaw tools profile",
 
 OpenClaw我喜欢它可以操作浏览器，可以操作系统文件，当然这也带来很多安全问题，所以也必须要小心使用。要养好这个小龙虾，就得花点时间学习怎么配置。
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/flZj-SpTJmQ?si=Jn8A8xWZ-jIZQCeo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
 
 ## 在开始之前：你的 API 余额够用吗？
 
