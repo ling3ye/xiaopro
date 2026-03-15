@@ -22,7 +22,7 @@ interface Props {
   currentPath?: string;
 }
 
-const { lang = 'zh-cn', currentPath = '/' } = Astro.props;
+const { lang = 'en', currentPath = '/' } = Astro.props;
 
 // 获取翻译函数
 const t = useTranslations(lang);
@@ -39,9 +39,9 @@ const navItems = [
 
 // 语言选项
 const languages = [
+  { code: 'en', name: 'English' },
   { code: 'zh-cn', name: '简体中文' },
   { code: 'zh-tw', name: '繁體中文' },
-  { code: 'en', name: 'English' },
   { code: 'ja', name: '日本語' },
 ];
 

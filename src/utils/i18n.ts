@@ -41,14 +41,16 @@ export function getLocalizedPath(path: string, lang: Lang | string): string {
 export function getLanguageSwitcherLinks(currentUrl: URL) {
   const currentLang = getLangFromUrl(currentUrl);
   const currentPath = currentUrl.pathname.replace(`/${currentLang}`, '');
-  
-  return Object.keys(languages).map((langCode) => {
-    const code = langCode as Lang;
+
+  // 定义语言排序，EN 在第一位
+  const langOrder: Lang[] = ['en', 'zh-cn', 'zh-tw', 'ja'];
+
+  return langOrder.map((langCode) => {
     return {
-      lang: code,
-      label: languages[code],
-      href: `/${code}${currentPath || ''}`,
-      isActive: code === currentLang
+      lang: langCode,
+      label: languages[langCode],
+      href: `/${langCode}${currentPath || ''}`,
+      isActive: langCode === currentLang
     };
   });
 }
