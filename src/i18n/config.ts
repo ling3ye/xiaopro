@@ -12,7 +12,7 @@ export const languages = {
 export type SupportedLocale = keyof typeof languages;
 
 // 2. 定义默认语言
-export const defaultLang: SupportedLocale = 'zh-cn';
+export const defaultLang: SupportedLocale = 'en';
 
 // 3. UI 界面翻译字典
 // 注意：这用于页面骨架（导航、页脚等），不是内容文章的翻译
