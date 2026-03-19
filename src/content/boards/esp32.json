@@ -73,6 +73,24 @@
       "動作電圧": "3.0 ~ 3.6 V",
       "動作温度": "-40 ~ 85 °C / -40 ~ 105 °C",
       "アンテナ": "基板実装 PCB アンテナ / 外部アンテナコネクタ"
+    },
+    "ko": {
+      "CPU": "Xtensa 듀얼코어 32비트 LX6 마이크로프로세서, 최대 240 MHz",
+      "Flash": "4/8/16 MB SPI flash",
+      "ROM": "448 KB",
+      "SRAM": "520 KB",
+      "RTC SRAM": "16 KB",
+      "PSRAM": "선택 사항 2 MB (일부 모델)",
+      "WiFi": "802.11b/g/n, 최대 150 Mbps",
+      "Bluetooth": "V4.2 BR/EDR 및 BLE",
+      "GPIO": "26개 (5개 strapping 핀)",
+      "ADC": "12-bit",
+      "DAC": "2 channels",
+      "주변 장치": "SD 카드, UART, SPI, SDIO, I2C, LED PWM, 모터 PWM, I2S, IR, 펄스 카운터, 정전식 터치 센서, TWAI(CAN)",
+      "크리스털": "40 MHz",
+      "동작 전압": "3.0 ~ 3.6 V",
+      "동작 온도": "-40 ~ 85 °C / -40 ~ 105 °C",
+      "안테나": "기판 탑재 PCB 안테나 / 외부 안테나 커넥터"
     }
   },
   "officialUrl": "https://www.espressif.com/en/products/socs/esp32",
@@ -81,6 +99,7 @@
     "zh-cn": ["ESP32", "物联网", "WiFi", "蓝牙", "Arduino", "MicroPython"],
     "zh-tw": ["ESP32", "物聯網", "WiFi", "藍牙", "Arduino", "MicroPython"],
     "en": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"],
-    "ja": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"]
+    "ja": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"],
+    "ko": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"]
   }
 }

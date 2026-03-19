@@ -19,6 +19,7 @@ const boards = defineCollection({
         'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
         'en': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
         'ja': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ko': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
       })
     ]).optional(),
     // 选填：官方文档链接
@@ -33,6 +34,7 @@ const boards = defineCollection({
         'zh-tw': z.array(z.string()).optional(),
         'en': z.array(z.string()).optional(),
         'ja': z.array(z.string()).optional(),
+        'ko': z.array(z.string()).optional(),
       })
     ]).optional(),
     // 选填：缩略图 (相对于 public 目录的路径)
@@ -59,6 +61,7 @@ const modules = defineCollection({
         'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
         'en': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
         'ja': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ko': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
       })
     ]).optional(),
     // 选填：关键词 (支持多语言嵌套结构)
@@ -71,6 +74,7 @@ const modules = defineCollection({
         'zh-tw': z.array(z.string()).optional(),
         'en': z.array(z.string()).optional(),
         'ja': z.array(z.string()).optional(),
+        'ko': z.array(z.string()).optional(),
       })
     ]).optional(),
     // 选填：官方文档链接
