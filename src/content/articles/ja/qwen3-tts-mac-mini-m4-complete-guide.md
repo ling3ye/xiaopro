@@ -25,6 +25,10 @@ tags: ["qwen3 tts", "qwen3 tts mac", "qwen tts guide", "Qwen3-TTS Mac設定", "Q
 
 プロセス全体は5ステップで、所要時間は約15〜30分（ほとんどはモデルのダウンロード待ちです）。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XG7krJlY-jY?si=X-F1_WwBnldVCeiK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
+
 ------
 
 ## ステップ1：システム依存関係をインストール

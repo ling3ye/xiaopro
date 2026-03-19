@@ -25,6 +25,10 @@ The good news: **not many changes needed, and I've already worked through all th
 
 The entire process takes 5 steps, approximately 15–30 minutes (most of which is spent waiting for the model to download).
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XG7krJlY-jY?si=X-F1_WwBnldVCeiK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
+
 ------
 
 ## Step 1: Install System Dependencies

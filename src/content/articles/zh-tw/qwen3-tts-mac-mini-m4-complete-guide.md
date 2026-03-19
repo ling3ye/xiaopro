@@ -25,6 +25,9 @@ tags: ["qwen3 tts", "qwen3 tts mac", "qwen tts guide", "Qwen3-TTS Mac 配置", "
 
 整個流程分 5 步，大約需要 15～30 分鐘（大部分時間在等模型下載）。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XG7krJlY-jY?si=X-F1_WwBnldVCeiK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
 ------
 
 ## 第一步：安裝系統依賴
