@@ -230,21 +230,27 @@ const structuredData = {
         </div>
       </div>
       <div class="hardware__grid">
-        {boards.slice(0, 6).map(board => (
-          <Card
-            type="board"
-            title={board.data.model}
-            description={`${board.data.brand} - ${Object.entries(board.data.specs || {})
-              .slice(0, 2)
-              .map(([k, v]) => `${k}: ${v}`)
-              .join(', ')}`}
-            link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
-            brand={board.data.brand}
-            specs={board.data.specs}
-            image={board.data.image}
-            locale={currentLocale}
-          />
-        ))}
+        {boards.slice(0, 6).map(board => {
+          // 获取当前语言的规格数据
+          const localizedSpecs = board.data.specs?.[currentLocale] || board.data.specs?.['en'] || {};
+          const specEntries = Object.entries(localizedSpecs).slice(0, 2);
+          const description = specEntries.length > 0
+            ? `${board.data.brand} - ${specEntries.map(([k, v]) => `${k}: ${v}`).join(', ')}`
+            : board.data.brand;
+
+          return (
+            <Card
+              type="board"
+              title={board.data.model}
+              description={description}
+              link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
+              brand={board.data.brand}
+              specs={localizedSpecs}
+              image={board.data.image}
+              locale={currentLocale}
+            />
+          );
+        })}
       </div>
     </div>
   </section>
