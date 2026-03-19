@@ -1,15 +1,51 @@
-# 多语言文章翻译提示词
+# 多语言文章处理工作流
 
 ## 任务描述
-为这篇新增加的文章添加多语言版本（繁体中文、英文、日文）。
+完成以下两个任务：
+1. **添加 frontmatter** - 为原始文章添加 YAML frontmatter 参数
+2. **多语言翻译** - 为文章添加繁体中文、英文、日文版本
 
-## 翻译要求
+## 任务 1：添加 frontmatter
+
+### Frontmatter 参数说明
+
+在原始简体中文文章（zh-cn）最开头添加 YAML frontmatter，用 `---` 包围：
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| title | string | 文章标题，可加副标题用 `｜` 分隔 |
+| domain | string | 领域分类：ai / dev / design / product / ops 等 |
+| platforms | array | 适用平台，如 ["mac"]、["mac", "windows", "linux"] |
+| format | string | 文章格式：tutorial / guide / news / review / opinion |
+| date | string | 发布日期，格式 YYYY-MM-DD |
+| intro | string | 1-2 句话介绍文章内容和目标读者 |
+| image | string | 封面图 URL，若无可用格式：`https://img.lingflux.com/2026/03/[英文标题连字符].webp` |
+| tags | array | 5-8 个标签，包含中英文关键词 |
+
+### Frontmatter 示例
+
+```yaml
+---
+title: "标题｜副标题"
+domain: ai
+platforms: ["mac", "windows"]
+format: "tutorial"
+date: 2026-03-19
+intro: "适合 Mac 用户、AI 新手，以及想尝试 TTS 模型的开发者。"
+image: "https://img.lingflux.com/2026/03/qwen3-tts-guide.webp"
+tags: ["qwen3 tts", "qwen tts mac", "Qwen3-TTS Mac 配置", "Qwen 文字转语音"]
+---
+```
+
+---
+
+## 任务 2：多语言翻译要求
 
 ### 通用原则
 1. **先阅读理解全文** - 不要逐句翻译，先完整理解文章内容、语气和上下文
 2. **自然流畅** - 避免生硬直译，使用各语种日常生活中的自然表达方式
 3. **保持技术准确性** - 专业术语保持一致，代码块、命令、配置项等不变
-4. **保留frontmatter** - 保留原文的frontmatter结构，只翻译可翻译字段（title, intro, tags）
+4. **保留 frontmatter** - 翻译 frontmatter 中的 title、intro、tags 字段
 
 ### 各语言注意事项
 
@@ -33,14 +69,37 @@
 
 ## 操作步骤
 
-1. **阅读原文** - 使用Read工具读取简体中文原文
-2. **理解内容** - 理解文章主题、技术点、语气风格
-3. **生成SEO友好文件名并重命名** - 基于文章标题（建议使用英文版本标题）生成符合SEO的文件名（kebab-case格式，空格用-代替），使用Bash工具将所有语言版本（zh-cn、zh-tw、en、ja）的文件重命名为新的文件名
-4. **创建翻译文件** - 分别在 `src/content/articles/zh-tw/`、`src/content/articles/en/`、`src/content/articles/ja/` 目录下创建同名文件
-5. **执行翻译** - 按各语言特点进行自然流畅的翻译
-6. **验证格式** - 确保frontmatter格式正确、代码块无误
+### 任务 1：添加 Frontmatter
+1. **阅读原文** - 使用 Read 工具读取简体中文原文
+2. **理解内容** - 理解文章主题、技术点、目标读者、语气风格
+3. **添加 frontmatter** - 根据文章内容智能推断各参数值，在文章开头添加 frontmatter
+4. **保存文件** - 使用 Edit 工具更新原始文件
+
+### 任务 2：多语言翻译
+5. **生成 SEO 友好文件名** - 基于文章英文标题生成 kebab-case 格式文件名（空格用 `-` 代替）
+6. **重命名原文件** - 使用 Bash 工具将 `zh-cn` 原文件重命名为新文件名
+7. **创建翻译文件** - 分别在 `src/content/articles/zh-tw/`、`src/content/articles/en/`、`src/content/articles/ja/` 目录下创建同名文件
+8. **执行翻译** - 按各语言特点进行自然流畅的翻译
+9. **验证格式** - 确保所有版本的 frontmatter 格式正确、代码块无误
+
+---
 
 ## 输出示例
+
+### 原始文件（zh-cn）Frontmatter 格式
+
+```yaml
+---
+title: "本地跑 Qwen3-TTS 启动 Web UI 完全手册｜不会代码也能玩声音克隆"
+domain: ai
+platforms: ["mac", "windows"]
+format: "tutorial"
+date: 2026-03-19
+intro: "Qwen3-TTS 自带网页界面，上传录音就能克隆声音，完全不需要写代码。本文支持 Mac（M 系列芯片）、Windows（NVIDIA 显卡）配置。"
+image: "https://img.lingflux.com/2026/03/qwen3-tts-web-ui-guide.webp"
+tags: ["qwen3 tts", "qwen tts web ui", "qwen voice clone", "Qwen3-TTS Web 界面", "Qwen 声音克隆", "Qwen TTS 教程"]
+---
+```
 
 ```markdown
 ---
