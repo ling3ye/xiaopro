@@ -1,7 +1,7 @@
 ---
 title: "ESP32 透過 8位並列匯流排驅動 ILI9341 螢幕"
 boardId: esp32
-moduleId: display/ili9341
+moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "詳細介紹如何使用 ESP32 透過 8位並列匯流排驅動 ILI9341 螢幕，相比 SPI 串列驅動提供極高的刷新率，適合顯示動態畫面。"
