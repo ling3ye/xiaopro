@@ -153,6 +153,25 @@
       "Tension de fonctionnement": "3,0 ~ 3,6 V",
       "Température de fonctionnement": "-40 ~ 65 °C (standard) / -40 ~ 85 °C (variante haute température)",
       "Antenne": "Antenne PCB intégrée / Connecteur d'antenne externe"
+    },
+    "it": {
+      "CPU": "Microprocessore Xtensa dual-core 32 bit LX7, fino a 240 MHz",
+      "Flash": "SPI Flash esterno, 4/8/16 MB",
+      "ROM": "384 KB",
+      "SRAM": "512 KB",
+      "RTC SRAM": "16 KB",
+      "PSRAM": "Opzionale 2/8 MB (Octal/SPI PSRAM)",
+      "WiFi": "802.11b/g/n, 2,4 GHz, supporto banda da 40 MHz",
+      "Bluetooth": "Bluetooth LE 5.0",
+      "GPIO": "45 GPIO programmabili",
+      "ADC": "SAR ADC 12 bit (2 ADC, fino a 20 canali)",
+      "USB": "USB OTG (Full-speed)",
+      "Periferiche": "SPI, I2S, I2C, PWM, RMT, UART, SD/MMC, TWAI(CAN), Sensore tattile capacitivo (14 pin), Coprocessore ULP",
+      "Accelerazione IA": "Supporto istruzioni vettoriali per calcolo di reti neurali ed elaborazione segnali",
+      "Cristallo": "40 MHz",
+      "Tensione di funzionamento": "3,0 ~ 3,6 V",
+      "Temperatura di funzionamento": "-40 ~ 65 °C (standard) / -40 ~ 85 °C (variante ad alta temperatura)",
+      "Antenna": "Antenna PCB integrata / Connettore antenna esterna"
     }
   },
   "officialUrl": "https://www.espressif.com/en/products/socs/esp32-s3",
@@ -165,6 +184,7 @@
     "ko": ["ESP32-S3", "IoT", "WiFi", "BLE", "AIoT", "Arduino", "MicroPython"],
     "es": ["ESP32-S3", "IoT", "WiFi", "BLE", "AIoT", "Arduino", "MicroPython"],
     "de": ["ESP32-S3", "IoT", "WiFi", "BLE", "AIoT", "Arduino", "MicroPython"],
-    "fr": ["ESP32-S3", "IoT", "WiFi", "BLE", "AIoT", "Arduino", "MicroPython"]
+    "fr": ["ESP32-S3", "IoT", "WiFi", "BLE", "AIoT", "Arduino", "MicroPython"],
+    "it": ["ESP32-S3", "IoT", "WiFi", "BLE", "AIoT", "Arduino", "MicroPython"]
   }
 }

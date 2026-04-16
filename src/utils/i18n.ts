@@ -43,7 +43,7 @@ export function getLanguageSwitcherLinks(currentUrl: URL) {
   const currentPath = currentUrl.pathname.replace(`/${currentLang}`, '');
 
   // 定义语言排序，EN 在第一位
-  const langOrder: Lang[] = ['en', 'zh-cn', 'zh-tw', 'ja', 'ko', 'es', 'de', 'fr'];
+  const langOrder: Lang[] = ['en', 'zh-cn', 'zh-tw', 'ja', 'ko', 'es', 'de', 'fr', 'it'];
 
   return langOrder.map((langCode) => {
     return {
