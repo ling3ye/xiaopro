@@ -109,6 +109,24 @@
       "Voltaje de operación": "3.0 ~ 3.6 V",
       "Temperatura de operación": "-40 ~ 85 °C / -40 ~ 105 °C",
       "Antena": "Antena PCB integrada / Conector de antena externa"
+    },
+    "de": {
+      "CPU": "Xtensa Dual-Core 32-Bit LX6 Mikroprozessor, bis zu 240 MHz",
+      "Flash": "4/8/16 MB SPI Flash",
+      "ROM": "448 KB",
+      "SRAM": "520 KB",
+      "RTC SRAM": "16 KB",
+      "PSRAM": "Optional 2 MB (einige Modelle)",
+      "WiFi": "802.11b/g/n, Datenrate bis zu 150 Mbps",
+      "Bluetooth": "V4.2 BR/EDR und BLE",
+      "GPIO": "26 Pins (5 Strapping-Pins)",
+      "ADC": "12-Bit",
+      "DAC": "2 Kanäle",
+      "Peripherie": "SD-Karte, UART, SPI, SDIO, I2C, LED PWM, Motor PWM, I2S, IR, Impulszähler, kapazitiver Touch-Sensor, TWAI(CAN)",
+      "Quarz": "40 MHz",
+      "Betriebsspannung": "3,0 ~ 3,6 V",
+      "Betriebstemperatur": "-40 ~ 85 °C / -40 ~ 105 °C",
+      "Antenne": "Onboard-PCB-Antenne / Externer Antennenanschluss"
     }
   },
   "officialUrl": "https://www.espressif.com/en/products/socs/esp32",
@@ -119,6 +137,7 @@
     "en": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"],
     "ja": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"],
     "ko": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"],
-    "es": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"]
+    "es": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"],
+    "de": ["ESP32", "IoT", "WiFi", "Bluetooth", "Arduino", "MicroPython"]
   }
 }
