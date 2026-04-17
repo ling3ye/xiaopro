@@ -20,6 +20,12 @@ image: "https://img.lingflux.com/2026/04/66dc2da51796bd3a7957b9bbc0cbfced.png"
 
 ------
 
+Youtube：
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CQLLgFDcRxQ?si=FN2UYXNuTbGifnBN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+------
+
 
 
 ## Ce que vous allez apprendre

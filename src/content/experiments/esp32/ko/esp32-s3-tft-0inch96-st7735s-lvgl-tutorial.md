@@ -22,6 +22,12 @@ image: "https://img.lingflux.com/2026/04/66dc2da51796bd3a7957b9bbc0cbfced.png"
 
 ------
 
+Youtube：
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CQLLgFDcRxQ?si=FN2UYXNuTbGifnBN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+------
+
 ## 이 가이드에서 배울 수 있는 것
 
 1. ESP32-S3가 SPI를 통해 ST7735S 0.96인치 TFT 컬러 LCD를 구동하는 방법
