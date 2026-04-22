@@ -211,6 +211,7 @@ const structuredData = {
                 link={link}
                 tags={[article.collection === 'experiments' ? t('nav.experiments') : t('nav.solutions')]}
                 date={('date' in article.data ? article.data.date as Date : undefined)}
+                image={article.data.image}
                 locale={currentLocale}
               />
             );
