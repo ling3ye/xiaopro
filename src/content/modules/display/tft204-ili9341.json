@@ -77,6 +77,66 @@
       "보관 온도": "-30℃~70℃",
       "작동 전압": "5V/3.3V",
       "제품 무게": "39(g)"
+    },
+    "es": {
+      "Color de pantalla": "Color RGB 65K",
+      "SKU": "MAR2406",
+      "Tamaño": "2.4 pulgadas",
+      "Tipo": "TFT",
+      "Chip controlador": "ILI9341",
+      "Resolución": "320*240 (Pixel)",
+      "Interfaz del módulo": "8-bit parallel interface",
+      "Área de visualización activa": "48.96*36.72(mm)",
+      "Tamaño PCB del módulo": "72.20*52.7(mm)",
+      "Temperatura de operación": "-20℃~60℃",
+      "Temperatura de almacenamiento": "-30℃~70℃",
+      "Voltaje de operación": "5V/3.3V",
+      "Peso del producto": "39(g)"
+    },
+    "de": {
+      "Anzeigefarbe": "RGB 65K Farbe",
+      "SKU": "MAR2406",
+      "Größe": "2,4 Zoll",
+      "Typ": "TFT",
+      "Treiberchip": "ILI9341",
+      "Auflösung": "320*240 (Pixel)",
+      "Modulschnittstelle": "8-bit parallel interface",
+      "Aktiver Anzeigebereich": "48.96*36.72(mm)",
+      "Modul-PCB-Größe": "72.20*52.7(mm)",
+      "Betriebstemperatur": "-20℃~60℃",
+      "Lagertemperatur": "-30℃~70℃",
+      "Betriebsspannung": "5V/3.3V",
+      "Produktgewicht": "39(g)"
+    },
+    "fr": {
+      "Couleur d'affichage": "Couleur RGB 65K",
+      "SKU": "MAR2406",
+      "Taille": "2,4 pouces",
+      "Type": "TFT",
+      "Puce pilote": "ILI9341",
+      "Résolution": "320*240 (Pixel)",
+      "Interface du module": "8-bit parallel interface",
+      "Zone d'affichage active": "48.96*36.72(mm)",
+      "Taille PCB du module": "72.20*52.7(mm)",
+      "Température de fonctionnement": "-20℃~60℃",
+      "Température de stockage": "-30℃~70℃",
+      "Tension de fonctionnement": "5V/3.3V",
+      "Poids du produit": "39(g)"
+    },
+    "it": {
+      "Colore display": "Colore RGB 65K",
+      "SKU": "MAR2406",
+      "Dimensione": "2,4 pollici",
+      "Tipo": "TFT",
+      "Chip driver": "ILI9341",
+      "Risoluzione": "320*240 (Pixel)",
+      "Interfaccia modulo": "8-bit parallel interface",
+      "Area di visualizzazione attiva": "48.96*36.72(mm)",
+      "Dimensioni PCB modulo": "72.20*52.7(mm)",
+      "Temperatura di funzionamento": "-20℃~60℃",
+      "Temperatura di conservazione": "-30℃~70℃",
+      "Tensione di funzionamento": "5V/3.3V",
+      "Peso del prodotto": "39(g)"
     }
   },
   "image": "https://img.lingflux.com/2026/03/8216c7bb4d5d1483333091846fc5a2bb.png",
@@ -85,6 +145,10 @@
     "zh-tw": ["TFT屏幕", "2.4寸TFT", "240x320屏幕", "ILI9341", "TFT Display"],
     "en": ["TFT Display", "2.4 inch TFT", "240x320 screen", "ILI9341", "TFT"],
     "ja": ["TFTディスプレイ", "2.4インチTFT", "240x320スクリーン", "ILI9341", "TFT"],
-    "ko": ["TFT 디스플레이", "2.4인치 TFT", "240x320 스크린", "ILI9341", "TFT"]
+    "ko": ["TFT 디스플레이", "2.4인치 TFT", "240x320 스크린", "ILI9341", "TFT"],
+    "es": ["Pantalla TFT", "TFT 2.4 pulgadas", "Pantalla 240x320", "ILI9341", "TFT"],
+    "de": ["TFT-Display", "2,4 Zoll TFT", "240x320 Bildschirm", "ILI9341", "TFT"],
+    "fr": ["Écran TFT", "TFT 2,4 pouces", "Écran 240x320", "ILI9341", "TFT"],
+    "it": ["Display TFT", "TFT 2,4 pollici", "Schermo 240x320", "ILI9341", "TFT"]
   }
 }

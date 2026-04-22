@@ -56,7 +56,7 @@ const modules = defineCollection({
   schema: z.object({
     brand: z.string().optional(), // 品牌（可选）
     // 必填：分类 (枚举类型，强制规范分类)
-    category: z.enum(['sensor', 'display', 'actuator', 'communication', 'power', 'other']),
+    category: z.enum(['sensor', 'display', 'actuator', 'communication', 'power', 'audio', 'other']),
     // 必填：型号 (如 'DHT11', 'SSD1306')
     model: z.string(),
     // 选填：硬件参数字典 (支持多语言嵌套结构)

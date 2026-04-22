@@ -103,6 +103,7 @@ export const ui = {
     'module.category.display': '显示器',
     'module.category.actuator': '执行器',
     'module.category.communication': '通信模块',
+    'module.category.audio': '音频模块',
     'module.category.power': '电源模块',
     'module.category.other': '其他',
     // 模块其他文本
@@ -240,6 +241,7 @@ export const ui = {
     'module.category.display': '顯示器',
     'module.category.actuator': '執行器',
     'module.category.communication': '通信模組',
+    'module.category.audio': '音訊模組',
     'module.category.power': '電源模組',
     'module.category.other': '其他',
     // 模組其他文本
@@ -377,6 +379,7 @@ export const ui = {
     'module.category.display': 'Display',
     'module.category.actuator': 'Actuator',
     'module.category.communication': 'Communication Module',
+    'module.category.audio': 'Audio Module',
     'module.category.power': 'Power Module',
     'module.category.other': 'Other',
     // Module other text
@@ -514,6 +517,7 @@ export const ui = {
     'module.category.display': 'ディスプレイ',
     'module.category.actuator': 'アクチュエーター',
     'module.category.communication': '通信モジュール',
+    'module.category.audio': 'オーディオモジュール',
     'module.category.power': '電源モジュール',
     'module.category.other': 'その他',
     // モジュールその他テキスト
@@ -651,6 +655,7 @@ export const ui = {
     'module.category.display': '디스플레이',
     'module.category.actuator': '액추에이터',
     'module.category.communication': '통신 모듈',
+    'module.category.audio': '오디오 모듈',
     'module.category.power': '전원 모듈',
     'module.category.other': '기타',
     // 모듈 기타 텍스트
@@ -788,6 +793,7 @@ export const ui = {
     'module.category.display': 'Pantalla',
     'module.category.actuator': 'Actuador',
     'module.category.communication': 'Módulo de comunicación',
+    'module.category.audio': 'Módulo de audio',
     'module.category.power': 'Módulo de alimentación',
     'module.category.other': 'Otros',
     // Otros textos de módulos
@@ -925,6 +931,7 @@ export const ui = {
     'module.category.display': 'Display',
     'module.category.actuator': 'Aktuator',
     'module.category.communication': 'Kommunikationsmodul',
+    'module.category.audio': 'Audiomodul',
     'module.category.power': 'Strommodul',
     'module.category.other': 'Sonstiges',
     // Weitere Modul-Texte
@@ -1062,6 +1069,7 @@ export const ui = {
     'module.category.display': 'Écran',
     'module.category.actuator': 'Actionneur',
     'module.category.communication': 'Module de communication',
+    'module.category.audio': 'Module audio',
     'module.category.power': 'Module d\'alimentation',
     'module.category.other': 'Autres',
     // Autres textes des modules
@@ -1199,6 +1207,7 @@ export const ui = {
     'module.category.display': 'Display',
     'module.category.actuator': 'Attuatore',
     'module.category.communication': 'Modulo di comunicazione',
+    'module.category.audio': 'Modulo audio',
     'module.category.power': 'Modulo di alimentazione',
     'module.category.other': 'Altro',
     // Altri testi dei moduli
