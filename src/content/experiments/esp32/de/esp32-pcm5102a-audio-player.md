@@ -25,7 +25,7 @@ Nur die Kernaussagen？ Hier sind sie：
 
 ---
 
-**ESP32-S3 + PCM5102A** ist eine der preiswertesten Kombinationen für DIY-Audioprojekte. Der ESP32-S3 übernimmt die Wi-Fi-Verbindung, den MP3-Download und die Audio-Decodierung, während der PCM5102A das digitale Signal in analoges Audio für Kopfhörer oder Lautsprecher umwandelt. Der gesamte Aufbau kostet nur wenige Euro, die Klangqualität übertrifft jedoch gleichpreisige Alternativen bei weitem.
+**ESP32-S3 + PCM5102A** ist eine der preiswertesten Kombinationen für DIY-Audioprojekte. Der ESP32-S3 übernimmt die Wi-Fi-Verbindung, den MP3-Download und die Audio-Decodierung, während der PCM5102A das digitale Signal in analoges Audio um（Hinweis: Reiner DAC-Ausgang ohne Verstärker — für Lautsprecher wird ein externes Verstärkermodul benötigt）. Der gesamte Aufbau kostet nur wenige Euro, die Klangqualität übertrifft jedoch gleichpreisige Alternativen bei weitem.
 
 Alle Verkabelungen und Codes in diesem Tutorial wurden getestet und verifiziert — Schritt für Schritt zum gleichen Ergebnis.
 
@@ -33,7 +33,7 @@ Alle Verkabelungen und Codes in diesem Tutorial wurden getestet und verifiziert 
 
 ## Endergebnis
 
-Nach dem Einschalten verbindet sich der ESP32-S3 automatisch mit dem Wi-Fi, ruft einen MP3-Audiostrom aus dem Netzwerk ab und gibt ihn über den PCM5102A wieder. Kopfhörer oder Lautsprecher spielen den Ton ab. Keine Tasten, kein Touchscreen — Einschalten und zuhören.
+Nach dem Einschalten verbindet sich der ESP32-S3 automatisch mit dem Wi-Fi, ruft einen MP3-Audiostrom aus dem Netzwerk ab und gibt ihn über den PCM5102A wieder. Kopfhörer oder ein externer Verstärker + Lautsprecher spielen den Ton ab. Keine Tasten, kein Touchscreen — Einschalten und zuhören.
 
 <br>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CjGkTj7KaQo?si=y2DN_3PwYmIfS5K_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -46,7 +46,7 @@ Nach dem Einschalten verbindet sich der ESP32-S3 automatisch mit dem Wi-Fi, ruft
 
 Der **PCM5102A** ist ein hochleistungsfähiger Stereo-**DAC-Chip**（Digital-Analog-Wandler）von Texas Instruments.
 
-Dein ESP32-S3 gibt **digitale Audiosignale** aus（I2S-formatierte Nullen und Einsen）, aber Kopfhörer und Lautsprecher verstehen nur **analoge Spannungssignale**（Wellenformen, die sich über die Zeit ändern）. Der PCM5102A fungiert als "Dolmetscher" zwischen beiden und wandelt digitale Daten in Echtzeit in analoge Audiosignale um.
+Dein ESP32-S3 gibt **digitale Audiosignale** aus（I2S-formatierte Nullen und Einsen）, aber Verstärker, Kopfhörer und andere Audiogeräte verstehen nur **analoge Spannungssignale**（Wellenformen, die sich über die Zeit ändern）. Der PCM5102A fungiert als "Dolmetscher" zwischen beiden und wandelt digitale Daten in Echtzeit in analoge Audiosignale um.
 
 ### PCM5102A Hauptmerkmale
 
@@ -57,9 +57,17 @@ Dein ESP32-S3 gibt **digitale Audiosignale** aus（I2S-formatierte Nullen und Ei
 | Dynamikumfang | 112dB（feine Details, extrem niedriges Grundrauschen） |
 | Betriebsspannung | 3.3V Einzelversorgung（perfekt für ESP32） |
 | MCLK | Integrierter PLL, kein externer Master-Takt erforderlich |
-| Ausgang | Integrierter Differenzial-Treiber, hohe Störsicherheit |
+| Ausgang | Differenzieller Line-Level-Ausgang（kein Verstärker, kann Lautsprecher nicht direkt ansteuern） |
 
 **Warum den PCM5102A wählen？** Günstig, einfach zu verwenden, läuft mit 3.3V, braucht keinen externen Takt und ein Dynamikumfang von 112dB ist für MCU-basiertes Audio beeindruckend — der beliebteste I2S-DAC-Begleiter für ESP32-Projekte.
+
+> **⚠️ Wichtig: Der PCM5102A ist ein reines DAC-Modul — kein Verstärker！**
+>
+> Der PCM5102A wandelt nur digitale Signale in analoge um（Line Level）. **Er hat keinerlei Verstärkungsfähigkeit.**
+>
+> - **Lautsprecher niemals direkt anschließen**：Lautsprecher haben niedrige Impedanz（typisch 4Ω–8Ω）. Der PCM5102A kann nicht genug Strom liefern — direkter Anschluss **zerstört das Modul**.
+> - **Kopfhörer sind ebenfalls riskant**：Die meisten Kopfhörer haben niedrige Impedanz（16Ω–32Ω）. Der Line-Level-Ausgang des PCM5102A ist nicht für Kopfhörer ausgelegt — längere Nutzung kann das Modul beschädigen. Hochimpedance-Kopfhörer（≥250Ω） sind weniger riskant, aber nicht empfohlen.
+> - **Korrekte Vorgehensweise**：Für Lautsprecher ein **Verstärkermodul** zwischen PCM5102A und Lautsprecher schalten（z.B. PAM8403, MAX98357, TPA2016）. Für Testzwecke hochimpedante Kopfhörer verwenden und die Lautstärke niedrig halten.
 
 ### PCM5102A Pin-Funktionen
 
@@ -87,7 +95,7 @@ Dein ESP32-S3 gibt **digitale Audiosignale** aus（I2S-formatierte Nullen und Ei
 | ESP32-S3-Entwicklungsboard | × 1 | Jedes ESP32-S3 DevKit geeignet |
 | PCM5102A-Audiomodul | × 1 | Weit verfügbar, ca. 1–2€ |
 | Jumper-Kabel（Dupont） | Mehrere | Männlich-männlich / männlich-weiblich je nach Board |
-| Kopfhörer oder kleiner Lautsprecher | × 1 | 3.5mm-Kopfhörer oder passiver Lautsprecher |
+| Hochimpedance-Kopfhörer | × 1 | Zum Testen, ≥64Ω empfohlen; niederimpedante Kopfhörer oder Lautsprecher erfordern ein externes Verstärkermodul（z.B. PAM8403） |
 
 ---
 
@@ -158,7 +166,7 @@ void setup() {
 
   // Schritt 3：I2S-Pins und Lautstärke konfigurieren
   audio.setPinout(I2S_BCLK, I2S_LRCK, I2S_DOUT);
-  audio.setVolume(18);  // Lautstärkebereich 0–21, 18 ist ein angenehmer Standard
+  audio.setVolume(12);  // Lautstärkebereich 0–21, bei ca. 10 starten und schrittweise erhöhen, um Kopfhörer/Modul zu schonen
 
   // Schritt 4：Online-MP3 streamen
   audio.connecttohost("https://pixabay.com/music/download/id-219731.mp3");
@@ -179,7 +187,7 @@ void audio_info(const char *info) {
 
 **Code-Erklärung：**
 
-- `audio.setVolume(18)`：Lautstärkebereich 0–21. 18 ist ein guter Standard — nach Bedarf anpassen.
+- `audio.setVolume(12)`：Lautstärkebereich 0–21. Bei ca. 10 starten und schrittweise erhöhen. Zu hohe Lautstärke erhöht den Ausgangsstrom und riskiert eine Beschädigung des Moduls bei Kopfhörerbetrieb.
 - `connecttohost()`：Unterstützt HTTP/HTTPS-Direct-MP3-Links. Bei abgelaufener URL einfach eine andere verwenden.
 - `audio.loop()`：Muss kontinuierlich in `loop()` aufgerufen werden — steuert Audio-Decodierung und -Ausgabe. Nicht entfernen und keine blockierenden Operationen hinzufügen.
 
@@ -273,9 +281,11 @@ Ja. Der ESP32-S3 hat genug Leistung für gleichzeitige I2S-Audioausgabe und SPI-
 
 ------
 
-### Q：Welche Ausgangsschnittstelle hat der PCM5102A？ Kann ich einen Verstärker anschließen？
+### Q：Kann ich Lautsprecher oder Kopfhörer direkt an den PCM5102A-Ausgang anschließen？
 
-Das PCM5102A-Modul bietet normalerweise einen Standard-3.5mm-Stereo-Analogausgang für Kopfhörer oder passive Lautsprecher. Für Verstärker die LINE-OUT-Schnittstelle des Moduls verwenden — der Ausgangspegel ist besser für Verstärkereingänge geeignet und klingt sauberer.
+**Lautsprecher niemals direkt anschließen, Kopfhörer nur mit Vorsicht.** Der PCM5102A ist ein reines DAC-Modul — sein Ausgang ist Line-Level ohne Verstärkung. Direkter Anschluss von Lautsprechern（4Ω–8Ω） führt zu Überstrom und **zerstört das Modul**. Auch niederimpedante Kopfhörer（16Ω–32Ω） können bei längerer Nutzung beschädigt werden.
+
+Für Lautsprecherbetrieb muss ein Verstärkermodul zwischen PCM5102A-Ausgang und Lautsprecher geschaltet werden. Empfohlene Optionen：PAM8403（3W×2, günstig und effektiv）, MAX98357（I2S-Eingang, eingebauter DAC — kann PCM5102A vollständig ersetzen）, TPA2016（2W×2, mit AGC）. Zum Testen hochimpedante Kopfhörer（≥64Ω） verwenden und Lautstärke niedrig halten.
 
 ------
 
