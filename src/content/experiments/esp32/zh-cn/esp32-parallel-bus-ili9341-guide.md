@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "详细介绍如何使用 ESP32 通过 8位并行总线驱动 ILI9341 屏幕，相比 SPI 串行驱动提供极高的刷新率，适合显示动态画面。"
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 本文将详细介绍如何使用 ESP32 通过 **8位并行总线 (8-bit Parallel)** 驱动 ILI9341 屏幕。相比常见的 SPI 串行驱动，并行模式能提供极高的刷新率，非常适合显示动态画面。

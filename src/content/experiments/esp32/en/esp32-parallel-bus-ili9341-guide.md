@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "A detailed guide on using ESP32 to drive ILI9341 display via 8-bit parallel bus, providing extremely high refresh rates compared to SPI serial driving, perfect for displaying dynamic content."
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 This article provides a detailed guide on using ESP32 to drive an ILI9341 display via **8-bit Parallel Bus**. Compared to the common SPI serial driving, parallel mode can provide extremely high refresh rates, making it ideal for displaying dynamic content.

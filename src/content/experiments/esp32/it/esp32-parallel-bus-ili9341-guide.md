@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "Guida dettagliata su come usare l'ESP32 per pilotare uno schermo ILI9341 tramite bus parallelo a 8 bit. Rispetto alla classica connessione SPI seriale, la modalità parallela offre un refresh rate altissimo, perfetto per visualizzare contenuti dinamici."
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 Questo articolo ti spiega nel dettaglio come usare un **ESP32** per pilotare uno schermo **ILI9341** tramite **bus parallelo a 8 bit (8-bit Parallel)**. Rispetto alla classica connessione SPI seriale, la modalità parallela offre un refresh rate nettamente superiore, ideale per visualizzare animazioni o interfacce dinamiche.

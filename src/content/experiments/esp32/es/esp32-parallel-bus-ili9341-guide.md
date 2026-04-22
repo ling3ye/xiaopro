@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "Guia detallada sobre como usar un ESP32 para controlar una pantalla ILI9341 mediante bus paralelo de 8 bits. Comparado con el bus SPI serie, el modo paralelo ofrece una tasa de refresco muy superior, ideal para mostrar imagenes en movimiento."
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 En este articulo te explico en detalle como usar un **ESP32** para controlar una pantalla **ILI9341** mediante un **bus paralelo de 8 bits (8-bit Parallel)**. Comparado con el clasico bus SPI serie, el modo paralelo ofrece una tasa de refresco muy alta, lo que lo hace perfecto para mostrar animaciones o contenido dinamico.

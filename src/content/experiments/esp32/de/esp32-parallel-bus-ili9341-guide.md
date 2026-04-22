@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "Ausfuehrliche Anleitung, wie der ESP32 ein ILI9341 Display ueber den 8-Bit-Parallelbus ansteuert. Gegenueber der SPI-Seriellanbindung bietet der Parallelmodus extrem hohe Bildraten – ideal fuer dynamische Darstellungen."
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 Dieser Artikel zeigt dir im Detail, wie du mit einem ESP32 ein ILI9341 Display ueber den **8-Bit-Parallelbus (8-bit Parallel)** ansteuerst. Im Vergleich zur gaengigen SPI-Schnittstelle liefert der Parallelmodus extrem hohe Bildraten und eignet sich hervorragend fuer dynamische Inhalte.

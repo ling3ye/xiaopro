@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "ESP32を使用して8ビットパラレルバスでILI9341ディスプレイを駆動する方法を詳しく紹介します。SPIシリアル駆動と比較して、非常に高いリフレッシュレートを提供し、動的なコンテンツの表示に最適です。"
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 この記事では、ESP32を使用して**8ビットパラレルバス（8-bit Parallel）**経由でILI9341ディスプレイを駆動する方法を詳しく紹介します。一般的なSPIシリアル駆動と比較して、パラレルモードは非常に高いリフレッシュレートを提供でき、動的なコンテンツの表示に最適です。

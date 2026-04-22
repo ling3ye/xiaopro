@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "詳細介紹如何使用 ESP32 透過 8位並列匯流排驅動 ILI9341 螢幕，相比 SPI 串列驅動提供極高的刷新率，適合顯示動態畫面。"
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 本文將詳細介紹如何使用 ESP32 透過 **8位並列匯流排 (8-bit Parallel)** 驅動 ILI9341 螢幕。相比常見的 SPI 串列驅動，並列模式能提供極高的刷新率，非常適合顯示動態畫面。

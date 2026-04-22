@@ -5,7 +5,7 @@ moduleId: display/tft204-ili9341
 category: esp32
 date: 2026-02-27
 intro: "ESP32를 사용하여 8비트 병렬 버스(8-bit Parallel)로 ILI9341 스크린을 구동하는 방법을 자세히 설명합니다. 일반적인 SPI 직렬 드라이버에 비해 매우 높은 리프레시율을 제공하여 동적인 화면 표시에 적합합니다."
-image: "https://img.lingshunlab.com/image-20260204140130062.png"
+image: "https://img.lingflux.com/2026/04/09744a0e9009ab9ac1938e81cf1e6ac4.png"
 ---
 
 이 문서에서는 ESP32를 사용하여 **8비트 병렬 버스(8-bit Parallel)**로 ILI9341 스크린을 구동하는 방법을 자세히 설명합니다. 일반적인 SPI 직렬 드라이버에 비해 병렬 모드는 매우 높은 리프레시율을 제공하며, 동적인 화면 표시에 매우 적합합니다.
