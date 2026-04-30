@@ -152,6 +152,13 @@ if (pageType === 'category-list' && currentCategory) {
   filteredExperiments = allExperiments;
 }
 
+// 按发布日期降序排序（最新发布在前）
+filteredExperiments.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  return dateB - dateA;
+});
+
 // 计算分页
 const totalItems = filteredExperiments.length;
 totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;

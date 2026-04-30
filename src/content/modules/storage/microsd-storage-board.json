@@ -148,7 +148,7 @@
       "Applicazioni": "Registratori di dati, lettura/scrittura file system (FATFS), espansione archiviazione di massa embedded, lettori portatili, archiviazione fotocamera"
     }
   },
-  "image": "",
+  "image": "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg",
   "keywords": {
     "zh-cn": ["MicroSD模块", "TF卡模块", "SD卡读写", "Waveshare", "SDIO", "SPI存储"],
     "zh-tw": ["MicroSD模組", "TF卡模組", "SD卡讀寫", "Waveshare", "SDIO", "SPI儲存"],
