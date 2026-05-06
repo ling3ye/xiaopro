@@ -157,7 +157,7 @@
       "Temperatura di funzionamento": "-30 ~ 70°C"
     }
   },
-  "image": "",
+  "image": "https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg",
   "keywords": {
     "zh-cn": ["OLED屏幕", "1.3寸OLED", "SH1106", "128x64屏幕", "I2C屏幕", "OLED模块"],
     "zh-tw": ["OLED螢幕", "1.3吋OLED", "SH1106", "128x64螢幕", "I2C螢幕", "OLED模組"],

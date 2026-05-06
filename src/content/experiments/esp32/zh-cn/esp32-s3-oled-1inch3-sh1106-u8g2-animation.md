@@ -1,7 +1,11 @@
-
-
-
-image:"https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg"
+---
+title: "ESP32-S3 + 1.3\" SH1106 OLED 赛博养章鱼｜I2C + U8g2 动画教程"
+boardId: esp32s3
+moduleId: display/oled13-sh1106
+category: esp32
+date: 2026-05-06
+intro: "ESP32-S3 驱动 1.3 寸 SH1106 OLED，用 U8g2 库实现章鱼游泳动画 + 泡泡粒子特效。I2C 接线 4 根，Lissajous 曲线运动算法，附避坑指南。"
+image: "https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg"
 ---
 
 # ESP32-S3 驱动 1.3" SH1106 OLED 完整教程——赛博养章鱼动画（I2C + U8g2）
@@ -41,8 +45,6 @@ image:"https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg"
 
 
 ![ESP32-canva-017-1inch3-oled (1) (1)](https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg)
-
-
 
 
 
