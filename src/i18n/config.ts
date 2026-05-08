@@ -106,6 +106,7 @@ export const ui = {
     'module.category.audio': '音频模块',
     'module.category.power': '电源模块',
     'module.category.storage': '存储模块',
+    'module.category.lighting': '照明模块',
     'module.category.other': '其他',
     // 模块其他文本
     'module.alias': '别名：',
@@ -245,6 +246,7 @@ export const ui = {
     'module.category.audio': '音訊模組',
     'module.category.power': '電源模組',
     'module.category.storage': '儲存模組',
+    'module.category.lighting': '照明模組',
     'module.category.other': '其他',
     // 模組其他文本
     'module.alias': '別名：',
@@ -384,6 +386,7 @@ export const ui = {
     'module.category.audio': 'Audio Module',
     'module.category.power': 'Power Module',
     'module.category.storage': 'Storage Module',
+    'module.category.lighting': 'Lighting Module',
     'module.category.other': 'Other',
     // Module other text
     'module.alias': 'Alias: ',
@@ -523,6 +526,7 @@ export const ui = {
     'module.category.audio': 'オーディオモジュール',
     'module.category.power': '電源モジュール',
     'module.category.storage': 'ストレージモジュール',
+    'module.category.lighting': '照明モジュール',
     'module.category.other': 'その他',
     // モジュールその他テキスト
     'module.alias': 'エイリアス：',
@@ -662,6 +666,7 @@ export const ui = {
     'module.category.audio': '오디오 모듈',
     'module.category.power': '전원 모듈',
     'module.category.storage': '스토리지 모듈',
+    'module.category.lighting': '조명 모듈',
     'module.category.other': '기타',
     // 모듈 기타 텍스트
     'module.alias': '별칭: ',
@@ -801,6 +806,7 @@ export const ui = {
     'module.category.audio': 'Módulo de audio',
     'module.category.power': 'Módulo de alimentación',
     'module.category.storage': 'Módulo de almacenamiento',
+    'module.category.lighting': 'Módulo de iluminación',
     'module.category.other': 'Otros',
     // Otros textos de módulos
     'module.alias': 'Alias: ',
@@ -940,6 +946,7 @@ export const ui = {
     'module.category.audio': 'Audiomodul',
     'module.category.power': 'Strommodul',
     'module.category.storage': 'Speichermodul',
+    'module.category.lighting': 'Beleuchtungsmodul',
     'module.category.other': 'Sonstiges',
     // Weitere Modul-Texte
     'module.alias': 'Alias: ',
@@ -1079,6 +1086,7 @@ export const ui = {
     'module.category.audio': 'Module audio',
     'module.category.power': 'Module d\'alimentation',
     'module.category.storage': 'Module de stockage',
+    'module.category.lighting': 'Module d\'éclairage',
     'module.category.other': 'Autres',
     // Autres textes des modules
     'module.alias': 'Alias : ',
@@ -1218,6 +1226,7 @@ export const ui = {
     'module.category.audio': 'Modulo audio',
     'module.category.power': 'Modulo di alimentazione',
     'module.category.storage': 'Modulo di archiviazione',
+    'module.category.lighting': 'Modulo di illuminazione',
     'module.category.other': 'Altro',
     // Altri testi dei moduli
     'module.alias': 'Alias: ',
