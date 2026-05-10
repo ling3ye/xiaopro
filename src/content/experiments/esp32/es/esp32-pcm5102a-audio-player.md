@@ -221,6 +221,57 @@ Es uno de los temas más discutidos en los proyectos de audio con ESP32. Hay var
 
 Cuando el ESP32 está decodificando MP3 o leyendo de la red/SD, picos repentinos de carga de CPU, buffers demasiado pequeños o velocidad de decodificación insuficiente pueden causar interrupciones breves de datos. Cuando el PCM5102A recibe relojes continuos pero la línea de datos va brevemente a cero, produce chasquidos repetibles.
 
+Esta es la falla más común en los proyectos ESP32 + PCM5102A, causada principalmente porque el **buffer I2S DMA es demasiado pequeño**, lo que hace que la velocidad de decodificación o lectura de datos no pueda seguir el ritmo de salida I2S, produciendo un Buffer Underrun.
+
+#### Comparación de configuración entre versiones nuevas y antiguas（¡Importante！）
+
+**Versión principal actual（V3.x / rama master）：**
+- Ya no usa `i2s_config_t` directamente.
+- Usa definiciones de macros（`#define`）o la estructura `audio.settings`.
+- Algunos usuarios que descargan la versión master pueden encontrar errores de compilación debido a conflictos de macros（`'class Audio' has no member named 'settings'`）.
+
+#### Solución recomendada（compatible con tu versión actual de la librería, compila directamente）
+
+Añade el siguiente código al principio de `setup()`, **antes de `setPinout()`**：
+
+```cpp
+#include "Audio.h"
+
+Audio audio;
+
+void setup() {
+    Serial.begin(115200);
+
+    // ====================== Código de inicialización WiFi / SD ======================
+
+    // ==================== 【CLAVE】Aumentar el buffer DMA I2S ====================
+    #undef DMA_DESC_NUM     // Primero desdefine las macros por defecto de la librería
+    #undef DMA_FRAME_NUM
+    #define DMA_DESC_NUM  16   // Cantidad de buffers（recomendado 12~24）
+    #define DMA_FRAME_NUM 512  // Tramas por buffer（recomendado 256~1024）
+
+    audio.setPinout(I2S_BCLK, I2S_LRCK, I2S_DOUT);
+
+    // Otras configuraciones
+    audio.setVolume(21);
+    // audio.connecttohost(...) o audio.connecttoFS(...)
+}
+```
+
+**Parámetros recomendados（experiencia práctica con PCM5102A）：**
+
+| Escenario                | DMA_DESC_NUM | DMA_FRAME_NUM | Notas                                  |
+|--------------------------|--------------|---------------|----------------------------------------|
+| Recomendación inicial    | 16           | 512           | Mejora notable en la mayoría de casos |
+| Más estable（recomendado）| 20          | 768           | Aún mejor con PSRAM                   |
+| Máxima estabilidad       | 24           | 1024          | Para red inestable o bitrate alto     |
+| Memoria limitada         | 12           | 384           | Para ESP32 normal sin PSRAM          |
+
+**Versión antigua（V2.x y anteriores）：**
+- Usa la estructura tradicional `i2s_config_t`.
+- Los parámetros se llaman `dma_buf_count` y `dma_buf_len`.
+- Normalmente requiere modificar el código fuente de la librería o redefinir la estructura en la inicialización.
+
 Solución：Aumenta `dma_buf_count`（8–16 recomendado）y `dma_buf_len`（256–1024）en `i2s_config`. Si usas `xTaskCreate`, sube la prioridad de la tarea de audio por encima de Wi-Fi y otras tareas en segundo plano.
 
 **Causa 2：Desajuste de frecuencia de muestreo o profundidad de bits**

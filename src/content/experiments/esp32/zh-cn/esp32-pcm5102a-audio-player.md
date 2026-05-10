@@ -223,6 +223,60 @@ void audio_info(const char *info) {
 
 ESP32 在解码 MP3 或从网络/SD 卡读取数据时，若 CPU 负载突然升高、缓冲区过小或解码速度跟不上 I2S 输出速率，就会出现短暂的数据中断。PCM5102A 收到连续时钟但数据线短暂为零时，就会产生可重复的爆音。如果爆音总在歌曲的同一位置出现，基本可以确认是这个原因（高比特率段、复杂帧或特定格式问题导致单帧处理耗时骤增）。
 
+这是 ESP32 + PCM5102A 项目中最常见的故障，主要原因是 **I2S DMA 缓冲区太小**，导致解码或数据读取速度跟不上 I2S 输出速度，产生 Buffer Underrun（数据欠载）。
+
+#### 新旧版本配置方式对比（非常重要！）
+
+
+**当前主流版本（V3.x / master 分支）：**
+- 不再直接使用 `i2s_config_t`。
+- 采用宏定义（`#define`）或 `audio.settings` 结构体。
+- 部分用户下载的 master 版本中，`audio.settings` 可能因宏冲突导致编译错误（`'class Audio' has no member named 'settings'`）。
+
+#### 推荐解决方法（兼容你当前库版本，可直接编译通过）
+
+在 `setup()` 最前面、**`setPinout()` 之前** 加入以下代码：
+
+```cpp
+#include "Audio.h"
+
+Audio audio;
+
+void setup() {
+    Serial.begin(115200);
+    
+    // ====================== WiFi / SD 初始化代码 ======================
+    
+    // ==================== 【关键】增大 I2S DMA 缓冲区 ====================
+    #undef DMA_DESC_NUM     // 先取消库默认的宏定义
+    #undef DMA_FRAME_NUM
+    #define DMA_DESC_NUM  16   // 缓冲区数量（推荐 12~24）
+    #define DMA_FRAME_NUM 512  // 每缓冲区帧数（推荐 256~1024）
+
+    audio.setPinout(I2S_BCLK, I2S_LRCK, I2S_DOUT);
+    
+    // 其他设置
+    audio.setVolume(21);
+    // audio.connecttohost(...) 或 audio.connecttoFS(...)
+}
+```
+
+**推荐参数（PCM5102A 实际经验）：**
+
+| 场景               | DMA_DESC_NUM | DMA_FRAME_NUM | 说明                     |
+|--------------------|--------------|---------------|--------------------------|
+| 起步推荐           | 16           | 512           | 大多数情况已明显改善     |
+| 更稳定（推荐）     | 20           | 768           | 有 PSRAM 时效果更好      |
+| 最高稳定           | 24           | 1024          | 网络不稳或高码率时使用   |
+| 内存紧张           | 12           | 384           | 普通 ESP32 无 PSRAM 时   |
+
+
+
+**旧版本（V2.x 及更早）：**
+- 使用传统的 `i2s_config_t` 结构体。
+- 参数名为 `dma_buf_count` 和 `dma_buf_len`。
+- 通常需要修改库源码或在初始化时重新定义结构体。
+
 解决方法：增大 `i2s_config` 中的 `dma_buf_count`（推荐 8～16）和 `dma_buf_len`（推荐 256～1024）；如果使用 `xTaskCreate` 创建音频任务，将其优先级调高，高于 Wi-Fi 和其他后台任务。使用 ESP32-audioI2S 等库时，检查并调大库内的 buffer size 设置。
 
 **原因二：采样率或位深配置不匹配**
