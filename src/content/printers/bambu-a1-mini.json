@@ -1,0 +1,45 @@
+{
+  "brand": "Bambu Lab",
+  "model": "A1 Mini",
+  "category": "fdm",
+  "image": "https://m.media-amazon.com/images/I/51D9zFABM3L._AC_SL1000_.jpg",
+  "priceRange": "¥2,299",
+  "officialUrl": "https://bambulab.com/en/a1-mini",
+  "affiliateUrl": "https://example.com/aff/bambu-a1-mini",
+  "specs": {
+    "zh-cn": {
+      "成型工艺": "FDM（熔融沉积）",
+      "打印体积": "180 × 180 × 180 mm",
+      "最大打印速度": "500 mm/s",
+      "最大加速度": "10000 mm/s²",
+      "层高范围": "0.02 - 0.28 mm",
+      "喷嘴直径": "0.4 mm（默认）",
+      "喷嘴最高温度": "280°C",
+      "热床最高温度": "80°C",
+      "支持耗材": "PLA / PETG / TPU / PVA",
+      "连接方式": "WiFi / USB / SD卡",
+      "输入成型机": "支持（AMS lite 选配）",
+      "切片软件": "Bambu Studio",
+      "整机重量": "约 4.2 kg"
+    },
+    "en": {
+      "Print Technology": "FDM (Fused Deposition Modeling)",
+      "Build Volume": "180 × 180 × 180 mm",
+      "Max Print Speed": "500 mm/s",
+      "Max Acceleration": "10000 mm/s²",
+      "Layer Height Range": "0.02 - 0.28 mm",
+      "Nozzle Diameter": "0.4 mm (default)",
+      "Max Nozzle Temp": "280°C",
+      "Max Bed Temp": "80°C",
+      "Supported Filaments": "PLA / PETG / TPU / PVA",
+      "Connectivity": "WiFi / USB / SD Card",
+      "Multi-color": "Yes (AMS lite optional)",
+      "Slicer": "Bambu Studio",
+      "Weight": "~4.2 kg"
+    }
+  },
+  "keywords": {
+    "zh-cn": ["3D打印机", "Bambu Lab", "FDM", "高速打印", "入门推荐"],
+    "en": ["3D Printer", "Bambu Lab", "FDM", "Fast Printing", "Beginner Friendly"]
+  }
+}

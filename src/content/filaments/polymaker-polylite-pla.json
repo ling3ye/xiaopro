@@ -1,0 +1,43 @@
+{
+  "brand": "Polymaker",
+  "model": "PolyLite PLA",
+  "category": "pla",
+  "image": "https://3d.nice-cdn.com/upload/image/product/large/default/polymaker-polylite-pla-white-483660-en.jpg",
+  "priceRange": "¥69-89/卷",
+  "officialUrl": "https://polymaker.com/product/polylite-pla",
+  "affiliateUrl": "https://example.com/aff/polymaker-pla",
+  "specs": {
+    "zh-cn": {
+      "材料类型": "PLA（聚乳酸）",
+      "直径": "1.75 mm",
+      "打印温度": "190 - 220°C",
+      "热床温度": "25 - 60°C",
+      "密度": "1.24 g/cm³",
+      "抗拉强度": "46 MPa",
+      "断裂伸长率": "5.2%",
+      "可打印性": "极易打印",
+      "是否易吸湿": "低",
+      "颜色数量": "30+",
+      "卷重": "1 kg",
+      "是否环保": "可生物降解"
+    },
+    "en": {
+      "Material Type": "PLA (Polylactic Acid)",
+      "Diameter": "1.75 mm",
+      "Print Temperature": "190 - 220°C",
+      "Bed Temperature": "25 - 60°C",
+      "Density": "1.24 g/cm³",
+      "Tensile Strength": "46 MPa",
+      "Elongation at Break": "5.2%",
+      "Printability": "Very Easy",
+      "Moisture Sensitivity": "Low",
+      "Available Colors": "30+",
+      "Spool Weight": "1 kg",
+      "Eco-Friendly": "Biodegradable"
+    }
+  },
+  "keywords": {
+    "zh-cn": ["PLA", "Polymaker", "通用耗材", "新手推荐", "环保"],
+    "en": ["PLA", "Polymaker", "General Purpose", "Beginner Friendly", "Eco-Friendly"]
+  }
+}

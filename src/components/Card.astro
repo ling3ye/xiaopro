@@ -31,7 +31,7 @@ import type { SupportedLocale } from '../i18n/config';
 
 // 获取组件属性
 interface Props {
-  type?: 'article' | 'board' | 'module';
+  type?: 'article' | 'board' | 'module' | 'printer' | 'filament' | 'model';
   title: string;
   description?: string;
   image?: string;
@@ -43,6 +43,10 @@ interface Props {
   brand?: string;
   specs?: Record<string, string | number | boolean>;
   locale?: SupportedLocale;
+  affiliateUrl?: string;
+  makerWorldUrl?: string;
+  priceRange?: string;
+  compareId?: string;
 }
 
 const {
@@ -58,6 +62,10 @@ const {
   brand,
   specs,
   locale = 'zh-cn',
+  affiliateUrl,
+  makerWorldUrl,
+  priceRange,
+  compareId,
 } = Astro.props;
 
 // 获取翻译函数
@@ -121,6 +129,9 @@ const wrapperProps = link
     <div class="card__header">
       {brand && (
         <span class="card__brand">{brand}</span>
+      )}
+      {priceRange && (
+        <span class="card__price">{priceRange}</span>
       )}
       {date && (
         <time class="card__date" datetime={date.toISOString()}>
@@ -195,6 +206,37 @@ const wrapperProps = link
               <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
             {t('card.viewModule')}
+          </>
+        )}
+        {type === 'printer' && (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            {t('card.viewPrinter')}
+          </>
+        )}
+        {type === 'filament' && (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="3"/>
+              <line x1="12" y1="2" x2="12" y2="5"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+            </svg>
+            {t('card.viewFilament')}
+          </>
+        )}
+        {type === 'model' && (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+            {t('card.viewModel')}
           </>
         )}
       </span>

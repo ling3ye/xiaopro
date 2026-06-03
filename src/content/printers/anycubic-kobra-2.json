@@ -1,0 +1,45 @@
+{
+  "brand": "Anycubic",
+  "model": "Kobra 2",
+  "category": "fdm",
+  "image": "https://m.media-amazon.com/images/I/71DLNUYdozL._AC_SL1500_.jpg",
+  "priceRange": "¥1,599",
+  "officialUrl": "https://www.anycubic.com/products/kobra-2",
+  "affiliateUrl": "https://example.com/aff/anycubic-kobra-2",
+  "specs": {
+    "zh-cn": {
+      "成型工艺": "FDM（熔融沉积）",
+      "打印体积": "220 × 220 × 250 mm",
+      "最大打印速度": "500 mm/s",
+      "最大加速度": "20000 mm/s²",
+      "层高范围": "0.05 - 0.35 mm",
+      "喷嘴直径": "0.4 mm",
+      "喷嘴最高温度": "260°C",
+      "热床最高温度": "110°C",
+      "支持耗材": "PLA / PETG / ABS / TPU",
+      "连接方式": "WiFi / USB / SD卡",
+      "自动调平": "Anycubic LeviQ 2.0",
+      "切片软件": "Anycubic Slicer / Cura",
+      "整机重量": "约 7.4 kg"
+    },
+    "en": {
+      "Print Technology": "FDM (Fused Deposition Modeling)",
+      "Build Volume": "220 × 220 × 250 mm",
+      "Max Print Speed": "500 mm/s",
+      "Max Acceleration": "20000 mm/s²",
+      "Layer Height Range": "0.05 - 0.35 mm",
+      "Nozzle Diameter": "0.4 mm",
+      "Max Nozzle Temp": "260°C",
+      "Max Bed Temp": "110°C",
+      "Supported Filaments": "PLA / PETG / ABS / TPU",
+      "Connectivity": "WiFi / USB / SD Card",
+      "Auto Leveling": "Anycubic LeviQ 2.0",
+      "Slicer": "Anycubic Slicer / Cura",
+      "Weight": "~7.4 kg"
+    }
+  },
+  "keywords": {
+    "zh-cn": ["3D打印机", "Anycubic", "FDM", "高速打印", "自动调平"],
+    "en": ["3D Printer", "Anycubic", "FDM", "Fast Printing", "Auto Leveling"]
+  }
+}

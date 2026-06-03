@@ -1,0 +1,188 @@
+---
+/**
+ * 打印机参数对比 - 独立页面
+ *
+ * 从 URL 参数读取选中的打印机 ID，展示完整对比表格
+ * URL 格式: /printing/printers/compare?item1=xxx&item2=xxx&item3=xxx
+ *
+ * @route /[lang]/printing/printers/compare
+ */
+
+import Layout from '../../../../layouts/Layout.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { languages } from '../../../../i18n/config';
+import type { SupportedLocale } from '../../../../i18n/config';
+
+export async function getStaticPaths() {
+  return Object.keys(languages).map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+
+const allPrinters = await getCollection('printers');
+
+const categoryNames: Record<string, string> = {
+  fdm: t('printer.category.fdm'),
+  resin: t('printer.category.resin'),
+  sla: t('printer.category.sla'),
+};
+
+const getLocalizedSpecs = (specs: any) => {
+  if (!specs) return {};
+  if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
+    return specs[currentLocale] || specs['zh-cn'] || specs['en'] || {};
+  }
+  return specs;
+};
+
+// All printer data for client-side lookup
+const allData = JSON.stringify(Object.fromEntries(
+  allPrinters.map(p => [p.id, {
+    name: `${p.data.brand} ${p.data.model}`,
+    brand: p.data.brand,
+    model: p.data.model,
+    category: categoryNames[p.data.category] || p.data.category,
+    priceRange: p.data.priceRange || '',
+    image: p.data.image || '',
+    link: getLocalizedPath(`/printing/printers/${p.id}`, currentLocale),
+    specs: getLocalizedSpecs(p.data.specs),
+  }])
+));
+
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.printing'), href: getLocalizedPath('/printing', currentLocale) },
+  { label: t('printing.printers'), href: getLocalizedPath('/printing/printers', currentLocale) },
+  { label: t('compare.title') },
+];
+---
+
+<Layout
+  title={`${t('compare.title')} - ${t('printing.printers')}`}
+  description={t('printer.listDescription')}
+  lang={lang}
+  currentPath={`/${lang}/printing/printers/compare`}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  <section class="compare-page">
+    <div class="container">
+      <header class="compare-header">
+        <h1 class="compare-title">{t('compare.title')} - {t('printing.printers')}</h1>
+        <a href={getLocalizedPath('/printing/printers', currentLocale)} class="compare-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+          </svg>
+          {t('printer.backToList')}
+        </a>
+      </header>
+
+      <div id="compare-content" class="compare-content">
+        <p class="compare-empty">{t('compare.selectHint')}</p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ allData }}>
+  function renderCompare() {
+    const params = new URLSearchParams(window.location.search);
+    const ids = [];
+    for (const [key, value] of params) {
+      if (key.startsWith('item') && value) ids.push(decodeURIComponent(value));
+    }
+
+    const container = document.getElementById('compare-content');
+    if (!container || ids.length < 2) return;
+
+    const data = typeof allData === 'string' ? JSON.parse(allData) : allData;
+    const items = ids.map(id => data[id]).filter(Boolean);
+    if (items.length < 2) {
+      container.innerHTML = '<p class="compare-empty">未找到选中的产品数据，请返回列表页重新选择。</p>';
+      return;
+    }
+
+    // Collect all spec keys
+    const allKeys = new Set();
+    items.forEach(item => { if (item.specs) Object.keys(item.specs).forEach(k => allKeys.add(k)); });
+
+    let html = '<div class="compare-cards">';
+    items.forEach(item => {
+      html += `
+        <div class="compare-card">
+          ${item.image ? `<img src="${item.image}" alt="${item.name}" class="compare-card__image" />` : '<div class="compare-card__placeholder">🖨️</div>'}
+          <div class="compare-card__brand">${item.brand}</div>
+          <h3 class="compare-card__model">${item.model}</h3>
+          ${item.priceRange ? `<div class="compare-card__price">${item.priceRange}</div>` : ''}
+          <div class="compare-card__category">${item.category}</div>
+          <a href="${item.link}" class="compare-card__link">查看详情 →</a>
+        </div>`;
+    });
+    html += '</div>';
+
+    // Spec comparison table
+    html += '<div class="compare-table-wrapper"><table class="compare-table">';
+    html += '<thead><tr><th class="compare-table__label-col">参数</th>';
+    items.forEach(item => { html += `<th>${item.model}</th>`; });
+    html += '</tr></thead><tbody>';
+
+    allKeys.forEach(key => {
+      const values = items.map(item => item.specs?.[key] || '—');
+      const allSame = values.length > 1 && values.every(v => v === values[0]);
+      html += `<tr class="${allSame ? 'compare-table__row--same' : 'compare-table__row--diff'}">`;
+      html += `<td class="compare-table__label">${key}</td>`;
+      values.forEach(v => {
+        html += `<td class="compare-table__value ${allSame ? '' : 'compare-table__value--highlight'}">${v}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderCompare);
+  } else {
+    renderCompare();
+  }
+</script>
+
+<style>
+  .compare-page { padding: var(--space-3xl) 0; }
+  .compare-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2xl); flex-wrap: wrap; gap: var(--space-md); }
+  .compare-title { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--color-text-primary); }
+  .compare-back { display: inline-flex; align-items: center; gap: var(--space-xs); padding: 8px 16px; background: var(--color-bg-tertiary); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-sm); transition: all var(--transition-fast); }
+  .compare-back:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  .compare-back svg { width: 16px; height: 16px; }
+
+  .compare-content { min-height: 200px; }
+  .compare-empty { text-align: center; color: var(--color-text-tertiary); padding: var(--space-5xl, 128px) 0; font-size: var(--text-lg); }
+
+  .compare-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-3xl); }
+  .compare-card { text-align: center; padding: var(--space-xl); background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+  .compare-card__image { width: 120px; height: 120px; object-fit: contain; margin: 0 auto var(--space-md); }
+  .compare-card__placeholder { font-size: 3rem; margin-bottom: var(--space-md); }
+  .compare-card__brand { font-size: var(--text-xs); color: var(--color-primary); text-transform: uppercase; font-weight: 600; }
+  .compare-card__model { font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); margin: var(--space-xs) 0; }
+  .compare-card__price { font-size: var(--text-xl); font-weight: 700; color: var(--color-warning); margin-bottom: var(--space-xs); }
+  .compare-card__category { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-bottom: var(--space-md); }
+  .compare-card__link { font-size: var(--text-sm); color: var(--color-primary); text-decoration: none; }
+  .compare-card__link:hover { text-decoration: underline; }
+
+  .compare-table-wrapper { overflow-x: auto; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .compare-table th, .compare-table td { padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-border); text-align: left; }
+  .compare-table th { background: var(--color-bg-tertiary); font-weight: 600; color: var(--color-text-primary); }
+  .compare-table__label-col { width: 160px; min-width: 120px; }
+  .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: nowrap; }
+  .compare-table__value { color: var(--color-text-primary); }
+  .compare-table__value--highlight { color: var(--color-primary); font-weight: 600; }
+  .compare-table__row--diff { background: rgba(0, 212, 255, 0.05); }
+</style>

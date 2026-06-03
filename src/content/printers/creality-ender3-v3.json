@@ -1,0 +1,45 @@
+{
+  "brand": "Creality",
+  "model": "Ender-3 V3 SE",
+  "category": "fdm",
+  "image": "https://m.media-amazon.com/images/I/61CLglMYH3L._AC_SL1500_.jpg",
+  "priceRange": "¥1,099",
+  "officialUrl": "https://www.creality.com/products/ender-3-v3-se",
+  "affiliateUrl": "https://example.com/aff/creality-ender3-v3",
+  "specs": {
+    "zh-cn": {
+      "成型工艺": "FDM（熔融沉积）",
+      "打印体积": "220 × 220 × 250 mm",
+      "最大打印速度": "250 mm/s",
+      "最大加速度": "2500 mm/s²",
+      "层高范围": "0.1 - 0.35 mm",
+      "喷嘴直径": "0.4 mm",
+      "喷嘴最高温度": "260°C",
+      "热床最高温度": "100°C",
+      "支持耗材": "PLA / PETG / TPU",
+      "连接方式": "USB / SD卡",
+      "自动调平": "CR Touch",
+      "切片软件": "Creality Print / Cura",
+      "整机重量": "约 7.58 kg"
+    },
+    "en": {
+      "Print Technology": "FDM (Fused Deposition Modeling)",
+      "Build Volume": "220 × 220 × 250 mm",
+      "Max Print Speed": "250 mm/s",
+      "Max Acceleration": "2500 mm/s²",
+      "Layer Height Range": "0.1 - 0.35 mm",
+      "Nozzle Diameter": "0.4 mm",
+      "Max Nozzle Temp": "260°C",
+      "Max Bed Temp": "100°C",
+      "Supported Filaments": "PLA / PETG / TPU",
+      "Connectivity": "USB / SD Card",
+      "Auto Leveling": "CR Touch",
+      "Slicer": "Creality Print / Cura",
+      "Weight": "~7.58 kg"
+    }
+  },
+  "keywords": {
+    "zh-cn": ["3D打印机", "Creality", "FDM", "性价比", "创客入门"],
+    "en": ["3D Printer", "Creality", "FDM", "Budget Friendly", "Maker Starter"]
+  }
+}

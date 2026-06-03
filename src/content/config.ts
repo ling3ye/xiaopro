@@ -154,7 +154,117 @@ const solutions = defineCollection({
   }),
 });
 
-// 6. 定义 Articles (博客文章) 集合 - 多维正交元数据法
+// 7. 定义 Printers (3D打印机) 集合
+const printers = defineCollection({
+  type: 'data',
+  schema: z.object({
+    brand: z.string(),
+    model: z.string(),
+    category: z.enum(['fdm', 'resin', 'sla']),
+    specs: z.union([
+      z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+      z.object({
+        'zh-cn': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+        'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'en': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ja': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ko': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'es': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'de': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'fr': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'it': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+      })
+    ]).optional(),
+    keywords: z.union([
+      z.array(z.string()),
+      z.object({
+        'zh-cn': z.array(z.string()),
+        'zh-tw': z.array(z.string()).optional(),
+        'en': z.array(z.string()).optional(),
+        'ja': z.array(z.string()).optional(),
+        'ko': z.array(z.string()).optional(),
+        'es': z.array(z.string()).optional(),
+        'de': z.array(z.string()).optional(),
+        'fr': z.array(z.string()).optional(),
+        'it': z.array(z.string()).optional(),
+      })
+    ]).optional(),
+    officialUrl: z.string().url().optional(),
+    affiliateUrl: z.string().url().optional(),
+    image: z.string().optional(),
+    priceRange: z.string().optional(),
+  }),
+});
+
+// 8. 定义 Filaments (3D打印耗材) 集合
+const filaments = defineCollection({
+  type: 'data',
+  schema: z.object({
+    brand: z.string().optional(),
+    model: z.string(),
+    category: z.enum(['pla', 'petg', 'abs', 'tpu', 'nylon', 'pc', 'asa', 'other']),
+    specs: z.union([
+      z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+      z.object({
+        'zh-cn': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+        'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'en': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ja': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'ko': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'es': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'de': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'fr': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+        'it': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+      })
+    ]).optional(),
+    keywords: z.union([
+      z.array(z.string()),
+      z.object({
+        'zh-cn': z.array(z.string()),
+        'zh-tw': z.array(z.string()).optional(),
+        'en': z.array(z.string()).optional(),
+        'ja': z.array(z.string()).optional(),
+        'ko': z.array(z.string()).optional(),
+        'es': z.array(z.string()).optional(),
+        'de': z.array(z.string()).optional(),
+        'fr': z.array(z.string()).optional(),
+        'it': z.array(z.string()).optional(),
+      })
+    ]).optional(),
+    officialUrl: z.string().url().optional(),
+    affiliateUrl: z.string().url().optional(),
+    datasheet: z.string().url().optional(),
+    image: z.string().optional(),
+    priceRange: z.string().optional(),
+  }),
+});
+
+// 9. 定义 Models (3D模型) 集合
+const models = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    category: z.enum(['utility', 'electronics', 'home', 'toy', 'tool', 'other']).optional(),
+    makerWorldUrl: z.string().url().optional(),
+    images: z.array(z.string()).optional(),
+    relatedSolutions: z.array(reference('solutions')).optional(),
+    relatedPrinters: z.array(reference('printers')).optional(),
+    relatedFilaments: z.array(reference('filaments')).optional(),
+    printSettings: z.object({
+      infill: z.string().optional(),
+      supports: z.string().optional(),
+      material: z.string().optional(),
+      estimatedTime: z.string().optional(),
+      layerHeight: z.string().optional(),
+    }).optional(),
+    date: z.date().optional(),
+    image: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+
+// 10. 定义 Articles (博客文章) 集合 - 多维正交元数据法
 const articles = defineCollection({
   type: 'content',
   schema: z.object({
@@ -175,7 +285,7 @@ const articles = defineCollection({
   }),
 });
 
-// 7. 导出集合注册
+// 11. 导出集合注册
 export const collections = {
   'boards': boards,
   'modules': modules,
@@ -183,5 +293,8 @@ export const collections = {
   'moduleDocs': moduleDocs,
   'experiments': experiments,
   'solutions': solutions,
+  'printers': printers,
+  'filaments': filaments,
+  'models': models,
   'articles': articles,
 };

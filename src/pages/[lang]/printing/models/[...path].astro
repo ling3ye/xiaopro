@@ -1,0 +1,400 @@
+---
+/**
+ * 3D模型 - 列表页和详情页
+ *
+ * 展示自设计的3D模型，支持 MakerWorld 下载链接
+ * 支持关联现有 solutions
+ *
+ * @route /[lang]/printing/models/[...path]
+ */
+
+import Layout from '../../../../layouts/Layout.astro';
+import Card from '../../../../components/Card.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import AffiliateLink from '../../../../components/AffiliateLink.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { languages } from '../../../../i18n/config';
+import type { SupportedLocale } from '../../../../i18n/config';
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+
+  for (const lang of Object.keys(languages)) {
+    paths.push({ params: { lang, path: undefined } });
+    const models = await getCollection('models', ({ id }) => id.startsWith(`${lang}/`));
+    models.forEach((model) => {
+      const slug = model.id.split('/').pop()?.replace('.md', '') || '';
+      paths.push({ params: { lang, path: slug } });
+    });
+  }
+  return paths;
+}
+
+const { lang, path: slug } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+const isListPage = !slug;
+
+const allModels = await getCollection('models', ({ id }) => id.startsWith(`${lang}/`));
+
+// Detail page data
+let model: any = null;
+let relatedSolutions: any[] = [];
+let relatedPrinters: any[] = [];
+let relatedFilaments: any[] = [];
+
+if (!isListPage) {
+  const entry = await getEntry('models', `${lang}/${slug}`);
+  if (entry) {
+    model = entry;
+
+    // Resolve related solutions
+    if ('relatedSolutions' in model.data && Array.isArray(model.data.relatedSolutions)) {
+      relatedSolutions = await Promise.all(
+        model.data.relatedSolutions.map(async (ref: any) => {
+          const solId = ref.id || String(ref);
+          return getEntry('solutions', solId);
+        })
+      );
+      relatedSolutions = relatedSolutions.filter(Boolean);
+    }
+
+    // Resolve related printers
+    if ('relatedPrinters' in model.data && Array.isArray(model.data.relatedPrinters)) {
+      relatedPrinters = await Promise.all(
+        model.data.relatedPrinters.map(async (ref: any) => {
+          const pId = ref.id || String(ref);
+          return getEntry('printers', pId);
+        })
+      );
+      relatedPrinters = relatedPrinters.filter(Boolean);
+    }
+
+    // Resolve related filaments
+    if ('relatedFilaments' in model.data && Array.isArray(model.data.relatedFilaments)) {
+      relatedFilaments = await Promise.all(
+        model.data.relatedFilaments.map(async (ref: any) => {
+          const fId = ref.id || String(ref);
+          return getEntry('filaments', fId);
+        })
+      );
+      relatedFilaments = relatedFilaments.filter(Boolean);
+    }
+  }
+}
+
+// Category config
+const categoryNames: Record<string, string> = {
+  utility: t('model.category.utility'),
+  electronics: t('model.category.electronics'),
+  home: t('model.category.home'),
+  toy: t('model.category.toy'),
+  tool: t('model.category.tool'),
+  other: t('model.category.other'),
+};
+
+// Group models by category
+const modelCategories = ['utility', 'electronics', 'home', 'toy', 'tool', 'other'] as const;
+const modelsByCategory: Record<string, typeof allModels> = {};
+modelCategories.forEach(cat => {
+  modelsByCategory[cat] = allModels.filter(m => (m.data.category || 'other') === cat);
+});
+
+// Breadcrumb
+const breadcrumbItems: any[] = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.printing'), href: getLocalizedPath('/printing', currentLocale) },
+  { label: t('printing.models'), href: getLocalizedPath('/printing/models', currentLocale) },
+];
+if (!isListPage && model) {
+  breadcrumbItems.push({ label: model.data.title, current: true });
+}
+
+// Structured data
+let structuredData: any = null;
+if (!isListPage && model) {
+  structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: model.data.title,
+    description: model.data.description || '',
+    image: model.data.image,
+  };
+}
+
+const pageDescription = !isListPage && model
+  ? model.data.description || t('model.listDescription')
+  : t('model.listDescription');
+---
+
+<Layout
+  title={isListPage ? `${t('printing.models')} - ${t('printing.title')}` : model?.data.title}
+  description={pageDescription}
+  lang={lang}
+  currentPath={`/${lang}/printing/models/${slug || ''}`}
+  image={!isListPage && model?.data.image ? model.data.image : undefined}
+  structuredData={structuredData}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  {isListPage && (
+    <section class="category-page">
+      <div class="container">
+        <header class="category-header">
+          <h1 class="category-title">{t('printing.models')}</h1>
+          <p class="category-description">{t('model.listDescription')}</p>
+          <div class="category-stats">
+            <span class="stat-item">
+              <span class="stat-value">{allModels.length}</span>
+              <span class="stat-label">{t('printing.models')}</span>
+            </span>
+          </div>
+        </header>
+
+        {modelCategories.map(cat => modelsByCategory[cat].length > 0 && (
+          <section class="category-section" id={cat}>
+            <div class="category-section-header">
+              <h2 class="category-section-title">{categoryNames[cat] || cat}</h2>
+              <span class="category-count">{modelsByCategory[cat].length}</span>
+            </div>
+            <div class="model-grid">
+              {modelsByCategory[cat].map(m => {
+                const mSlug = m.id.split('/').pop()?.replace('.md', '') || '';
+                return (
+                  <Card
+                    type="model"
+                    title={m.data.title}
+                    description={m.data.description}
+                    link={getLocalizedPath(`/printing/models/${mSlug}`, currentLocale)}
+                    image={m.data.image}
+                    tags={m.data.tags}
+                    date={m.data.date}
+                    locale={currentLocale}
+                  />
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {!isListPage && model && (
+    <section class="model-detail">
+      <div class="container model-layout">
+        <main class="model-main">
+          <header class="model-header">
+            {model.data.category && (
+              <span class="model-category-badge">{categoryNames[model.data.category] || model.data.category}</span>
+            )}
+            <h1 class="model-title">{model.data.title}</h1>
+            {model.data.description && (
+              <p class="model-description">{model.data.description}</p>
+            )}
+          </header>
+
+          <!-- MakerWorld download button (prominent) -->
+          {model.data.makerWorldUrl && (
+            <div class="model-download">
+              <AffiliateLink url={model.data.makerWorldUrl} label={t('model.makerWorld')} type="makerworld" variant="button" locale={currentLocale} />
+              <span class="model-download-tip">{t('model.makerWorldTip')}</span>
+            </div>
+          )}
+
+          <!-- Print settings -->
+          {model.data.printSettings && (
+            <section class="model-section">
+              <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                {t('model.printSettings')}
+              </h2>
+              <div class="settings-grid">
+                {model.data.printSettings.material && (
+                  <div class="setting-item">
+                    <span class="setting-key">{t('model.material')}</span>
+                    <span class="setting-value">{model.data.printSettings.material}</span>
+                  </div>
+                )}
+                {model.data.printSettings.infill && (
+                  <div class="setting-item">
+                    <span class="setting-key">{t('model.infill')}</span>
+                    <span class="setting-value">{model.data.printSettings.infill}</span>
+                  </div>
+                )}
+                {model.data.printSettings.supports && (
+                  <div class="setting-item">
+                    <span class="setting-key">{t('model.supports')}</span>
+                    <span class="setting-value">{model.data.printSettings.supports}</span>
+                  </div>
+                )}
+                {model.data.printSettings.layerHeight && (
+                  <div class="setting-item">
+                    <span class="setting-key">{t('model.layerHeight')}</span>
+                    <span class="setting-value">{model.data.printSettings.layerHeight}</span>
+                  </div>
+                )}
+                {model.data.printSettings.estimatedTime && (
+                  <div class="setting-item">
+                    <span class="setting-key">{t('model.estimatedTime')}</span>
+                    <span class="setting-value">{model.data.printSettings.estimatedTime}</span>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          <!-- Model content -->
+          <div class="model-content prose" set:html={model.rendered?.html} />
+        </main>
+
+        <aside class="model-sidebar">
+          <!-- Related solutions -->
+          {relatedSolutions.length > 0 && (
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">
+                {t('model.relatedSolutions')}
+                <span class="count-badge">{relatedSolutions.length}</span>
+              </h3>
+              <div class="related-list">
+                {relatedSolutions.map((sol: any) => (
+                  <a href={getLocalizedPath(`/solutions/${sol.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)} class="related-item">
+                    <span class="related-title">{sol.data.title}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Recommended printers -->
+          {relatedPrinters.length > 0 && (
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">{t('model.relatedPrinters')}</h3>
+              <div class="hardware-list">
+                {relatedPrinters.map((p: any) => (
+                  <a href={getLocalizedPath(`/printing/printers/${p.id}`, currentLocale)} class="hardware-card">
+                    <div class="hardware-info">
+                      <span class="hardware-brand">{p.data.brand}</span>
+                      <span class="hardware-model">{p.data.model}</span>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Recommended filaments -->
+          {relatedFilaments.length > 0 && (
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">{t('model.relatedFilaments')}</h3>
+              <div class="hardware-list">
+                {relatedFilaments.map((f: any) => (
+                  <a href={getLocalizedPath(`/printing/filaments/${f.id}`, currentLocale)} class="hardware-card">
+                    <div class="hardware-info">
+                      <span class="hardware-brand">{f.data.brand || ''}</span>
+                      <span class="hardware-model">{f.data.model}</span>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+    </section>
+  )}
+
+  {!isListPage && !model && (
+    <section class="not-found">
+      <div class="container">
+        <h1>{t('model.notFound')}</h1>
+        <a href={getLocalizedPath('/printing/models', currentLocale)} class="btn">{t('model.backToList')}</a>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .category-page { padding: var(--space-3xl) 0; }
+  .category-header { text-align: center; margin-bottom: var(--space-3xl); }
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-warning) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .category-description { font-size: var(--text-lg); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto var(--space-xl); }
+  .category-stats { display: flex; justify-content: center; gap: var(--space-lg); }
+  .stat-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
+  .stat-value { font-size: var(--text-2xl); font-weight: 700; color: var(--color-warning); }
+  .stat-label { font-size: var(--text-sm); color: var(--color-text-tertiary); }
+
+  .category-section { margin-bottom: var(--space-3xl); }
+  .category-section-header { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); }
+  .category-section-title { font-size: var(--text-xl); font-weight: 600; color: var(--color-text-primary); }
+  .category-count { margin-left: auto; padding: 4px 12px; background: var(--color-bg-tertiary); border-radius: var(--radius-lg); color: var(--color-text-tertiary); font-size: var(--text-sm); }
+  .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-lg); }
+
+  .model-detail { padding: var(--space-3xl) 0; }
+  .model-layout { display: grid; grid-template-columns: 1fr; gap: var(--space-3xl); }
+  .model-header { margin-bottom: var(--space-2xl); }
+  .model-category-badge { display: inline-block; padding: 4px 12px; background: rgba(255, 170, 0, 0.15); color: var(--color-warning); border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600; margin-bottom: var(--space-md); }
+  .model-title { font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 700; margin-bottom: var(--space-md); color: var(--color-text-primary); }
+  .model-description { font-size: var(--text-lg); color: var(--color-text-secondary); line-height: 1.6; }
+
+  .model-download { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-2xl); padding: var(--space-lg); background: rgba(0, 174, 66, 0.1); border: 1px solid rgba(0, 174, 66, 0.3); border-radius: var(--radius-lg); }
+  .model-download-tip { font-size: var(--text-sm); color: var(--color-text-tertiary); }
+
+  .model-section { margin-bottom: var(--space-2xl); }
+  .section-title { font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-lg); color: var(--color-text-primary); display: flex; align-items: center; gap: var(--space-sm); }
+  .section-title svg { width: 20px; height: 20px; color: var(--color-primary); }
+
+  .settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-md); }
+  .setting-item { display: flex; flex-direction: column; gap: 4px; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md); }
+  .setting-key { font-size: var(--text-xs); color: var(--color-text-tertiary); text-transform: uppercase; }
+  .setting-value { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-primary); }
+
+  .model-content { padding: var(--space-xl) 0; border-top: 1px solid var(--color-border); max-width: 100%; }
+  @media (min-width: 768px) { .model-content { max-width: 700px; } }
+  @media (min-width: 1200px) { .model-content { max-width: 800px; } }
+  .model-content :global(h2) { font-size: var(--text-xl); font-weight: 600; margin-top: var(--space-2xl); margin-bottom: var(--space-md); padding-bottom: var(--space-sm); border-bottom: 2px solid var(--color-warning); }
+  .model-content :global(h3) { font-size: var(--text-lg); font-weight: 600; margin-top: var(--space-xl); margin-bottom: var(--space-sm); }
+  .model-content :global(p) { margin-bottom: var(--space-md); line-height: 1.8; }
+  .model-content :global(ul) { margin-bottom: var(--space-md); padding-left: var(--space-lg); }
+  .model-content :global(li) { margin-bottom: var(--space-xs); line-height: 1.6; }
+  .model-content :global(strong) { color: var(--color-primary); font-weight: 600; }
+
+  .model-sidebar { display: flex; flex-direction: column; gap: var(--space-xl); }
+  .sidebar-section { padding: var(--space-md); background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+  .sidebar-title { display: flex; align-items: center; gap: var(--space-sm); font-size: var(--text-base); font-weight: 600; margin-bottom: var(--space-md); color: var(--color-text-primary); }
+  .count-badge { margin-left: auto; padding: 2px 8px; background: var(--color-primary); color: white; border-radius: var(--radius-sm); font-size: var(--text-xs); }
+  .related-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .related-item { display: block; padding: var(--space-sm); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast); }
+  .related-item:hover { background: var(--color-bg-tertiary); }
+  .related-title { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .related-item:hover .related-title { color: var(--color-warning); }
+
+  .hardware-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .hardware-card { display: flex; align-items: center; justify-content: space-between; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast); }
+  .hardware-card:hover { background: var(--color-bg-elevated); transform: translateX(4px); }
+  .hardware-info { display: flex; flex-direction: column; gap: 2px; }
+  .hardware-brand { font-size: var(--text-xs); color: var(--color-primary); }
+  .hardware-model { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-primary); }
+  .hardware-card svg { width: 16px; height: 16px; color: var(--color-text-tertiary); }
+
+  .not-found { padding: var(--space-5xl, 128px) 0; text-align: center; }
+  .not-found h1 { font-size: var(--text-3xl); margin-bottom: var(--space-xl); color: var(--color-text-secondary); }
+  .btn { display: inline-block; padding: 12px 24px; background: var(--color-warning); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 500; transition: all var(--transition-fast); }
+  .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  @media (min-width: 1024px) {
+    .model-layout { grid-template-columns: 1fr 320px; }
+    .model-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-lg)); }
+  }
+</style>

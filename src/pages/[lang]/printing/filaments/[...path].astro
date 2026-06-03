@@ -1,0 +1,375 @@
+---
+/**
+ * 3D打印耗材 - 列表页和详情页
+ *
+ * 展示所有3D打印耗材产品信息，支持参数对比
+ * 支持多语言路由
+ *
+ * @route /[lang]/printing/filaments/[...path]
+ */
+
+import Layout from '../../../../layouts/Layout.astro';
+import Card from '../../../../components/Card.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import CompareWidget from '../../../../components/CompareWidget.astro';
+import AffiliateLink from '../../../../components/AffiliateLink.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { languages } from '../../../../i18n/config';
+import type { SupportedLocale } from '../../../../i18n/config';
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+  const filaments = await getCollection('filaments');
+
+  for (const lang of Object.keys(languages)) {
+    paths.push({ params: { lang, path: undefined } });
+    filaments.forEach((filament) => {
+      paths.push({ params: { lang, path: filament.id } });
+    });
+  }
+  return paths;
+}
+
+const { lang, path: id } = Astro.params;
+const currentLocale: SupportedLocale = lang as SupportedLocale;
+const t = useTranslations(currentLocale);
+const isListPage = !id;
+
+const allFilaments = await getCollection('filaments');
+
+let filament: any = null;
+let relatedModels: any[] = [];
+
+if (!isListPage) {
+  filament = await getEntry('filaments', id);
+  if (filament) {
+    relatedModels = await getCollection('models', (entry) => {
+      return 'relatedFilaments' in entry.data &&
+        Array.isArray(entry.data.relatedFilaments) &&
+        entry.data.relatedFilaments.some((ref: any) => (ref.id || String(ref)) === id) &&
+        entry.id.startsWith(`${lang}/`);
+    });
+  }
+}
+
+// Group by category
+const categories = ['pla', 'petg', 'abs', 'tpu', 'nylon', 'pc', 'asa', 'other'] as const;
+const filamentsByCategory: Record<string, typeof allFilaments> = {};
+categories.forEach(cat => {
+  filamentsByCategory[cat] = allFilaments.filter(f => f.data.category === cat);
+});
+
+const categoryNames: Record<string, string> = {
+  pla: t('filament.category.pla'),
+  petg: t('filament.category.petg'),
+  abs: t('filament.category.abs'),
+  tpu: t('filament.category.tpu'),
+  nylon: t('filament.category.nylon'),
+  pc: t('filament.category.pc'),
+  asa: t('filament.category.asa'),
+  other: t('filament.category.other'),
+};
+
+const categoryIcons: Record<string, string> = {
+  pla: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>`,
+  petg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>`,
+  abs: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>`,
+  tpu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12h8"/></svg>`,
+  nylon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+  pc: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  asa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>`,
+  other: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+};
+
+const getLocalizedSpecs = (specs: any) => {
+  if (!specs) return {};
+  if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
+    return specs[currentLocale] || specs['zh-cn'] || specs['en'] || {};
+  }
+  return specs;
+};
+
+const breadcrumbItems: any[] = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.printing'), href: getLocalizedPath('/printing', currentLocale) },
+  { label: t('printing.filaments'), href: getLocalizedPath('/printing/filaments', currentLocale) },
+];
+if (!isListPage && filament) {
+  breadcrumbItems.push({ label: filament.data.model, current: true });
+}
+
+const specsJson = isListPage
+  ? JSON.stringify(Object.fromEntries(allFilaments.map(f => [f.id, getLocalizedSpecs(f.data.specs)])))
+  : '{}';
+
+const pageDescription = !isListPage && filament
+  ? (() => { const s = getLocalizedSpecs(filament.data.specs); return Object.entries(s).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', '); })()
+  : t('filament.listDescription');
+---
+
+<Layout
+  title={isListPage ? `${t('printing.filaments')} - ${t('printing.title')}` : filament?.data.model}
+  description={pageDescription}
+  lang={lang}
+  currentPath={`/${lang}/printing/filaments/${id || ''}`}
+>
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+
+  {isListPage && (
+    <section class="category-page">
+      <div class="container">
+        <header class="category-header">
+          <h1 class="category-title">{t('printing.filaments')}</h1>
+          <p class="category-description">{t('filament.listDescription')}</p>
+          <div class="category-stats">
+            <span class="stat-item">
+              <span class="stat-value">{allFilaments.length}</span>
+              <span class="stat-label">{t('printing.filaments')}</span>
+            </span>
+          </div>
+        </header>
+
+        {categories.map(cat => filamentsByCategory[cat].length > 0 && (
+          <section class="category-section" id={cat}>
+            <div class="category-section-header">
+              <span class="category-icon" set:html={categoryIcons[cat]} />
+              <h2 class="category-section-title">{categoryNames[cat] || cat}</h2>
+              <span class="category-count">{filamentsByCategory[cat].length}</span>
+            </div>
+            <div class="filament-grid">
+              {filamentsByCategory[cat].map(f => {
+                const localizedSpecs = getLocalizedSpecs(f.data.specs);
+                return (
+                  <div class="filament-card-wrapper" data-compare-id={f.id}>
+                    <label class="compare-checkbox-wrapper">
+                      <input type="checkbox" class="compare-checkbox" data-compare-id={f.id} />
+                      <span class="compare-checkbox-label">{t('compare.addToCompare')}</span>
+                    </label>
+                    <Card
+                      type="filament"
+                      title={f.data.model}
+                      description={f.data.brand ? `${f.data.brand} - ${categoryNames[cat]}` : categoryNames[cat]}
+                      link={getLocalizedPath(`/printing/filaments/${f.id}`, currentLocale)}
+                      image={f.data.image}
+                      brand={f.data.brand}
+                      specs={localizedSpecs}
+                      priceRange={f.data.priceRange}
+                      locale={currentLocale}
+                    />
+                    <span class="compare-item-name" style="display:none">{f.data.brand || ''} {f.data.model}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {!isListPage && filament && (
+    <section class="filament-detail">
+      <div class="container">
+        <header class="filament-header">
+          <div class="filament-category">
+            <span class="category-icon small" set:html={categoryIcons[filament.data.category]} />
+            <span class="category-name">{categoryNames[filament.data.category]}</span>
+          </div>
+          {filament.data.brand && <div class="filament-brand">{filament.data.brand}</div>}
+          <h1 class="filament-title">{filament.data.model}</h1>
+          {filament.data.priceRange && <div class="filament-price">{filament.data.priceRange}</div>}
+          <div class="filament-links">
+            {filament.data.officialUrl && (
+              <AffiliateLink url={filament.data.officialUrl} label={t('filament.officialDocs')} type="official" variant="button" locale={currentLocale} />
+            )}
+            {filament.data.affiliateUrl && (
+              <AffiliateLink url={filament.data.affiliateUrl} label={t('filament.buyNow')} type="affiliate" variant="button" locale={currentLocale} />
+            )}
+          </div>
+            <!-- Add to compare button -->
+            <button
+              id="detail-add-compare"
+              class="detail-compare-btn"
+              data-item-id={id}
+              data-item-name={`${filament.data.brand || ''} ${filament.data.model}`}
+              data-item-specs={JSON.stringify(getLocalizedSpecs(filament.data.specs))}
+            >
+              {t('compare.addToCompare')}
+            </button>
+        </header>
+
+        <div class="filament-layout">
+          <main class="filament-main">
+            <section class="filament-section">
+              <h2 class="section-title">{t('filament.specs')}</h2>
+              <div class="specs-grid">
+                {Object.entries(getLocalizedSpecs(filament.data.specs) || {}).map(([key, value]) => (
+                  <div class="spec-item">
+                    <span class="spec-key">{key}</span>
+                    <span class="spec-value">{String(value)}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {(filament.data.officialUrl || filament.data.datasheet) && (
+              <section class="filament-section">
+                <h2 class="section-title">{t('filament.officialResources')}</h2>
+                <div class="resources-list">
+                  {filament.data.officialUrl && (
+                    <a href={filament.data.officialUrl} target="_blank" rel="noopener noreferrer" class="resource-link">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      {t('filament.officialDocs')}
+                    </a>
+                  )}
+                  {filament.data.datasheet && (
+                    <a href={filament.data.datasheet} target="_blank" rel="noopener noreferrer" class="resource-link">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                      {t('filament.datasheet')}
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
+          </main>
+
+          <aside class="filament-sidebar">
+            {relatedModels.length > 0 && (
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                  {t('filament.relatedModels')}
+                  <span class="count-badge">{relatedModels.length}</span>
+                </h3>
+                <div class="related-list">
+                  {relatedModels.slice(0, 5).map(model => {
+                    const slug = model.id.split('/').pop()?.replace('.md', '') || '';
+                    return (
+                      <a href={getLocalizedPath(`/printing/models/${slug}`, currentLocale)} class="related-item">
+                        <span class="related-title">{model.data.title}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {!isListPage && !filament && (
+    <section class="not-found">
+      <div class="container">
+        <h1>{t('filament.notFound')}</h1>
+        <a href={getLocalizedPath('/printing/filaments', currentLocale)} class="btn">{t('filament.backToList')}</a>
+      </div>
+    </section>
+  )}
+
+  <CompareWidget collectionType="filaments" locale={currentLocale} />
+</Layout>
+
+{isListPage && (
+  <script define:vars={{ specsData: specsJson }}>
+    if (window.__compareSpecsData) {
+      Object.assign(window.__compareSpecsData, specsData);
+    }
+  </script>
+)}
+
+<style>
+  .category-page { padding: var(--space-3xl) 0; }
+  .category-header { text-align: center; margin-bottom: var(--space-3xl); }
+  .category-title {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-success) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .category-description { font-size: var(--text-lg); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto var(--space-xl); }
+  .category-stats { display: flex; justify-content: center; gap: var(--space-lg); }
+  .stat-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
+  .stat-value { font-size: var(--text-2xl); font-weight: 700; color: var(--color-success); }
+  .stat-label { font-size: var(--text-sm); color: var(--color-text-tertiary); }
+
+  .category-section { margin-bottom: var(--space-3xl); }
+  .category-section-header { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); }
+  .category-icon { width: 32px; height: 32px; color: var(--color-primary); }
+  .category-icon.small { width: 20px; height: 20px; }
+  .category-section-title { font-size: var(--text-xl); font-weight: 600; color: var(--color-text-primary); }
+  .category-count { margin-left: auto; padding: 4px 12px; background: var(--color-bg-tertiary); border-radius: var(--radius-lg); color: var(--color-text-tertiary); font-size: var(--text-sm); }
+
+  .filament-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-lg); }
+  .filament-card-wrapper { position: relative; }
+  .compare-checkbox-wrapper { display: flex; align-items: center; gap: 6px; padding: 6px 10px; margin-bottom: var(--space-xs); cursor: pointer; font-size: var(--text-xs); color: var(--color-text-tertiary); }
+  .compare-checkbox-wrapper:hover { color: var(--color-primary); }
+  .compare-checkbox { width: 16px; height: 16px; accent-color: var(--color-primary); cursor: pointer; }
+
+  .filament-detail { padding: var(--space-3xl) 0; }
+  .filament-header { text-align: center; margin-bottom: var(--space-3xl); }
+  .filament-category { display: inline-flex; align-items: center; gap: var(--space-xs); padding: 6px 16px; background: rgba(0, 255, 136, 0.15); color: var(--color-success); border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-md); }
+  .filament-brand { display: inline-block; padding: 4px 12px; background: var(--color-bg-tertiary); border-radius: var(--radius-md); color: var(--color-primary); font-size: var(--text-sm); margin-bottom: var(--space-sm); }
+  .filament-title { font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 700; margin-bottom: var(--space-md); color: var(--color-text-primary); }
+  .filament-price { font-size: var(--text-2xl); font-weight: 700; color: var(--color-success); margin-bottom: var(--space-md); }
+  .filament-links { display: flex; justify-content: center; gap: var(--space-md); flex-wrap: wrap; }
+
+  .filament-layout { display: grid; grid-template-columns: 1fr; gap: var(--space-3xl); }
+  .filament-section { margin-bottom: var(--space-2xl); }
+  .section-title { font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-lg); color: var(--color-text-primary); }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md); }
+  .spec-item { display: flex; justify-content: space-between; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md); gap: var(--space-sm); }
+  .spec-key { font-size: var(--text-sm); color: var(--color-text-tertiary); }
+  .spec-value { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-primary); }
+
+  .resources-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .resource-link { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md); background: var(--color-bg-tertiary); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; color: var(--color-text-primary); transition: all var(--transition-fast); }
+  .resource-link:hover { background: var(--color-bg-elevated); border-color: var(--color-primary); transform: translateX(4px); }
+  .resource-link svg { width: 20px; height: 20px; color: var(--color-primary); }
+
+  .filament-sidebar { display: flex; flex-direction: column; gap: var(--space-xl); }
+  .sidebar-section { padding: var(--space-md); background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+  .sidebar-title { display: flex; align-items: center; gap: var(--space-sm); font-size: var(--text-base); font-weight: 600; margin-bottom: var(--space-md); color: var(--color-text-primary); }
+  .count-badge { margin-left: auto; padding: 2px 8px; background: var(--color-primary); color: white; border-radius: var(--radius-sm); font-size: var(--text-xs); }
+  .related-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .related-item { display: block; padding: var(--space-sm); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast); }
+  .related-item:hover { background: var(--color-bg-tertiary); }
+  .related-title { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .related-item:hover .related-title { color: var(--color-success); }
+
+  .not-found { padding: var(--space-5xl, 128px) 0; text-align: center; }
+  .not-found h1 { font-size: var(--text-3xl); margin-bottom: var(--space-xl); color: var(--color-text-secondary); }
+  .btn { display: inline-block; padding: 12px 24px; background: var(--color-success); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 500; transition: all var(--transition-fast); }
+  .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  @media (min-width: 1024px) {
+    .filament-layout { grid-template-columns: 1fr 320px; }
+    .filament-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-lg)); }
+  }
+
+  .detail-compare-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 10px 20px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  .detail-compare-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  .detail-compare-btn--added {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+</style>

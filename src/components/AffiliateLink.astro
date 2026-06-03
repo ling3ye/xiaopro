@@ -1,0 +1,184 @@
+---
+/**
+ * 外链/导购组件 AffiliateLink
+ *
+ * 用于渲染赞助链接、MakerWorld下载链接、官方链接等
+ * 支持多种样式和类型
+ *
+ * @component AffiliateLink
+ *
+ * Props:
+ * @property {string} url - 链接地址
+ * @property {string} label - 显示文字
+ * @property {'affiliate' | 'makerworld' | 'official'} type - 链接类型
+ * @property {'button' | 'card' | 'inline'} variant - 显示样式
+ *
+ * @author Claude Code
+ * @version 1.0.0
+ */
+
+import { useTranslations } from '../utils/i18n';
+import type { SupportedLocale } from '../i18n/config';
+
+interface Props {
+  url: string;
+  label: string;
+  type?: 'affiliate' | 'makerworld' | 'official';
+  variant?: 'button' | 'card' | 'inline';
+  locale?: SupportedLocale;
+}
+
+const {
+  url,
+  label,
+  type = 'official',
+  variant = 'button',
+  locale = 'zh-cn',
+} = Astro.props;
+
+const t = useTranslations(locale);
+
+const typeClass = `affiliate-link--${type}`;
+const variantClass = `affiliate-link--${variant}`;
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={`affiliate-link ${typeClass} ${variantClass}`}
+>
+  {type === 'affiliate' && (
+    <span class="affiliate-link__badge">{t('printer.affiliate')}</span>
+  )}
+  {type === 'makerworld' && (
+    <span class="affiliate-link__badge affiliate-link__badge--makerworld">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="affiliate-link__icon">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      MakerWorld
+    </span>
+  )}
+  <span class="affiliate-link__label">{label}</span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="affiliate-link__arrow">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+    <polyline points="15 3 21 3 21 9"/>
+    <line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+</a>
+
+<style>
+  .affiliate-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  /* ============================================
+     按钮样式
+     ============================================ */
+  .affiliate-link--button {
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--text-sm);
+  }
+
+  .affiliate-link--button.affiliate-link--affiliate {
+    background: var(--color-warning);
+    color: white;
+  }
+
+  .affiliate-link--button.affiliate-link--affiliate:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 170, 0, 0.3);
+  }
+
+  .affiliate-link--button.affiliate-link--makerworld {
+    background: #00ae42;
+    color: white;
+  }
+
+  .affiliate-link--button.affiliate-link--makerworld:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 174, 66, 0.3);
+  }
+
+  .affiliate-link--button.affiliate-link--official {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+  }
+
+  .affiliate-link--button.affiliate-link--official:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  /* ============================================
+     卡片样式
+     ============================================ */
+  .affiliate-link--card {
+    padding: var(--space-md);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .affiliate-link--card:hover {
+    border-color: var(--color-primary);
+    background: var(--color-bg-elevated);
+    transform: translateX(4px);
+  }
+
+  /* ============================================
+     行内样式
+     ============================================ */
+  .affiliate-link--inline {
+    color: var(--color-primary);
+    font-size: var(--text-sm);
+  }
+
+  .affiliate-link--inline:hover {
+    text-decoration: underline;
+  }
+
+  /* ============================================
+     通用子元素
+     ============================================ */
+  .affiliate-link__badge {
+    font-size: var(--text-xs);
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  .affiliate-link__badge--makerworld {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .affiliate-link__icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .affiliate-link__label {
+    flex: 1;
+  }
+
+  .affiliate-link__arrow {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+</style>

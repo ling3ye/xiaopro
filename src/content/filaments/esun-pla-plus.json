@@ -1,0 +1,43 @@
+{
+  "brand": "eSUN",
+  "model": "PLA+",
+  "category": "pla",
+  "image": "https://m.media-amazon.com/images/I/61QfNcQs79L._AC_SL1000_.jpg",
+  "priceRange": "¥59-79/卷",
+  "officialUrl": "https://www.esun3d.com/pla-pro-product",
+  "affiliateUrl": "https://example.com/aff/esun-pla-plus",
+  "specs": {
+    "zh-cn": {
+      "材料类型": "PLA+（增强型聚乳酸）",
+      "直径": "1.75 mm",
+      "打印温度": "205 - 225°C",
+      "热床温度": "40 - 60°C",
+      "密度": "1.24 g/cm³",
+      "抗拉强度": "53 MPa",
+      "断裂伸长率": "8.5%",
+      "可打印性": "容易",
+      "是否易吸湿": "低",
+      "颜色数量": "25+",
+      "卷重": "1 kg",
+      "优势": "比普通PLA更强韧"
+    },
+    "en": {
+      "Material Type": "PLA+ (Enhanced PLA)",
+      "Diameter": "1.75 mm",
+      "Print Temperature": "205 - 225°C",
+      "Bed Temperature": "40 - 60°C",
+      "Density": "1.24 g/cm³",
+      "Tensile Strength": "53 MPa",
+      "Elongation at Break": "8.5%",
+      "Printability": "Easy",
+      "Moisture Sensitivity": "Low",
+      "Available Colors": "25+",
+      "Spool Weight": "1 kg",
+      "Advantage": "Tougher than standard PLA"
+    }
+  },
+  "keywords": {
+    "zh-cn": ["PLA+", "eSUN", "增强PLA", "高性价比", "强韧"],
+    "en": ["PLA+", "eSUN", "Enhanced PLA", "Great Value", "Tough"]
+  }
+}
