@@ -48,6 +48,9 @@ Cet article vous guide pas à pas pour utiliser un **ESP32-S3 + microphone numé
 - Barres arc-en-ciel rayonnant de l'intérieur vers l'extérieur sur l'écran circulaire, points blancs de crête en descente lente
 - Taux de rafraîchissement d'environ 20 fps, parfaitement fluide à l'œil nu
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Description des composants

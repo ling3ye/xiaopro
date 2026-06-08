@@ -48,6 +48,9 @@ Questo articolo ti guiderà passo dopo passo nell'uso di **ESP32-S3 + microfono 
 - Barre arcobaleno sul display circolare irradiate dall'interno verso l'esterno, con picchi bianchi a discesa lenta
 - Frequenza di aggiornamento di circa 20 fps, perfettamente fluida a occhio nudo
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Descrizione dei componenti

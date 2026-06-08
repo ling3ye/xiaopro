@@ -48,6 +48,9 @@ arduinoFFT v2.0.4
 - 원형 화면에 레인보우 바가 중심에서 바깥으로 방사, 피크 흰 점이 천천히 하강
 - 약 20fps 새로고침, 육안으로 완전히 부드러움
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 부품 설명

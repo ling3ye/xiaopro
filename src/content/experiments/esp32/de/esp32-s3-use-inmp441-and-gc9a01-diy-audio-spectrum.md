@@ -48,6 +48,9 @@ Dieser Artikel führt dich Schritt für Schritt durch den Aufbau eines **kreisf�
 - Regenbogen-Balken strahlen auf dem kreisförmigen Display von innen nach außen, weißer Peak-Punkt sinkt langsam
 - Aktualisierungsrate ca. 20 fps, für das bloße Auge völlig flüssig
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Komponenten-Beschreibung

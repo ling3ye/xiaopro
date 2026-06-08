@@ -48,6 +48,9 @@ Este artículo te guía paso a paso para usar un **ESP32-S3 + micrófono digital
 - Barras de arcoíris en la pantalla circular irradian de adentro hacia afuera, con puntos blancos de pico que descienden lentamente
 - Tasa de refresco de aproximadamente 20fps, completamente fluida a simple vista
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Descripción de componentes

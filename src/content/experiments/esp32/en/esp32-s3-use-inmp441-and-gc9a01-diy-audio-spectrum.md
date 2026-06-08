@@ -48,6 +48,9 @@ This article walks you through building a real-time, sound-responsive circular r
 - Rainbow bars radiate outward on the circular screen, with white peak dots slowly descending
 - Refresh rate around 20fps — perfectly smooth to the naked eye
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Component Overview

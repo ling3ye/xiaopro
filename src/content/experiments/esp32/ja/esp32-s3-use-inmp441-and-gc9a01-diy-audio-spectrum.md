@@ -48,6 +48,9 @@ arduinoFFT v2.0.4
 - 円形ディスプレイ上にレインボーバーが内側から外側に放射、ピーク白点がゆっくり下降
 - リフレッシュレート約 20fps、肉眼で十分滑らかに表示
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## パーツ説明

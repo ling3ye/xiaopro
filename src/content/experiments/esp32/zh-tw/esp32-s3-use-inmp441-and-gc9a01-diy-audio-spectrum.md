@@ -48,6 +48,9 @@ arduinoFFT v2.0.4
 - 圓形螢幕上彩虹柱從內向外輻射，峰值白點緩降
 - 更新率約 20fps，肉眼看完全流暢
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nmPC6lKog0o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 元件說明
