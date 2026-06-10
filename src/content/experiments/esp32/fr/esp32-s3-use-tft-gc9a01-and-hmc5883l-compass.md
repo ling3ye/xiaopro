@@ -48,11 +48,12 @@ Si vous voulez apprendre à piloter un GC9A01 + HMC5883L, ou fabriquer un bibelo
 
 ## Résultat de l'expérience
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 L'écran rond GC9A01 affiche en temps réel un cadran de boussole : l'aiguille rouge pointe vers le nord, le chiffre vert au centre indique l'azimut actuel (0°~359°), les lettres jaunes indiquent la direction la plus proche parmi les huit points cardinaux (N / NE / E / SE / S / SW / W / NW). Au démarrage, maintenir la touche BOOT lance le mode d'étalonnage par rotation de 15 secondes — l'écran affiche une barre de progression et la plage du champ magnétique en temps réel ; une fois l'étalonnage terminé, l'aiguille est fluide (~25 fps), sans les saccades observées sans étalonnage.
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **Sur la précision, soyons clairs :** un HMC5883L étalonné dans un environnement idéal (loin des métaux et autres sources magnétiques) présente une erreur d'azimut d'environ ±5°. À proximité d'un boîtier d'ordinateur, d'un chargeur, d'un haut-parleur ou d'un tournevis, l'erreur monte facilement au-delà de ±15°. En utilisation de bureau au quotidien, « la direction générale est bonne », mais je ne suis pas sûr que mon module soit un original — il arrive parfois qu'il se bloque. Ne comptez pas sur une précision à l'unité près. C'est une limitation matérielle intrinsèque, pas un problème de code — la section « Convient-il pour un projet sérieux ? » y revient en détail.
 

@@ -48,11 +48,12 @@ Se vuoi imparare i metodi di driver per GC9A01 + HMC5883L, o creare un soprammob
 
 ## Risultato dell'esperimento
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 Sullo schermo tondo GC9A01 viene visualizzato in tempo reale un quadrante da bussola: l'ago rosso indica il nord, al centro un numero verde mostra l'azimut corrente (0°~359°), lettere gialle indicano la direzione cardinale più vicina tra le otto (N / NE / E / SE / S / SW / W / NW). All'accensione, tenendo premuto il tasto BOOT si accede alla modalità di calibrazione rotazionale di 15 secondi: lo schermo mostra una barra di avanzamento e il range magnetico in tempo reale; completata la calibrazione, il movimento dell'ago è fluido, circa 25 fps, senza le vibrazioni irregolari tipiche della mancanza di calibrazione.
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **Sulla precisione, chiariamo subito:** Un HMC5883L calibrato, in condizioni ideali (lontano da metalli e altre fonti magnetiche), ha un errore di azimut di circa ±5°. Avvicinandosi al case del computer, al caricabatterie, alle casse o a un cacciavite, l'errore sale facilmente oltre ±15°. Nell'uso quotidiano su scrivania "la direzione generale è corretta", ma il modulo che ho comprato non so se sia originale, a volte si blocca e non si muove; per la precisione alla decina di gradi non c'è da aspettarsi miracoli. È un limite hardware intrinseco, non un problema di codice; la sezione "Adatto a un progetto serio?" più avanti lo spiega nel dettaglio.
 

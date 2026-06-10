@@ -48,11 +48,12 @@ If you want to learn how to drive a GC9A01 + HMC5883L, or build a cool desk gadg
 
 ## Demo
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 The GC9A01 round display shows a real-time compass dial: a red needle points north, the center displays the current heading in green digits (0°~359°), and yellow letters indicate the nearest eight-point direction (N / NE / E / SE / S / SW / W / NW). Hold the BOOT button during power-on to enter a 15-second rotation calibration mode, where the screen shows a progress bar and real-time magnetic field range. After calibration, the needle moves smoothly at approximately 25fps, without the jittery behavior seen when uncalibrated.
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **About accuracy, let's be clear:** A calibrated HMC5883L in an ideal environment (away from metal and other magnetic sources) has a heading error of about ±5°. Near a computer chassis, charger, speaker, or screwdriver, the error easily climbs to ±15° or more. For everyday desktop use, "the general direction is right," but I'm not sure if the module I bought is genuine — sometimes it just stops responding. Don't expect accuracy down to individual degrees. This is an inherent hardware limitation, not a code issue. The "Is It Suitable for Real Projects?" section later explains this in detail.
 

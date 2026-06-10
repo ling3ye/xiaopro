@@ -48,11 +48,12 @@ Wer die Ansteuerung von GC9A01 + HMC5883L lernen moechte oder eine coole Schreib
 
 ## Ergebnis des Experiments
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 Auf dem GC9A01-Runddisplay wird in Echtzeit ein Kompass-Zifferblatt angezeigt: Der rote Zeiger zeigt nach Norden, die gruene Zahl in der Mitte zeigt den aktuellen Azimut (0°~359°), gelbe Buchstaben kennzeichnen die naechste der acht Hauptrichtungen (N / NE / E / SE / S / SW / W / NW). Beim Einschalten kann durch Gedrueckthalten der BOOT-Taste der 15-sekuendige Rotationskalibrierungsmodus gestartet werden – das Display zeigt einen Fortschrittsbalken und den aktuellen Magnetfeldbereich an. Nach Abschluss der Kalibrierung bewegt sich der Zeiger fluessig bei ca. 25fps, ohne das unkalibriert typische Zittern.
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **Zur Genauigkeit, gleich vorweg:** Ein kalibriertes HMC5883L erreicht unter idealen Bedingungen (fernab von Metall und anderen Magnetfeldquellen) einen Azimutfehler von ca. ±5°. In der Naehe eines Computers, Netzteils, Lautsprechers oder Schraubenziehers steigt der Fehler leicht auf ±15° und mehr. Im taeglichen Schreibtischbetrieb stimmt „die grobe Richtung", aber ob dieses Modul, das ich gekauft habe, ein Original ist, weiss ich nicht – manchmal reagiert es einfach nicht. Auf eine Genauigkeit im einstelligen Gradbereich sollte man nicht hoffen. Das ist eine grundsaetzliche Einschraenkung der Hardware, kein Codeproblem. Der Abschnitt „Geeignet fuer echte Projekte?" erklaert dies ausfuehrlicher.
 

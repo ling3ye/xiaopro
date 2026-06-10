@@ -48,11 +48,12 @@ image: "https://img.lingflux.com/2026/06/79dbcadeea8dba2436b055a92f76fc20.jpg"
 
 ## 实验效果
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 GC9A01 圆屏上实时显示指南针表盘：红色指针指北，中央绿色数字显示当前方位角（0°~359°），黄色字母标注最近的八方位（N / NE / E / SE / S / SW / W / NW）。上电时按住 BOOT 键进入 15 秒旋转校准模式，屏幕显示进度条和实时磁场范围；校准完成后指针运动平滑、约 25fps，不会像未校准时那样乱抖。
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **关于精度，先说清楚：** 校准过的 HMC5883L 在理想环境（远离金属和其他磁场源）下，方位角误差约 ±5°。靠近电脑主机、充电器、音箱或螺丝刀时，误差轻松涨到 ±15° 以上。日常桌面使用"大方向没错"，但是我买的这个模块不知道是不是正品，有时候是会抽风不动，精确到十位数就不要指望了。这是硬件的先天局限，不是代码的问题，后面的"适不适合正式项目"一节会详细解释。
 

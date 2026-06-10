@@ -48,11 +48,12 @@ Si quieres aprender el método de driver para GC9A01 + HMC5883L, o hacer un ador
 
 ## Resultado del experimento
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 La pantalla circular GC9A01 muestra en tiempo real una esfera de brújula: la aguja roja apunta al norte, los números verdes centrales muestran el acimut actual (0°~359°), las letras amarillas indican las ocho direcciones más cercanas (N / NE / E / SE / S / SW / W / NW). Al encender, mantén presionado el botón BOOT para entrar en el modo de calibración de rotación de 15 segundos; la pantalla muestra una barra de progreso y el rango de campo magnético en tiempo real; una vez completada la calibración, el movimiento de la aguja es suave, aproximadamente 25fps, sin los temblores que se ven sin calibrar.
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **Sobre la precisión, seamos claros:** El HMC5883L calibrado en un entorno ideal (lejos de metal y otras fuentes de campo magnético) tiene un error de acimut de aproximadamente ±5°. Cerca de la CPU de un ordenador, cargadores, altavoces o destornilladores, el error sube fácilmente a ±15° o más. En uso diario de escritorio "la dirección general es correcta", pero no sé si el módulo que compré es original, a veces se bloquea y no se mueve, no puedes esperar precisión en las decenas de grados. Esta es una limitación inherente del hardware, no un problema de código; la sección "¿Es adecuado para proyectos serios?" lo explica en detalle.
 

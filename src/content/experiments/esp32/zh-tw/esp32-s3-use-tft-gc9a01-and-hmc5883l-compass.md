@@ -48,11 +48,12 @@ image: "https://img.lingflux.com/2026/06/79dbcadeea8dba2436b055a92f76fc20.jpg"
 
 ## 實驗效果
 
-![111111 (1)](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
+![](https://img.lingflux.com/2026/06/61587ad00164cf25e866feb4066e069f.jpg)
 
 GC9A01 圓螢幕上即時顯示指南針錶盤：紅色指標指北，中央綠色數字顯示當前方位角（0°~359°），黃色字母標註最近的八方位（N / NE / E / SE / S / SW / W / NW）。上電時按住 BOOT 鍵進入 15 秒旋轉校準模式，螢幕顯示進度條和即時磁場範圍；校準完成後指標運動平滑、約 25fps，不會像未校準時那樣亂抖。
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DDc_7iRCPy8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > **關於精度，先說清楚：** 校準過的 HMC5883L 在理想環境（遠離金屬和其他磁場源）下，方位角誤差約 ±5°。靠近電腦主機、充電器、喇叭或螺絲起子時，誤差輕鬆漲到 ±15° 以上。日常桌面使用「大方向沒錯」，但是我買的這個模組不知道是不是正品，有時候是會抽風不動，精確到十位數就不要指望了。這是硬體的先天侷限，不是程式碼的問題，後面的「適不適合正式專案」一節會詳細解釋。
 
