@@ -57,11 +57,16 @@ let currentDoc = null;
 if (!isListPage) {
   module = await getEntry('modules', id);
   if (module) {
-    // 获取相关实验
+    // 获取相关实验（同时匹配 moduleId 和 moduleIds）
     relatedExperiments = await getCollection('experiments', (entry) => {
-      return 'moduleId' in entry.data &&
-             (entry.data.moduleId.id || String(entry.data.moduleId)) === id &&
-             entry.id.includes(`/${lang}/`);
+      const matchSingle = 'moduleId' in entry.data &&
+             (entry.data.moduleId.id || String(entry.data.moduleId)) === id;
+      const matchMultiple = 'moduleIds' in entry.data &&
+             Array.isArray(entry.data.moduleIds) &&
+             entry.data.moduleIds.some((moduleRef: any) => {
+               return (moduleRef.id || String(moduleRef)) === id;
+             });
+      return (matchSingle || matchMultiple) && entry.id.includes(`/${lang}/`);
     });
 
     // 获取相关方案

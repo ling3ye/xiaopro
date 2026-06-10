@@ -111,6 +111,8 @@ const experiments = defineCollection({
     boardId: reference('boards'),
     // ✨ 核心魔法：关联到 modules 集合
     moduleId: reference('modules'),
+    // 选填：关联多个模块（当实验使用多个硬件模块时）
+    moduleIds: z.array(reference('modules')).optional(),
     // 必填：分类 (枚举类型，强制规范分类)
     category: z.enum(['esp32', 'arduino', 'rp', 'stm32', 'other']).optional(),
 

@@ -169,21 +169,30 @@ const currentExperiments = filteredExperiments.slice(startIndex, endIndex);
 // 详情页：获取当前文章数据
 let experiment = null;
 let board = null;
-let module = null;
+let modules: any[] = [];
 
 if (pageType === 'detail' && currentCategory && currentSlug) {
   // 使用 category 和 slug 查找实验（路径格式：category/zh-cn/article.md）
   experiment = allExperiments.find(({ id }) => id.startsWith(`${currentCategory}/${lang}/`) && id.endsWith(`/${currentSlug}.md`));
   if (experiment) {
-    // 解析关联的开发板和模块
+    // 解析关联的开发板
     if ('boardId' in experiment.data && experiment.data.boardId) {
       const boardId = (experiment.data.boardId as any).id || String(experiment.data.boardId);
       board = await getEntry('boards', boardId);
     }
-    if ('moduleId' in experiment.data && experiment.data.moduleId) {
-      const moduleId = (experiment.data.moduleId as any).id || String(experiment.data.moduleId);
-      module = await getEntry('modules', moduleId);
+    // 解析关联的模块：优先使用 moduleIds（多模块），否则回退到 moduleId（单模块）
+    if ('moduleIds' in experiment.data && Array.isArray(experiment.data.moduleIds)) {
+      modules = await Promise.all(
+        experiment.data.moduleIds.map(async (modRef: any) => {
+          const modId = modRef.id || String(modRef);
+          return await getEntry('modules', modId);
+        })
+      );
+    } else if ('moduleId' in experiment.data && experiment.data.moduleId) {
+      const modId = (experiment.data.moduleId as any).id || String(experiment.data.moduleId);
+      modules = [await getEntry('modules', modId)];
     }
+    modules = modules.filter(Boolean);
   }
 }
 
@@ -335,16 +344,16 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
                   {board.data.brand} {board.data.model}
                 </span>
               )}
-              {module && (
+              {modules.map((mod: any) => (
                 <span class="article-module">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5z"/>
                     <path d="M2 17l10 5 10-5"/>
                     <path d="M2 12l10 5 10-5"/>
                   </svg>
-                  {module.data.model}
+                  {mod.data.model}
                 </span>
-              )}
+              ))}
             </div>
             <h1 class="article-title">{experiment.data.title}</h1>
             {experiment.data.intro && (
@@ -400,22 +409,24 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
             </div>
           )}
 
-          {module && (
+          {modules.length > 0 && (
             <div class="sidebar-section">
               <h3 class="sidebar-title">{t('experiments.usedModule')}</h3>
-              <a
-                href={getLocalizedPath(`/modules/${module.id}`, currentLocale)}
-                class="hardware-card"
-              >
-                <div class="hardware-info">
-                  <span class="hardware-brand">{module.data.brand || ''}</span>
-                  <span class="hardware-model">{module.data.model}</span>
-                </div>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"/>
-                  <path d="M12 5l7 7-7 7"/>
-                </svg>
-              </a>
+              {modules.map((mod: any) => (
+                <a
+                  href={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}
+                  class="hardware-card"
+                >
+                  <div class="hardware-info">
+                    <span class="hardware-brand">{mod.data.brand || ''}</span>
+                    <span class="hardware-model">{mod.data.model}</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"/>
+                    <path d="M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              ))}
             </div>
           )}
         </aside>
