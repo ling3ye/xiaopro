@@ -1,0 +1,73 @@
+{
+  "brand": "eSUN",
+  "model": "PLA Base",
+  "category": "pla",
+  "image": "https://m.media-amazon.com/images/I/61QfNcQs79L._AC_SL1000_.jpg",
+  "priceRange": "¥49-69/卷",
+  "officialUrl": "https://www.esun3d.com/pla-product",
+  "affiliateUrl": "https://example.com/aff/esun-pla-base",
+  "specs": {
+    "zh-cn": {
+      "材料类型": "PLA（聚乳酸）",
+      "直径": "1.75 mm",
+      "密度": "1.24 g/cm³",
+      "熔融指数": "3.5-4.5（190°C / 2.16kg）",
+      "热变形温度": "50-60°C（0.45 MPa）",
+      "抗拉强度（XY）": "63.95 MPa",
+      "抗拉强度（Z）": "28.29 MPa",
+      "弯曲强度（XY）": "101.2 MPa",
+      "弯曲强度（Z）": "40.5 MPa",
+      "弯曲模量（XY）": "3085.87 MPa",
+      "弯曲模量（Z）": "2832.46 MPa",
+      "断裂伸长率（XY）": "4.17%",
+      "断裂伸长率（Z）": "2.41%",
+      "缺口冲击强度（XY）": "3.09 kJ/m²",
+      "缺口冲击强度（Z）": "2.15 kJ/m²",
+      "可打印性": "容易",
+      "是否易吸湿": "低",
+      "颜色数量": "25+",
+      "卷重": "1 kg",
+      "优势": "性价比高，适合日常打印"
+    },
+    "en": {
+      "Material Type": "PLA (Polylactic Acid)",
+      "Diameter": "1.75 mm",
+      "Density": "1.24 g/cm³",
+      "Melt Flow Index": "3.5-4.5 (190°C / 2.16kg)",
+      "Heat Deflection Temperature": "50-60°C (0.45 MPa)",
+      "Tensile Strength (XY)": "63.95 MPa",
+      "Tensile Strength (Z)": "28.29 MPa",
+      "Flexural Strength (XY)": "101.2 MPa",
+      "Flexural Strength (Z)": "40.5 MPa",
+      "Flexural Modulus (XY)": "3085.87 MPa",
+      "Flexural Modulus (Z)": "2832.46 MPa",
+      "Elongation at Break (XY)": "4.17%",
+      "Elongation at Break (Z)": "2.41%",
+      "Notched Impact Strength (XY)": "3.09 kJ/m²",
+      "Notched Impact Strength (Z)": "2.15 kJ/m²",
+      "Printability": "Easy",
+      "Moisture Sensitivity": "Low",
+      "Available Colors": "25+",
+      "Spool Weight": "1 kg",
+      "Advantage": "Great value, ideal for everyday printing"
+    }
+  },
+  "printing_guidelines": {
+    "nozzle_temperature_celsius": {
+      "range": [210, 230],
+      "recommended": 215
+    },
+    "bed_temperature_celsius": [45, 60],
+    "fan_speed_percent": 100,
+    "print_speed_mm_s": "40-300",
+    "heated_bed_required": true,
+    "note": {
+      "zh-cn": "建议打印前进行干燥处理",
+      "en": "Drying before printing is recommended"
+    }
+  },
+  "keywords": {
+    "zh-cn": ["PLA", "eSUN", "PLA Base", "高性价比", "入门"],
+    "en": ["PLA", "eSUN", "PLA Base", "Budget Friendly", "Beginner"]
+  }
+}

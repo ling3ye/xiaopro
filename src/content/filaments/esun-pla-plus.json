@@ -10,11 +10,19 @@
     "zh-cn": {
       "材料类型": "PLA+（增强型聚乳酸）",
       "直径": "1.75 mm",
-      "打印温度": "205 - 225°C",
-      "热床温度": "40 - 60°C",
-      "密度": "1.24 g/cm³",
-      "抗拉强度": "53 MPa",
-      "断裂伸长率": "8.5%",
+      "密度": "1.23 g/cm³",
+      "熔融指数": "5（190°C / 2.16kg）",
+      "热变形温度": "53°C（0.45 MPa）",
+      "抗拉强度（XY）": "53.34 MPa",
+      "抗拉强度（Z）": "31.2 MPa",
+      "弯曲强度（XY）": "81.16 MPa",
+      "弯曲强度（Z）": "59.8 MPa",
+      "弯曲模量（XY）": "2888.22 MPa",
+      "弯曲模量（Z）": "2684.19 MPa",
+      "断裂伸长率（XY）": "4.11%",
+      "断裂伸长率（Z）": "2.6%",
+      "缺口冲击强度（XY）": "5.51 kJ/m²",
+      "缺口冲击强度（Z）": "2.51 kJ/m²",
       "可打印性": "容易",
       "是否易吸湿": "低",
       "颜色数量": "25+",
@@ -24,16 +32,38 @@
     "en": {
       "Material Type": "PLA+ (Enhanced PLA)",
       "Diameter": "1.75 mm",
-      "Print Temperature": "205 - 225°C",
-      "Bed Temperature": "40 - 60°C",
-      "Density": "1.24 g/cm³",
-      "Tensile Strength": "53 MPa",
-      "Elongation at Break": "8.5%",
+      "Density": "1.23 g/cm³",
+      "Melt Flow Index": "5 (190°C / 2.16kg)",
+      "Heat Deflection Temperature": "53°C (0.45 MPa)",
+      "Tensile Strength (XY)": "53.34 MPa",
+      "Tensile Strength (Z)": "31.2 MPa",
+      "Flexural Strength (XY)": "81.16 MPa",
+      "Flexural Strength (Z)": "59.8 MPa",
+      "Flexural Modulus (XY)": "2888.22 MPa",
+      "Flexural Modulus (Z)": "2684.19 MPa",
+      "Elongation at Break (XY)": "4.11%",
+      "Elongation at Break (Z)": "2.6%",
+      "Notched Impact Strength (XY)": "5.51 kJ/m²",
+      "Notched Impact Strength (Z)": "2.51 kJ/m²",
       "Printability": "Easy",
       "Moisture Sensitivity": "Low",
       "Available Colors": "25+",
       "Spool Weight": "1 kg",
       "Advantage": "Tougher than standard PLA"
+    }
+  },
+  "printing_guidelines": {
+    "nozzle_temperature_celsius": {
+      "range": [210, 230],
+      "recommended": 220
+    },
+    "bed_temperature_celsius": [45, 60],
+    "fan_speed_percent": 100,
+    "print_speed_mm_s": "<300",
+    "heated_bed_required": true,
+    "note": {
+      "zh-cn": "建议打印前进行干燥处理",
+      "en": "Drying before printing is recommended"
     }
   },
   "keywords": {

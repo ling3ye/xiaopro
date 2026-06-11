@@ -115,7 +115,11 @@ const breadcrumbItems = [
     const allKeys = new Set();
     items.forEach(item => { if (item.specs) Object.keys(item.specs).forEach(k => allKeys.add(k)); });
 
-    let html = '<div class="compare-cards">';
+    const colCount = items.length;
+    const labelColWidth = 140;
+    const itemColWidth = `1fr`;
+    let html = `<div class="compare-cards" style="grid-template-columns: ${labelColWidth}px repeat(${colCount}, ${itemColWidth})">`;
+    html += '<div class="compare-card compare-card--label"></div>';
     items.forEach(item => {
       html += `
         <div class="compare-card">
@@ -129,7 +133,10 @@ const breadcrumbItems = [
     });
     html += '</div>';
 
-    html += '<div class="compare-table-wrapper"><table class="compare-table">';
+    html += '<div class="compare-table-wrapper"><table class="compare-table" style="table-layout: fixed;">';
+    html += `<colgroup><col style="width: ${labelColWidth}px" />`;
+    items.forEach(() => { html += '<col />'; });
+    html += '</colgroup>';
     html += '<thead><tr><th class="compare-table__label-col">参数</th>';
     items.forEach(item => { html += `<th>${item.model}</th>`; });
     html += '</tr></thead><tbody>';
@@ -137,10 +144,32 @@ const breadcrumbItems = [
     allKeys.forEach(key => {
       const values = items.map(item => item.specs?.[key] || '—');
       const allSame = values.length > 1 && values.every(v => v === values[0]);
+
+      // 检测数值并找出最大值
+      const numValues = values.map(v => {
+        const m = String(v).match(/[-+]?[\d.]+/);
+        return m ? parseFloat(m[0]) : NaN;
+      });
+      const hasNumbers = numValues.some(n => !isNaN(n));
+      const allNumeric = numValues.every(n => !isNaN(n));
+      let maxIdx = -1;
+      if (hasNumbers && !allSame) {
+        const maxVal = Math.max(...numValues.filter(n => !isNaN(n)));
+        // 只有当最大值唯一时才高亮
+        const maxIndices = numValues.reduce((acc, n, i) => { if (n === maxVal) acc.push(i); return acc; }, []);
+        if (maxIndices.length === 1) maxIdx = maxIndices[0];
+      }
+
       html += `<tr class="${allSame ? 'compare-table__row--same' : 'compare-table__row--diff'}">`;
       html += `<td class="compare-table__label">${key}</td>`;
-      values.forEach(v => {
-        html += `<td class="compare-table__value ${allSame ? '' : 'compare-table__value--highlight'}">${v}</td>`;
+      values.forEach((v, i) => {
+        const isMax = i === maxIdx;
+        const cls = [
+          'compare-table__value',
+          !allSame && !isMax ? 'compare-table__value--highlight' : '',
+          isMax ? 'compare-table__value--best' : '',
+        ].filter(Boolean).join(' ');
+        html += `<td class="${cls}">${v}</td>`;
       });
       html += '</tr>';
     });
@@ -156,7 +185,7 @@ const breadcrumbItems = [
   }
 </script>
 
-<style>
+<style is:global>
   .compare-page { padding: var(--space-3xl) 0; }
   .compare-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2xl); flex-wrap: wrap; gap: var(--space-md); }
   .compare-title { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--color-text-primary); }
@@ -167,24 +196,33 @@ const breadcrumbItems = [
   .compare-content { min-height: 200px; }
   .compare-empty { text-align: center; color: var(--color-text-tertiary); padding: var(--space-5xl, 128px) 0; font-size: var(--text-lg); }
 
-  .compare-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-3xl); }
-  .compare-card { text-align: center; padding: var(--space-xl); background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
-  .compare-card__image { width: 120px; height: 120px; object-fit: contain; margin: 0 auto var(--space-md); }
-  .compare-card__placeholder { font-size: 3rem; margin-bottom: var(--space-md); }
+  .compare-cards { display: grid; gap: 1px; margin-bottom: 0; background: var(--color-border); border: 1px solid var(--color-border); border-bottom: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden; }
+  .compare-card { text-align: center; padding: var(--space-md) var(--space-sm); background: var(--color-bg-secondary); }
+  .compare-card__image { width: 80px; height: 80px; object-fit: contain; margin: 0 auto var(--space-xs); }
+  .compare-card__placeholder { font-size: 2rem; margin-bottom: var(--space-xs); }
   .compare-card__brand { font-size: var(--text-xs); color: var(--color-primary); text-transform: uppercase; font-weight: 600; }
-  .compare-card__model { font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); margin: var(--space-xs) 0; }
-  .compare-card__price { font-size: var(--text-xl); font-weight: 700; color: var(--color-success); margin-bottom: var(--space-xs); }
-  .compare-card__category { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-bottom: var(--space-md); }
-  .compare-card__link { font-size: var(--text-sm); color: var(--color-primary); text-decoration: none; }
+  .compare-card__model { font-size: var(--text-sm); font-weight: 700; color: var(--color-text-primary); margin: 2px 0; }
+  .compare-card__price { font-size: var(--text-base); font-weight: 700; color: var(--color-success); margin-bottom: 2px; }
+  .compare-card__category { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-bottom: var(--space-xs); }
+  .compare-card__link { font-size: var(--text-xs); color: var(--color-primary); text-decoration: none; }
   .compare-card__link:hover { text-decoration: underline; }
 
   .compare-table-wrapper { overflow-x: auto; }
-  .compare-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
-  .compare-table th, .compare-table td { padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-border); text-align: left; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow: hidden; }
+  .compare-card--label { background: var(--color-bg-tertiary); }
+  .compare-table th, .compare-table td { padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-border); text-align: left; transition: background 0.25s ease, box-shadow 0.25s ease; }
+  .compare-table tbody tr { transition: background 0.25s ease, box-shadow 0.25s ease; }
+  .compare-table tbody tr:hover { background: rgba(99, 102, 241, 0.18); box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.25); }
+  .compare-table tbody tr:hover td { border-color: rgba(99, 102, 241, 0.15); }
+  .compare-table tbody tr.compare-table__row--diff:hover { background: rgba(0, 255, 136, 0.18); box-shadow: inset 0 0 0 1px rgba(0, 255, 136, 0.25); }
+  .compare-table tbody tr.compare-table__row--diff:hover td { border-color: rgba(0, 255, 136, 0.15); }
+  .compare-table tbody tr:hover td.compare-table__value--best { background: rgba(0, 255, 136, 0.28); }
   .compare-table th { background: var(--color-bg-tertiary); font-weight: 600; color: var(--color-text-primary); }
   .compare-table__label-col { width: 160px; min-width: 120px; }
   .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: nowrap; }
   .compare-table__value { color: var(--color-text-primary); }
   .compare-table__value--highlight { color: var(--color-primary); font-weight: 600; }
+  .compare-table__value--best { background: rgba(0, 255, 136, 0.12); color: var(--color-success); font-weight: 700; position: relative; }
+  .compare-table__value--best::after { content: ' ★'; font-size: 0.7em; }
   .compare-table__row--diff { background: rgba(0, 255, 136, 0.05); }
 </style>
