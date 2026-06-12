@@ -6,34 +6,45 @@
   "priceRange": "¥79-99/卷",
   "officialUrl": "https://overture3d.com/collections/petg",
   "affiliateUrl": "https://example.com/aff/overture-petg",
-  "specs": {
-    "zh-cn": {
-      "材料类型": "PETG（聚对苯二甲酸乙二醇酯改性）",
-      "直径": "1.75 mm",
-      "打印温度": "220 - 250°C",
-      "热床温度": "70 - 80°C",
-      "密度": "1.27 g/cm³",
-      "抗拉强度": "32 MPa",
-      "断裂伸长率": "23%",
-      "可打印性": "中等",
-      "是否易吸湿": "中等",
-      "颜色数量": "20+",
-      "卷重": "1 kg",
-      "优势": "耐温耐候，不易脆裂"
+  "properties": {
+    "material_type": {
+      "value": "PETG (Polyethylene Terephthalate Glycol)",
+      "value_zh": "PETG（聚对苯二甲酸乙二醇酯改性）"
     },
-    "en": {
-      "Material Type": "PETG (Polyethylene Terephthalate Glycol)",
-      "Diameter": "1.75 mm",
-      "Print Temperature": "220 - 250°C",
-      "Bed Temperature": "70 - 80°C",
-      "Density": "1.27 g/cm³",
-      "Tensile Strength": "32 MPa",
-      "Elongation at Break": "23%",
-      "Printability": "Moderate",
-      "Moisture Sensitivity": "Medium",
-      "Available Colors": "20+",
-      "Spool Weight": "1 kg",
-      "Advantage": "Heat/weather resistant, not brittle"
+    "diameter": {
+      "value": 1.75,
+      "unit": "mm"
+    },
+    "density": {
+      "value": 1.27,
+      "unit": "g/cm³"
+    },
+    "print_temperature": {
+      "value": "220 - 250°C"
+    },
+    "bed_temperature": {
+      "value": "70 - 80°C"
+    },
+    "toughness": {
+      "value": 15.7,
+      "unit": "kJ/㎡",
+      "condition": "± 3.9"
+    },
+    "layer_adhesion": {
+      "value": 45.7,
+      "unit": "MPa",
+      "condition": "± 1.7"
+    },
+    "elongation_at_break": {
+      "value": 9.3,
+      "unit": "%",
+      "condition": "± 6.5"
+    },
+    "available_colors": {
+      "value": "20+"
+    },
+    "spool_weight": {
+      "value": "1 kg"
     }
   },
   "keywords": {

@@ -199,12 +199,25 @@ const printers = defineCollection({
 });
 
 // 8. 定义 Filaments (3D打印耗材) 集合
+// 新格式: canonical ID -> 结构化数值
+const specPropertyValue = z.object({
+  value: z.union([z.number(), z.string(), z.boolean()]),
+  value_zh: z.string().optional(),
+  unit: z.string().optional(),
+  standard: z.string().optional(),
+  test_method: z.string().optional(),
+  condition: z.string().optional(),
+});
+
 const filaments = defineCollection({
   type: 'data',
   schema: z.object({
     brand: z.string().optional(),
     model: z.string(),
     category: z.enum(['pla', 'petg', 'abs', 'tpu', 'nylon', 'pc', 'asa', 'other']),
+    // 新格式: canonical spec ID -> 结构化属性值
+    properties: z.record(z.string(), specPropertyValue).optional(),
+    // 旧格式 (兼容过渡, 仅非 filament 集合使用)
     specs: z.union([
       z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
       z.object({

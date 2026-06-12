@@ -6,34 +6,115 @@
   "priceRange": "¥69-89/卷",
   "officialUrl": "https://polymaker.com/product/polylite-pla",
   "affiliateUrl": "https://example.com/aff/polymaker-pla",
-  "specs": {
-    "zh-cn": {
-      "材料类型": "PLA（聚乳酸）",
-      "直径": "1.75 mm",
-      "打印温度": "190 - 220°C",
-      "热床温度": "25 - 60°C",
-      "密度": "1.24 g/cm³",
-      "抗拉强度": "46 MPa",
-      "断裂伸长率": "5.2%",
-      "可打印性": "极易打印",
-      "是否易吸湿": "低",
-      "颜色数量": "30+",
-      "卷重": "1 kg",
-      "是否环保": "可生物降解"
+  "properties": {
+    "material_type": {
+      "value": "PLA (Polylactic Acid)",
+      "value_zh": "PLA（聚乳酸）"
     },
-    "en": {
-      "Material Type": "PLA (Polylactic Acid)",
-      "Diameter": "1.75 mm",
-      "Print Temperature": "190 - 220°C",
-      "Bed Temperature": "25 - 60°C",
-      "Density": "1.24 g/cm³",
-      "Tensile Strength": "46 MPa",
-      "Elongation at Break": "5.2%",
-      "Printability": "Very Easy",
-      "Moisture Sensitivity": "Low",
-      "Available Colors": "30+",
-      "Spool Weight": "1 kg",
-      "Eco-Friendly": "Biodegradable"
+    "diameter": {
+      "value": 1.75,
+      "unit": "mm"
+    },
+    "density": {
+      "value": "1.17 - 1.24",
+      "unit": "g/cm³",
+      "condition": "21.5°C"
+    },
+    "melt_flow_index": {
+      "value": "7 - 11 g/10 min (210°C / 2.16 kg)"
+    },
+    "glass_transition_temperature": {
+      "value": 61,
+      "unit": "°C"
+    },
+    "vicat_softening_temperature": {
+      "value": 63,
+      "unit": "°C"
+    },
+    "melting_temperature": {
+      "value": 150,
+      "unit": "°C"
+    },
+    "crystallization_temperature": {
+      "value": 114,
+      "unit": "°C"
+    },
+    "youngs_modulus_xy": {
+      "value": 2636,
+      "unit": "MPa",
+      "condition": "± 330"
+    },
+    "tensile_strength_xy": {
+      "value": 46.6,
+      "unit": "MPa",
+      "condition": "± 0.9"
+    },
+    "tensile_strength_z": {
+      "value": 43.5,
+      "unit": "MPa",
+      "condition": "± 3.1"
+    },
+    "elongation_at_break_xy": {
+      "value": 1.9,
+      "unit": "%",
+      "condition": "± 0.2"
+    },
+    "flexural_modulus_xy": {
+      "value": 3283,
+      "unit": "MPa",
+      "condition": "± 132"
+    },
+    "flexural_strength_xy": {
+      "value": 85.1,
+      "unit": "MPa",
+      "condition": "± 2.9"
+    },
+    "impact_strength_xy": {
+      "value": 2.7,
+      "unit": "kJ/m²",
+      "standard": "ASTM D256",
+      "test_method": "charpy",
+      "condition": "± 0.2"
+    },
+    "printability": {
+      "value": "Very Easy",
+      "value_zh": "极易打印"
+    },
+    "moisture_sensitivity": {
+      "value": "Low",
+      "value_zh": "低"
+    },
+    "available_colors": {
+      "value": "30+"
+    },
+    "spool_weight": {
+      "value": "1 kg"
+    },
+    "eco_friendly": {
+      "value": "Biodegradable",
+      "value_zh": "可生物降解"
+    }
+  },
+  "printing_guidelines": {
+    "nozzle_temperature_celsius": {
+      "range": [190, 230],
+      "recommended": 210
+    },
+    "bed_temperature_celsius": [25, 60],
+    "fan_speed_percent": 100,
+    "print_speed_mm_s": "40 - 60",
+    "heated_bed_required": false,
+    "build_surface": "BuildTak®, Glass, Blue Tape",
+    "bed_surface_treatment": "Glue, Magigoo",
+    "raft_spacing_mm": 0.2,
+    "retraction_distance_mm": 1,
+    "retraction_speed_mm_s": 20,
+    "ambient_temperature_celsius": "Room temperature - 45°C",
+    "max_overhang_angle": "45°",
+    "recommended_support_material": "PolySupport and PolyDissolve S1",
+    "note": {
+      "zh-cn": "冷却风扇建议开启",
+      "en": "Cooling fan is recommended to be turned on"
     }
   },
   "keywords": {

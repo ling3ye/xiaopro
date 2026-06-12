@@ -6,50 +6,88 @@
   "priceRange": "¥49-69/卷",
   "officialUrl": "https://www.esun3d.com/pla-product",
   "affiliateUrl": "https://example.com/aff/esun-pla-base",
-  "specs": {
-    "zh-cn": {
-      "材料类型": "PLA（聚乳酸）",
-      "直径": "1.75 mm",
-      "密度": "1.24 g/cm³",
-      "熔融指数": "3.5-4.5（190°C / 2.16kg）",
-      "热变形温度": "50-60°C（0.45 MPa）",
-      "抗拉强度（XY）": "63.95 MPa",
-      "抗拉强度（Z）": "28.29 MPa",
-      "弯曲强度（XY）": "101.2 MPa",
-      "弯曲强度（Z）": "40.5 MPa",
-      "弯曲模量（XY）": "3085.87 MPa",
-      "弯曲模量（Z）": "2832.46 MPa",
-      "断裂伸长率（XY）": "4.17%",
-      "断裂伸长率（Z）": "2.41%",
-      "缺口冲击强度（XY）": "3.09 kJ/m²",
-      "缺口冲击强度（Z）": "2.15 kJ/m²",
-      "可打印性": "容易",
-      "是否易吸湿": "低",
-      "颜色数量": "25+",
-      "卷重": "1 kg",
-      "优势": "性价比高，适合日常打印"
+  "properties": {
+    "material_type": {
+      "value": "PLA (Polylactic Acid)",
+      "value_zh": "PLA（聚乳酸）"
     },
-    "en": {
-      "Material Type": "PLA (Polylactic Acid)",
-      "Diameter": "1.75 mm",
-      "Density": "1.24 g/cm³",
-      "Melt Flow Index": "3.5-4.5 (190°C / 2.16kg)",
-      "Heat Deflection Temperature": "50-60°C (0.45 MPa)",
-      "Tensile Strength (XY)": "63.95 MPa",
-      "Tensile Strength (Z)": "28.29 MPa",
-      "Flexural Strength (XY)": "101.2 MPa",
-      "Flexural Strength (Z)": "40.5 MPa",
-      "Flexural Modulus (XY)": "3085.87 MPa",
-      "Flexural Modulus (Z)": "2832.46 MPa",
-      "Elongation at Break (XY)": "4.17%",
-      "Elongation at Break (Z)": "2.41%",
-      "Notched Impact Strength (XY)": "3.09 kJ/m²",
-      "Notched Impact Strength (Z)": "2.15 kJ/m²",
-      "Printability": "Easy",
-      "Moisture Sensitivity": "Low",
-      "Available Colors": "25+",
-      "Spool Weight": "1 kg",
-      "Advantage": "Great value, ideal for everyday printing"
+    "diameter": {
+      "value": 1.75,
+      "unit": "mm"
+    },
+    "density": {
+      "value": 1.24,
+      "unit": "g/cm³"
+    },
+    "melt_flow_index": {
+      "value": "3.5-4.5 (190°C / 2.16kg)"
+    },
+    "heat_deflection_temperature": {
+      "value": "50-60",
+      "unit": "°C",
+      "condition": "0.45 MPa"
+    },
+    "tensile_strength_xy": {
+      "value": 63.95,
+      "unit": "MPa"
+    },
+    "tensile_strength_z": {
+      "value": 28.29,
+      "unit": "MPa"
+    },
+    "flexural_strength_xy": {
+      "value": 101.2,
+      "unit": "MPa"
+    },
+    "flexural_strength_z": {
+      "value": 40.5,
+      "unit": "MPa"
+    },
+    "flexural_modulus_xy": {
+      "value": 3085.87,
+      "unit": "MPa"
+    },
+    "flexural_modulus_z": {
+      "value": 2832.46,
+      "unit": "MPa"
+    },
+    "elongation_at_break_xy": {
+      "value": 4.17,
+      "unit": "%"
+    },
+    "elongation_at_break_z": {
+      "value": 2.41,
+      "unit": "%"
+    },
+    "impact_strength_xy": {
+      "value": 3.09,
+      "unit": "kJ/m²",
+      "standard": "ASTM D256",
+      "test_method": "notched_izod"
+    },
+    "impact_strength_z": {
+      "value": 2.15,
+      "unit": "kJ/m²",
+      "standard": "ASTM D256",
+      "test_method": "notched_izod"
+    },
+    "printability": {
+      "value": "Easy",
+      "value_zh": "容易"
+    },
+    "moisture_sensitivity": {
+      "value": "Low",
+      "value_zh": "低"
+    },
+    "available_colors": {
+      "value": "25+"
+    },
+    "spool_weight": {
+      "value": "1 kg"
+    },
+    "advantage": {
+      "value": "Great value, ideal for everyday printing",
+      "value_zh": "性价比高，适合日常打印"
     }
   },
   "printing_guidelines": {

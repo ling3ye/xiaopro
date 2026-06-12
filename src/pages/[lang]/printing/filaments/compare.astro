@@ -14,6 +14,9 @@ import { getCollection } from 'astro:content';
 import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
 import { languages } from '../../../../i18n/config';
 import type { SupportedLocale } from '../../../../i18n/config';
+import { specLabels } from '../../../../content/filaments/spec-labels';
+import { specPropertyMeta, specGroupOrder, specGroupLabels } from '../../../../content/filaments/spec-registry';
+import type { FilamentSpecId } from '../../../../content/filaments/spec-registry';
 
 export async function getStaticPaths() {
   return Object.keys(languages).map(lang => ({ params: { lang } }));
@@ -36,14 +39,7 @@ const categoryNames: Record<string, string> = {
   other: t('filament.category.other'),
 };
 
-const getLocalizedSpecs = (specs: any) => {
-  if (!specs) return {};
-  if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
-    return specs[currentLocale] || specs['zh-cn'] || specs['en'] || {};
-  }
-  return specs;
-};
-
+// Build data for client-side: id -> { name, brand, model, category, priceRange, image, link, properties }
 const allData = JSON.stringify(Object.fromEntries(
   allFilaments.map(f => [f.id, {
     name: `${f.data.brand || ''} ${f.data.model}`.trim(),
@@ -53,9 +49,27 @@ const allData = JSON.stringify(Object.fromEntries(
     priceRange: f.data.priceRange || '',
     image: f.data.image || '',
     link: getLocalizedPath(`/printing/filaments/${f.id}`, currentLocale),
-    specs: getLocalizedSpecs(f.data.specs),
+    properties: f.data.properties || {},
   }])
 ));
+
+// Build spec labels map for client-side rendering
+const labelsForJs: Record<string, string> = {};
+for (const [id, localeMap] of Object.entries(specLabels)) {
+  labelsForJs[id] = localeMap[currentLocale] || localeMap['en'] || id;
+}
+
+// Build spec meta map for client-side comparison logic
+const metaForJs: Record<string, { comparable: boolean; highlightDirection: string }> = {};
+for (const [id, meta] of Object.entries(specPropertyMeta)) {
+  metaForJs[id] = {
+    comparable: meta.comparable,
+    highlightDirection: meta.highlightDirection,
+  };
+}
+
+const specLabelsJson = JSON.stringify(labelsForJs);
+const specMetaJson = JSON.stringify(metaForJs);
 
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
@@ -94,82 +108,150 @@ const breadcrumbItems = [
   </section>
 </Layout>
 
-<script define:vars={{ allData }}>
+<script define:vars={{ allData, specLabels: specLabelsJson, specMeta: specMetaJson }}>
   function renderCompare() {
-    const params = new URLSearchParams(window.location.search);
-    const ids = [];
-    for (const [key, value] of params) {
-      if (key.startsWith('item') && value) ids.push(decodeURIComponent(value));
+    var params = new URLSearchParams(window.location.search);
+    var ids = [];
+    for (var pair of params) {
+      if (pair[0].startsWith('item') && pair[1]) ids.push(decodeURIComponent(pair[1]));
     }
 
-    const container = document.getElementById('compare-content');
+    var container = document.getElementById('compare-content');
     if (!container || ids.length < 2) return;
 
-    const data = typeof allData === 'string' ? JSON.parse(allData) : allData;
-    const items = ids.map(id => data[id]).filter(Boolean);
+    var data = typeof allData === 'string' ? JSON.parse(allData) : allData;
+    var labels = typeof specLabels === 'string' ? JSON.parse(specLabels) : specLabels;
+    var meta = typeof specMeta === 'string' ? JSON.parse(specMeta) : specMeta;
+    var items = ids.map(function(id) { return data[id]; }).filter(Boolean);
+
     if (items.length < 2) {
       container.innerHTML = '<p class="compare-empty">未找到选中的产品数据，请返回列表页重新选择。</p>';
       return;
     }
 
-    const allKeys = new Set();
-    items.forEach(item => { if (item.specs) Object.keys(item.specs).forEach(k => allKeys.add(k)); });
+    // Collect all canonical spec IDs across selected items, sorted by priority
+    var allPropIds = [];
+    var seenIds = {};
+    items.forEach(function(item) {
+      if (item.properties) {
+        Object.keys(item.properties).forEach(function(id) {
+          if (!seenIds[id]) {
+            seenIds[id] = true;
+            allPropIds.push(id);
+          }
+        });
+      }
+    });
 
-    const colCount = items.length;
-    const labelColWidth = 140;
-    const itemColWidth = `1fr`;
-    let html = `<div class="compare-cards" style="grid-template-columns: ${labelColWidth}px repeat(${colCount}, ${itemColWidth})">`;
+    // Sort by priority (from specMeta, use original order as fallback)
+    var priorityMap = {};
+    var priorityIdx = 0;
+    for (var key in meta) {
+      priorityMap[key] = priorityIdx++;
+    }
+    // For properties not in meta, assign high priority
+    allPropIds.forEach(function(id, idx) {
+      if (!(id in priorityMap)) priorityMap[id] = 9999 + idx;
+    });
+    allPropIds.sort(function(a, b) { return priorityMap[a] - priorityMap[b]; });
+
+    // Helper: get display value from property object
+    function getDisplayValue(prop) {
+      if (!prop) return '—';
+      var raw = prop.value;
+      if (typeof raw === 'number') {
+        var unit = prop.unit ? ' ' + prop.unit : '';
+        var cond = prop.condition ? ' (' + prop.condition + ')' : '';
+        return raw + unit + cond;
+      }
+      return String(raw);
+    }
+
+    // Helper: get numeric value for comparison
+    function getNumericValue(prop) {
+      if (!prop) return NaN;
+      if (typeof prop.value === 'number') return prop.value;
+      if (typeof prop.value === 'string') {
+        var m = prop.value.match(/([-+]?[\d.]+)/);
+        return m ? parseFloat(m[1]) : NaN;
+      }
+      return NaN;
+    }
+
+    var colCount = items.length;
+    var labelColWidth = 180;
+    var itemColWidth = '1fr';
+    var html = '<div class="compare-cards" style="grid-template-columns: ' + labelColWidth + 'px repeat(' + colCount + ', ' + itemColWidth + ')">';
     html += '<div class="compare-card compare-card--label"></div>';
-    items.forEach(item => {
-      html += `
-        <div class="compare-card">
-          ${item.image ? `<img src="${item.image}" alt="${item.name}" class="compare-card__image" />` : '<div class="compare-card__placeholder">🧵</div>'}
-          ${item.brand ? `<div class="compare-card__brand">${item.brand}</div>` : ''}
-          <h3 class="compare-card__model">${item.model}</h3>
-          ${item.priceRange ? `<div class="compare-card__price">${item.priceRange}</div>` : ''}
-          <div class="compare-card__category">${item.category}</div>
-          <a href="${item.link}" class="compare-card__link">查看详情 →</a>
-        </div>`;
+    items.forEach(function(item) {
+      html += '<div class="compare-card">' +
+        (item.image ? '<img src="' + item.image + '" alt="' + item.name + '" class="compare-card__image" />' : '<div class="compare-card__placeholder">🧵</div>') +
+        (item.brand ? '<div class="compare-card__brand">' + item.brand + '</div>' : '') +
+        '<h3 class="compare-card__model">' + item.model + '</h3>' +
+        (item.priceRange ? '<div class="compare-card__price">' + item.priceRange + '</div>' : '') +
+        '<div class="compare-card__category">' + item.category + '</div>' +
+        '<a href="' + item.link + '" class="compare-card__link">查看详情 →</a>' +
+        '</div>';
     });
     html += '</div>';
 
     html += '<div class="compare-table-wrapper"><table class="compare-table" style="table-layout: fixed;">';
-    html += `<colgroup><col style="width: ${labelColWidth}px" />`;
-    items.forEach(() => { html += '<col />'; });
+    html += '<colgroup><col style="width: ' + labelColWidth + 'px" />';
+    items.forEach(function() { html += '<col />'; });
     html += '</colgroup>';
     html += '<thead><tr><th class="compare-table__label-col">参数</th>';
-    items.forEach(item => { html += `<th>${item.model}</th>`; });
+    items.forEach(function(item) { html += '<th>' + item.model + '</th>'; });
     html += '</tr></thead><tbody>';
 
-    allKeys.forEach(key => {
-      const values = items.map(item => item.specs?.[key] || '—');
-      const allSame = values.length > 1 && values.every(v => v === values[0]);
+    allPropIds.forEach(function(propId) {
+      var props = items.map(function(item) { return item.properties ? item.properties[propId] : null; });
+      var values = props.map(function(p) { return getDisplayValue(p); });
+      var allSame = values.length > 1 && values.every(function(v) { return v === values[0]; });
 
-      // 检测数值并找出最大值
-      const numValues = values.map(v => {
-        const m = String(v).match(/[-+]?[\d.]+/);
-        return m ? parseFloat(m[0]) : NaN;
-      });
-      const hasNumbers = numValues.some(n => !isNaN(n));
-      const allNumeric = numValues.every(n => !isNaN(n));
-      let maxIdx = -1;
-      if (hasNumbers && !allSame) {
-        const maxVal = Math.max(...numValues.filter(n => !isNaN(n)));
-        // 只有当最大值唯一时才高亮
-        const maxIndices = numValues.reduce((acc, n, i) => { if (n === maxVal) acc.push(i); return acc; }, []);
-        if (maxIndices.length === 1) maxIdx = maxIndices[0];
+      // Numeric comparison for best-value highlighting
+      var numValues = props.map(function(p) { return getNumericValue(p); });
+      var hasNumbers = numValues.some(function(n) { return !isNaN(n); });
+      var propMeta = meta[propId];
+      var isComparable = propMeta && propMeta.comparable;
+      var highlightDir = propMeta ? propMeta.highlightDirection : 'higher_is_better';
+
+      var maxIdx = -1;
+      if (hasNumbers && !allSame && isComparable) {
+        var validNums = numValues.filter(function(n) { return !isNaN(n); });
+        if (validNums.length > 0) {
+          var bestVal = highlightDir === 'higher_is_better'
+            ? Math.max.apply(null, validNums)
+            : Math.min.apply(null, validNums);
+          var bestIndices = numValues.reduce(function(acc, n, i) {
+            if (n === bestVal) acc.push(i);
+            return acc;
+          }, []);
+          if (bestIndices.length === 1) maxIdx = bestIndices[0];
+        }
       }
 
-      html += `<tr class="${allSame ? 'compare-table__row--same' : 'compare-table__row--diff'}">`;
-      html += `<td class="compare-table__label">${key}</td>`;
-      values.forEach((v, i) => {
-        const isMax = i === maxIdx;
-        const cls = [
+      // Check if test_method differs across items
+      var testMethods = props.map(function(p) { return p && p.test_method ? p.test_method : ''; });
+      var hasMethodDiff = testMethods.some(function(m, i) { return m && m !== testMethods[0]; });
+
+      var label = labels[propId] || propId;
+      html += '<tr class="' + (allSame ? 'compare-table__row--same' : 'compare-table__row--diff') + '">';
+      html += '<td class="compare-table__label">' + label + '</td>';
+      values.forEach(function(v, i) {
+        var isMax = i === maxIdx;
+        var cls = [
           'compare-table__value',
           !allSame && !isMax ? 'compare-table__value--highlight' : '',
           isMax ? 'compare-table__value--best' : '',
         ].filter(Boolean).join(' ');
-        html += `<td class="${cls}">${v}</td>`;
+
+        // Add test_method note if methods differ
+        var methodNote = '';
+        if (hasMethodDiff && testMethods[i]) {
+          methodNote = ' <span class="compare-table__method" title="Test method">(' + testMethods[i] + ')</span>';
+        }
+
+        html += '<td class="' + cls + '">' + v + methodNote + '</td>';
       });
       html += '</tr>';
     });
@@ -218,11 +300,12 @@ const breadcrumbItems = [
   .compare-table tbody tr.compare-table__row--diff:hover td { border-color: rgba(0, 255, 136, 0.15); }
   .compare-table tbody tr:hover td.compare-table__value--best { background: rgba(0, 255, 136, 0.28); }
   .compare-table th { background: var(--color-bg-tertiary); font-weight: 600; color: var(--color-text-primary); }
-  .compare-table__label-col { width: 160px; min-width: 120px; }
-  .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: nowrap; }
+  .compare-table__label-col { width: 180px; min-width: 140px; }
+  .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: normal; word-break: break-word; line-height: 1.4; }
   .compare-table__value { color: var(--color-text-primary); }
   .compare-table__value--highlight { color: var(--color-primary); font-weight: 600; }
   .compare-table__value--best { background: rgba(0, 255, 136, 0.12); color: var(--color-success); font-weight: 700; position: relative; }
   .compare-table__value--best::after { content: ' ★'; font-size: 0.7em; }
   .compare-table__row--diff { background: rgba(0, 255, 136, 0.05); }
+  .compare-table__method { font-size: 0.8em; color: var(--color-text-tertiary); font-weight: 400; font-style: italic; }
 </style>

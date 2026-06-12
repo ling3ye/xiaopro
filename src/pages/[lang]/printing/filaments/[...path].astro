@@ -17,6 +17,8 @@ import { getCollection, getEntry } from 'astro:content';
 import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
 import { languages } from '../../../../i18n/config';
 import type { SupportedLocale } from '../../../../i18n/config';
+import { buildCardSpecs, getGroupedProperties, getDisplayValue, getSpecLabel, getTopProperties } from '../../../../content/filaments/spec-utils';
+import type { FilamentSpecId } from '../../../../content/filaments/spec-registry';
 
 export async function getStaticPaths() {
   const paths: any[] = [];
@@ -82,14 +84,6 @@ const categoryIcons: Record<string, string> = {
   other: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
 };
 
-const getLocalizedSpecs = (specs: any) => {
-  if (!specs) return {};
-  if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
-    return specs[currentLocale] || specs['zh-cn'] || specs['en'] || {};
-  }
-  return specs;
-};
-
 const breadcrumbItems: any[] = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.printing'), href: getLocalizedPath('/printing', currentLocale) },
@@ -99,12 +93,17 @@ if (!isListPage && filament) {
   breadcrumbItems.push({ label: filament.data.model, current: true });
 }
 
-const specsJson = isListPage
-  ? JSON.stringify(Object.fromEntries(allFilaments.map(f => [f.id, getLocalizedSpecs(f.data.specs)])))
+// Serialize properties data for client-side comparison
+const propertiesJson = isListPage
+  ? JSON.stringify(Object.fromEntries(allFilaments.map(f => [f.id, f.data.properties || {}])))
   : '{}';
 
 const pageDescription = !isListPage && filament
-  ? (() => { const s = getLocalizedSpecs(filament.data.specs); return Object.entries(s).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', '); })()
+  ? (() => {
+      const props = filament.data.properties || {};
+      const topIds = getTopProperties(props, 3);
+      return topIds.map(id => `${getSpecLabel(id, currentLocale)}: ${getDisplayValue(props[id], currentLocale)}`).join(', ');
+    })()
   : t('filament.listDescription');
 ---
 
@@ -141,7 +140,9 @@ const pageDescription = !isListPage && filament
             </div>
             <div class="filament-grid">
               {filamentsByCategory[cat].map(f => {
-                const localizedSpecs = getLocalizedSpecs(f.data.specs);
+                const cardSpecs = f.data.properties
+                  ? buildCardSpecs(f.data.properties, currentLocale, 3)
+                  : {};
                 return (
                   <div class="filament-card-wrapper" data-compare-id={f.id}>
                     <label class="compare-checkbox-wrapper">
@@ -155,7 +156,7 @@ const pageDescription = !isListPage && filament
                       link={getLocalizedPath(`/printing/filaments/${f.id}`, currentLocale)}
                       image={f.data.image}
                       brand={f.data.brand}
-                      specs={localizedSpecs}
+                      specs={cardSpecs}
                       priceRange={f.data.priceRange}
                       locale={currentLocale}
                     />
@@ -170,96 +171,107 @@ const pageDescription = !isListPage && filament
     </section>
   )}
 
-  {!isListPage && filament && (
-    <section class="filament-detail">
-      <div class="container">
-        <header class="filament-header">
-          <div class="filament-category">
-            <span class="category-icon small" set:html={categoryIcons[filament.data.category]} />
-            <span class="category-name">{categoryNames[filament.data.category]}</span>
-          </div>
-          {filament.data.brand && <div class="filament-brand">{filament.data.brand}</div>}
-          <h1 class="filament-title">{filament.data.model}</h1>
-          {filament.data.priceRange && <div class="filament-price">{filament.data.priceRange}</div>}
-          <div class="filament-links">
-            {filament.data.officialUrl && (
-              <AffiliateLink url={filament.data.officialUrl} label={t('filament.officialDocs')} type="official" variant="button" locale={currentLocale} />
-            )}
-            {filament.data.affiliateUrl && (
-              <AffiliateLink url={filament.data.affiliateUrl} label={t('filament.buyNow')} type="affiliate" variant="button" locale={currentLocale} />
-            )}
-          </div>
-            <!-- Add to compare button -->
-            <button
-              id="detail-add-compare"
-              class="detail-compare-btn"
-              data-item-id={id}
-              data-item-name={`${filament.data.brand || ''} ${filament.data.model}`}
-              data-item-specs={JSON.stringify(getLocalizedSpecs(filament.data.specs))}
-            >
-              {t('compare.addToCompare')}
-            </button>
-        </header>
+  {!isListPage && filament && (() => {
+    const props = filament.data.properties || {};
+    const grouped = getGroupedProperties(props, currentLocale);
+    return (
+      <section class="filament-detail">
+        <div class="container">
+          <header class="filament-header">
+            <div class="filament-category">
+              <span class="category-icon small" set:html={categoryIcons[filament.data.category]} />
+              <span class="category-name">{categoryNames[filament.data.category]}</span>
+            </div>
+            {filament.data.brand && <div class="filament-brand">{filament.data.brand}</div>}
+            <h1 class="filament-title">{filament.data.model}</h1>
+            {filament.data.priceRange && <div class="filament-price">{filament.data.priceRange}</div>}
+            <div class="filament-links">
+              {filament.data.officialUrl && (
+                <AffiliateLink url={filament.data.officialUrl} label={t('filament.officialDocs')} type="official" variant="button" locale={currentLocale} />
+              )}
+              {filament.data.affiliateUrl && (
+                <AffiliateLink url={filament.data.affiliateUrl} label={t('filament.buyNow')} type="affiliate" variant="button" locale={currentLocale} />
+              )}
+            </div>
+              {/* Add to compare button */}
+              <button
+                id="detail-add-compare"
+                class="detail-compare-btn"
+                data-item-id={id}
+                data-item-name={`${filament.data.brand || ''} ${filament.data.model}`}
+                data-item-specs={JSON.stringify(props)}
+              >
+                {t('compare.addToCompare')}
+              </button>
+          </header>
 
-        <div class="filament-layout">
-          <main class="filament-main">
-            <section class="filament-section">
-              <h2 class="section-title">{t('filament.specs')}</h2>
-              <div class="specs-grid">
-                {Object.entries(getLocalizedSpecs(filament.data.specs) || {}).map(([key, value]) => (
-                  <div class="spec-item">
-                    <span class="spec-key">{key}</span>
-                    <span class="spec-value">{String(value)}</span>
+          <div class="filament-layout">
+            <main class="filament-main">
+              {grouped.map(group => (
+                <section class="filament-section">
+                  <h2 class="section-title">{group.label}</h2>
+                  <div class="specs-grid">
+                    {group.properties.map(({ id: specId, prop }) => (
+                      <div class="spec-item">
+                        <span class="spec-key">{getSpecLabel(specId, currentLocale)}</span>
+                        <span class="spec-value">
+                          {getDisplayValue(prop, currentLocale)}
+                          {prop.standard && (
+                            <span class="spec-standard" title={prop.standard}>📋</span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </section>
+                </section>
+              ))}
 
-            {(filament.data.officialUrl || filament.data.datasheet) && (
-              <section class="filament-section">
-                <h2 class="section-title">{t('filament.officialResources')}</h2>
-                <div class="resources-list">
-                  {filament.data.officialUrl && (
-                    <a href={filament.data.officialUrl} target="_blank" rel="noopener noreferrer" class="resource-link">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                      {t('filament.officialDocs')}
-                    </a>
-                  )}
-                  {filament.data.datasheet && (
-                    <a href={filament.data.datasheet} target="_blank" rel="noopener noreferrer" class="resource-link">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                      {t('filament.datasheet')}
-                    </a>
-                  )}
-                </div>
-              </section>
-            )}
-          </main>
-
-          <aside class="filament-sidebar">
-            {relatedModels.length > 0 && (
-              <div class="sidebar-section">
-                <h3 class="sidebar-title">
-                  {t('filament.relatedModels')}
-                  <span class="count-badge">{relatedModels.length}</span>
-                </h3>
-                <div class="related-list">
-                  {relatedModels.slice(0, 5).map(model => {
-                    const slug = model.id.split('/').pop()?.replace('.md', '') || '';
-                    return (
-                      <a href={getLocalizedPath(`/printing/models/${slug}`, currentLocale)} class="related-item">
-                        <span class="related-title">{model.data.title}</span>
+              {(filament.data.officialUrl || filament.data.datasheet) && (
+                <section class="filament-section">
+                  <h2 class="section-title">{t('filament.officialResources')}</h2>
+                  <div class="resources-list">
+                    {filament.data.officialUrl && (
+                      <a href={filament.data.officialUrl} target="_blank" rel="noopener noreferrer" class="resource-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        {t('filament.officialDocs')}
                       </a>
-                    );
-                  })}
+                    )}
+                    {filament.data.datasheet && (
+                      <a href={filament.data.datasheet} target="_blank" rel="noopener noreferrer" class="resource-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                        {t('filament.datasheet')}
+                      </a>
+                    )}
+                  </div>
+                </section>
+              )}
+            </main>
+
+            <aside class="filament-sidebar">
+              {relatedModels.length > 0 && (
+                <div class="sidebar-section">
+                  <h3 class="sidebar-title">
+                    {t('filament.relatedModels')}
+                    <span class="count-badge">{relatedModels.length}</span>
+                  </h3>
+                  <div class="related-list">
+                    {relatedModels.slice(0, 5).map(model => {
+                      const slug = model.id.split('/').pop()?.replace('.md', '') || '';
+                      return (
+                        <a href={getLocalizedPath(`/printing/models/${slug}`, currentLocale)} class="related-item">
+                          <span class="related-title">{model.data.title}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
-          </aside>
+              )}
+            </aside>
+          </div>
         </div>
-      </div>
-    </section>
-  )}
+      </section>
+    );
+  })()}
 
   {!isListPage && !filament && (
     <section class="not-found">
@@ -274,7 +286,7 @@ const pageDescription = !isListPage && filament
 </Layout>
 
 {isListPage && (
-  <script define:vars={{ specsData: specsJson }}>
+  <script define:vars={{ specsData: propertiesJson }}>
     if (window.__compareSpecsData) {
       Object.assign(window.__compareSpecsData, specsData);
     }
@@ -323,6 +335,7 @@ const pageDescription = !isListPage && filament
   .spec-item { display: flex; justify-content: space-between; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md); gap: var(--space-sm); }
   .spec-key { font-size: var(--text-sm); color: var(--color-text-tertiary); }
   .spec-value { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-primary); }
+  .spec-standard { margin-left: 4px; opacity: 0.5; cursor: help; }
 
   .resources-list { display: flex; flex-direction: column; gap: var(--space-sm); }
   .resource-link { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md); background: var(--color-bg-tertiary); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; color: var(--color-text-primary); transition: all var(--transition-fast); }

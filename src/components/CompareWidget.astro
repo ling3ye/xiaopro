@@ -1,11 +1,12 @@
 ---
 /**
- * 对比组件 CompareWidget (v3 - 跨页面持久对比)
+ * 对比组件 CompareWidget (v4 - 规范化属性对比)
  *
- * v3 修复：
- * - STORAGE_KEY 通过 prop 传入，不再依赖 DOM（修复详情页 key 错误）
- * - 详情页也显示浮动栏（有已选项时自动出现）
- * - 复选框从 localStorage 恢复时正确勾选
+ * v4 变更:
+ * - 使用 canonical spec ID 替代语言相关的 key
+ * - 属性数据为结构化对象 {value, unit, test_method, ...}
+ * - 对比表格使用统一的 spec label 映射
+ * - 兼容旧 localStorage 格式, 自动清理
  *
  * @component CompareWidget
  *
@@ -14,11 +15,13 @@
  * @property {string} locale - 当前语言
  *
  * @author Claude Code
- * @version 3.0.0
+ * @version 4.0.0
  */
 
 import { useTranslations, getLocalizedPath } from '../utils/i18n';
 import type { SupportedLocale } from '../i18n/config';
+import { specLabels } from '../content/filaments/spec-labels';
+import { specPropertyMeta } from '../content/filaments/spec-registry';
 
 interface Props {
   collectionType: 'printers' | 'filaments';
@@ -33,10 +36,21 @@ const comparePagePath = getLocalizedPath(
   locale
 );
 
-// Pass collectionType to JS via data attribute (always rendered, not conditional)
+// Build spec labels for client-side JS
+const specLabelsForJs: Record<string, string> = {};
+if (collectionType === 'filaments') {
+  for (const [id, localeMap] of Object.entries(specLabels)) {
+    specLabelsForJs[id] = localeMap[locale] || localeMap['en'] || id;
+  }
+}
+const specLabelsJson = JSON.stringify(specLabelsForJs);
 ---
 
-<div class="compare-host" data-collection-type={collectionType} style="display:none;"></div>
+<div class="compare-host"
+  data-collection-type={collectionType}
+  data-spec-labels={collectionType === 'filaments' ? specLabelsJson : '{}'}
+  style="display:none;"
+></div>
 
 <!-- 对比浮动栏 (always rendered, JS controls visibility) -->
 <div class="compare-bar" id="compare-bar" style="display:none;">
@@ -103,6 +117,13 @@ const comparePagePath = getLocalizedPath(
   var collectionType = hostEl ? hostEl.getAttribute('data-collection-type') : 'printers';
   var STORAGE_KEY = 'compare_' + collectionType;
 
+  // Load spec labels from data attribute (for filaments)
+  var specLabels = {};
+  try {
+    var labelsStr = hostEl ? hostEl.getAttribute('data-spec-labels') : '{}';
+    specLabels = JSON.parse(labelsStr || '{}');
+  } catch(e) {}
+
   function getStorage() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
   }
@@ -122,7 +143,54 @@ const comparePagePath = getLocalizedPath(
     localStorage.setItem(STORAGE_KEY + '_names', JSON.stringify(data));
   }
 
+  /**
+   * Migrate old localStorage format (string values) to new format.
+   * Old: { id: { "Tensile Strength": "53 MPa", ... } }
+   * New: { id: { "tensile_strength_xy": { value: 53, unit: "MPa" }, ... } }
+   * Detect old format: values are strings, not objects with .value
+   */
+  function migrateOldFormat() {
+    var specs = getSpecs();
+    var needsMigrate = false;
+    for (var id in specs) {
+      var itemProps = specs[id];
+      for (var key in itemProps) {
+        if (typeof itemProps[key] === 'string') {
+          needsMigrate = true;
+          break;
+        }
+      }
+      if (needsMigrate) break;
+    }
+    if (needsMigrate) {
+      // Clear old data — user needs to re-add items
+      localStorage.removeItem(STORAGE_KEY + '_specs');
+    }
+  }
+
+  // Helper: get display value from property object
+  function getDisplayValue(prop) {
+    if (!prop) return '—';
+    var raw = prop.value;
+    if (typeof raw === 'number') {
+      var unit = prop.unit ? ' ' + prop.unit : '';
+      var cond = prop.condition ? ' (' + prop.condition + ')' : '';
+      return raw + unit + cond;
+    }
+    return String(raw);
+  }
+
+  // Helper: get numeric value
+  function getNumericValue(prop) {
+    if (!prop) return NaN;
+    if (typeof prop.value === 'number') return prop.value;
+    return NaN;
+  }
+
   function initCompare() {
+    // Migrate old localStorage format if needed
+    migrateOldFormat();
+
     var bar = document.getElementById('compare-bar');
     var modal = document.getElementById('compare-modal');
     var countEl = document.getElementById('compare-count');
@@ -138,7 +206,7 @@ const comparePagePath = getLocalizedPath(
     // Load persisted selections
     var selectedItems = getStorage();
 
-    // Inject specs data from list page into localStorage
+    // Inject properties data from list page into localStorage
     var pageSpecs = window.__compareSpecsData;
     if (pageSpecs && Object.keys(pageSpecs).length > 0) {
       var storedSpecs = getSpecs();
@@ -153,8 +221,7 @@ const comparePagePath = getLocalizedPath(
       setNames(storedNames);
     }
 
-    // ========== KEY FIX: Sync checkboxes with persisted state ==========
-    // Must run on EVERY page load to restore checked state from localStorage
+    // Sync checkboxes with persisted state
     document.querySelectorAll('.compare-checkbox').forEach(function(cb) {
       var input = cb;
       var id = input.dataset.compareId || '';
@@ -191,12 +258,11 @@ const comparePagePath = getLocalizedPath(
         pageLink.href = pageLink.href.split('?')[0] + '?' + params;
       }
 
-      // Also sync checkboxes when bar updates (for disable state)
+      // Sync checkboxes when bar updates
       document.querySelectorAll('.compare-checkbox').forEach(function(cb) {
         var input = cb;
         var id = input.dataset.compareId || '';
         input.disabled = selectedItems.length >= MAX_COMPARE && selectedItems.indexOf(id) === -1;
-        // Keep checkbox in sync
         input.checked = selectedItems.indexOf(id) !== -1;
       });
     }
@@ -205,10 +271,18 @@ const comparePagePath = getLocalizedPath(
       if (!bodyEl || selectedItems.length < 2) return;
       var specs = getSpecs();
       var names = getNames();
-      var allKeys = {};
+
+      // Collect all canonical property IDs
+      var allPropIds = [];
+      var seenIds = {};
       selectedItems.forEach(function(id) {
-        var itemSpecs = specs[id] || {};
-        for (var k in itemSpecs) { allKeys[k] = true; }
+        var itemProps = specs[id] || {};
+        for (var k in itemProps) {
+          if (!seenIds[k]) {
+            seenIds[k] = true;
+            allPropIds.push(k);
+          }
+        }
       });
 
       var html = '<div class="compare-table-wrapper"><table class="compare-table">';
@@ -216,16 +290,44 @@ const comparePagePath = getLocalizedPath(
       selectedItems.forEach(function(id) { html += '<th class="compare-table__item-col">' + (names[id] || id) + '</th>'; });
       html += '</tr></thead><tbody>';
 
-      for (var key in allKeys) {
-        var values = selectedItems.map(function(id) { return (specs[id] && specs[id][key]) ? specs[id][key] : '—'; });
+      allPropIds.forEach(function(propId) {
+        var props = selectedItems.map(function(id) { return (specs[id] && specs[id][propId]) ? specs[id][propId] : null; });
+        var values = props.map(function(p) { return getDisplayValue(p); });
         var allSame = values.length > 1 && values.every(function(v) { return v === values[0]; });
+
+        // Check test_method differences
+        var testMethods = props.map(function(p) { return p && p.test_method ? p.test_method : ''; });
+        var hasMethodDiff = testMethods.some(function(m, i) { return m && m !== testMethods[0]; });
+
+        // Best value highlighting for numeric properties
+        var numValues = props.map(function(p) { return getNumericValue(p); });
+        var hasNumbers = numValues.some(function(n) { return !isNaN(n); });
+        var maxIdx = -1;
+        if (hasNumbers && !allSame) {
+          var validNums = numValues.filter(function(n) { return !isNaN(n); });
+          var maxVal = Math.max.apply(null, validNums);
+          var maxIndices = numValues.reduce(function(acc, n, i) { if (n === maxVal) acc.push(i); return acc; }, []);
+          if (maxIndices.length === 1) maxIdx = maxIndices[0];
+        }
+
+        var label = specLabels[propId] || propId;
         html += '<tr class="' + (allSame ? 'compare-table__row--same' : 'compare-table__row--diff') + '">';
-        html += '<td class="compare-table__label">' + key + '</td>';
-        values.forEach(function(v) {
-          html += '<td class="compare-table__value ' + (allSame ? '' : 'compare-table__value--highlight') + '">' + v + '</td>';
+        html += '<td class="compare-table__label">' + label + '</td>';
+        values.forEach(function(v, i) {
+          var isMax = i === maxIdx;
+          var cls = 'compare-table__value';
+          if (!allSame && !isMax) cls += ' compare-table__value--highlight';
+          if (isMax) cls += ' compare-table__value--best';
+
+          var methodNote = '';
+          if (hasMethodDiff && testMethods[i]) {
+            methodNote = ' <span class="compare-table__method">(' + testMethods[i] + ')</span>';
+          }
+
+          html += '<td class="' + cls + '">' + v + methodNote + '</td>';
         });
         html += '</tr>';
-      }
+      });
 
       html += '</tbody></table></div>';
       bodyEl.innerHTML = html;
@@ -278,13 +380,11 @@ const comparePagePath = getLocalizedPath(
     if (addBtn) {
       var itemId = addBtn.dataset.itemId || '';
       var itemName = addBtn.dataset.itemName || '';
-      var itemSpecsStr = addBtn.dataset.itemSpecs || '{}';
+      var itemPropsStr = addBtn.dataset.itemSpecs || '{}';
 
       // Sync button state with persisted selections
       if (selectedItems.indexOf(itemId) !== -1) {
         addBtn.classList.add('detail-compare-btn--added');
-        var addLabel = addBtn.querySelector('.detail-compare-btn__label');
-        if (addLabel) addLabel.textContent = '✓ 已加入对比';
       }
 
       addBtn.addEventListener('click', function() {
@@ -292,22 +392,18 @@ const comparePagePath = getLocalizedPath(
         if (idx > -1) {
           selectedItems.splice(idx, 1);
           addBtn.classList.remove('detail-compare-btn--added');
-          var addLabel = addBtn.querySelector('.detail-compare-btn__label');
-          if (addLabel) addLabel.textContent = '加入对比';
         } else {
           if (selectedItems.length >= MAX_COMPARE) return;
           selectedItems.push(itemId);
           try {
             var storedSpecs = getSpecs();
-            storedSpecs[itemId] = JSON.parse(itemSpecsStr);
+            storedSpecs[itemId] = JSON.parse(itemPropsStr);
             setSpecs(storedSpecs);
           } catch(e) {}
           var storedNames = getNames();
           storedNames[itemId] = itemName;
           setNames(storedNames);
           addBtn.classList.add('detail-compare-btn--added');
-          var addLabel = addBtn.querySelector('.detail-compare-btn__label');
-          if (addLabel) addLabel.textContent = '✓ 已加入对比';
         }
         setStorage(selectedItems);
         updateBar();
@@ -488,9 +584,11 @@ const comparePagePath = getLocalizedPath(
   .compare-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
   .compare-table th, .compare-table td { padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-border); text-align: left; }
   .compare-table th { background: var(--color-bg-tertiary); font-weight: 600; color: var(--color-text-primary); position: sticky; top: 0; }
-  .compare-table__label-col { width: 160px; min-width: 120px; }
-  .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: nowrap; }
+  .compare-table__label-col { width: 180px; min-width: 140px; }
+  .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: normal; word-break: break-word; line-height: 1.4; }
   .compare-table__value { color: var(--color-text-primary); }
   .compare-table__value--highlight { color: var(--color-primary); font-weight: 500; }
+  .compare-table__value--best { background: rgba(0, 255, 136, 0.12); color: var(--color-success); font-weight: 700; }
   .compare-table__row--diff { background: rgba(0, 212, 255, 0.03); }
+  .compare-table__method { font-size: 0.8em; color: var(--color-text-tertiary); font-style: italic; }
 </style>
