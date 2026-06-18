@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0e14"/>
+      <stop offset="1" stop-color="#11171f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.15" r="0.6">
+      <stop offset="0" stop-color="#00d4ff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="logograd" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00d4ff"/>
+      <stop offset="1" stop-color="#00ff88"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- 电路网格装饰 -->
+  <g stroke="#00d4ff" stroke-opacity="0.08" stroke-width="1">
+    <path d="M0 90 H1200 M0 210 H1200 M0 330 H1200 M0 450 H1200 M0 570 H1200"/>
+    <path d="M150 0 V630 M390 0 V630 M630 0 V630 M870 0 V630 M1050 0 V630"/>
+  </g>
+
+  <!-- 左侧青色竖条 -->
+  <rect x="100" y="230" width="6" height="120" rx="3" fill="url(#logograd)"/>
+
+  <!-- Logo 标记（取自 favicon，青色填充） -->
+  <g transform="translate(100,150) scale(2.6)" fill="url(#logograd)">
+    <path d="M50.4 78.5a75.1 75.1 0 0 0-28.5 6.9l24.2-65.7c.7-2 1.9-3.2 3.4-3.2h29c1.5 0 2.7 1.2 3.4 3.2l24.2 65.7s-11.6-7-28.5-7L67 45.5c-.4-1.7-1.6-2.8-2.9-2.8-1.3 0-2.5 1.1-2.9 2.7L50.4 78.5Zm-1.1 28.2Zm-4.2-20.2c-2 6.6-.6 15.8 4.2 20.2a17.5 17.5 0 0 1 .2-.7 5.5 5.5 0 0 1 5.7-4.5c2.8.1 4.3 1.5 4.7 4.7.2 1.1.2 2.3.2 3.5v.4c0 2.7.7 5.2 2.2 7.4a13 13 0 0 0 5.7 4.9v-.3l-.2-.3c-1.8-5.6-.5-9.5 4.4-12.8l1.5-1a73 73 0 0 0 3.2-2.2 16 16 0 0 0 6.8-11.4c.3-2 .1-4-.6-6l-.8.6-1.6 1a37 37 0 0 1-22.4 2.7c-5-.7-9.7-2-13.2-6.2Z"/>
+  </g>
+
+  <!-- 品牌名 -->
+  <text x="140" y="250" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="96" font-weight="800" letter-spacing="2" fill="#e2e8f0">LINGFLUX</text>
+
+  <!-- 口号 -->
+  <text x="142" y="320" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="500" fill="#00d4ff">Soldering Ideas, Bridging Worlds</text>
+
+  <!-- 副描述 -->
+  <text x="144" y="386" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="30" font-weight="400" fill="#94a3b8">Hardware tutorials · Boards · Modules · 3D Printing · 9 languages</text>
+
+  <!-- 域名 -->
+  <text x="144" y="500" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="34" font-weight="600" fill="#e2e8f0">lingflux.com</text>
+
+  <!-- 右下角芯片装饰 -->
+  <g transform="translate(980,420)" stroke="#00d4ff" stroke-width="2" fill="none" opacity="0.5">
+    <rect x="0" y="0" width="120" height="120" rx="10"/>
+    <rect x="35" y="35" width="50" height="50" rx="6"/>
+    <path d="M35 60 H10 M85 60 H110 M60 35 V10 M60 85 V110"/>
+    <circle cx="60" cy="60" r="8"/>
+  </g>
+</svg>

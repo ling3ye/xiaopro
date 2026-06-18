@@ -14,13 +14,14 @@
  */
 
 import { useTranslations, getLocalizedPath } from '../utils/i18n';
+import { defaultLang } from '../i18n/config';
 
 // 获取组件属性
 interface Props {
   lang?: string;
 }
 
-const { lang = 'zh-cn' } = Astro.props;
+const { lang = defaultLang } = Astro.props;
 
 // 获取翻译函数
 const t = useTranslations(lang as any);

@@ -66,6 +66,7 @@ const currentLocale: SupportedLocale = lang as SupportedLocale;
 const siteUrl = Astro.site || 'https://lingflux.com';
 
 // 构建结构化数据 (Schema.org)
+// 注意：暂未提供站内搜索，因此不输出 SearchAction（指向 404 的 /search 会被 Search Console 标为无效）
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -73,14 +74,6 @@ const structuredData = {
   description: t('home.hero.description'),
   url: new URL(`/${lang}/`, siteUrl).href,
   inLanguage: lang,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: new URL(`/${lang}/search?q={search_term_string}`, siteUrl).href
-    },
-    'query-input': 'required name=search_term_string'
-  }
 };
 ---
 

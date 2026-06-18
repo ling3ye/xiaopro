@@ -18,6 +18,7 @@
  */
 
 import { useTranslations, getLocalizedPath } from '../utils/i18n';
+import { defaultLang } from '../i18n/config';
 import { getCollection } from 'astro:content';
 import Tag from './Tag.astro';
 
@@ -29,7 +30,7 @@ interface Props {
   tags?: string[];
 }
 
-const { lang = 'zh-cn', currentPath = '/', type = 'experiments', tags = [] } = Astro.props;
+const { lang = defaultLang, currentPath = '/', type = 'experiments', tags = [] } = Astro.props;
 
 // 获取翻译函数
 const t = useTranslations(lang);

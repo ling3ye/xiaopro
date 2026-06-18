@@ -18,7 +18,7 @@
  */
 
 import { useTranslations } from '../utils/i18n';
-import type { SupportedLocale } from '../i18n/config';
+import { defaultLang, type SupportedLocale } from '../i18n/config';
 
 interface Props {
   url: string;
@@ -33,7 +33,7 @@ const {
   label,
   type = 'official',
   variant = 'button',
-  locale = 'zh-cn',
+  locale = defaultLang,
 } = Astro.props;
 
 const t = useTranslations(locale);

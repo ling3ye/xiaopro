@@ -205,6 +205,7 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
               tags={['案例']}
               difficulty={('difficulty' in solution.data ? solution.data.difficulty as 'Easy' | 'Medium' | 'Hard' : undefined)}
               image={solution.data.image}
+              locale={currentLocale}
             />
           ))}
         </div>

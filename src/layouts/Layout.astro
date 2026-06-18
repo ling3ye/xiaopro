@@ -25,7 +25,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { ui } from '../i18n/config';
+import { ui, languages, defaultLang } from '../i18n/config';
 
 // 获取组件属性
 interface Props {
@@ -41,9 +41,9 @@ interface Props {
 const {
   title = 'LINGFLUX',
   description = '探索硬件开发的无限可能，从基础教程到高级案例，一站式学习平台',
-  lang = 'zh-cn',
+  lang = defaultLang,
   currentPath = '/',
-  image = '/og-image.jpg',
+  image = '/og-image.png',
   robots,
   structuredData,
 } = Astro.props;
@@ -60,6 +60,56 @@ const pageTitle = title === 'LINGFLUX'
 const siteUrl = Astro.site || 'https://lingflux.com';
 const canonicalUrl = new URL(currentPath, siteUrl).href;
 const imageUrl = new URL(image, siteUrl).href;
+const isDefaultOg = image === '/og-image.png';
+
+// og:locale：Open Graph 规范要求 language_TERRITORY 格式（下划线 + 地区）
+// 否则会被多数社交平台爬虫忽略
+const ogLocaleMap = {
+  'zh-cn': 'zh_CN',
+  'zh-tw': 'zh_TW',
+  en: 'en_US',
+  ja: 'ja_JP',
+  ko: 'ko_KR',
+  es: 'es_ES',
+  de: 'de_DE',
+  fr: 'fr_FR',
+  it: 'it_IT',
+};
+const ogLocale = ogLocaleMap[lang as keyof typeof ogLocaleMap] || 'en_US';
+const ogLocaleAlternates = Object.keys(languages)
+  .filter((code) => code !== lang)
+  .map((code) => ogLocaleMap[code as keyof typeof ogLocaleMap])
+  .filter(Boolean);
+
+// hreflang：推导当前页面在每种语言下的对应 URL
+// currentPath 形如 "/en/experiments/foo" 或 "/en/"，去掉当前语言前缀得到跨语言公共路径
+const langPrefix = `/${lang}`;
+const pathWithoutLang = currentPath.startsWith(langPrefix)
+  ? currentPath.slice(langPrefix.length) || '/'
+  : currentPath;
+const localizedHref = (code: string) =>
+  new URL(pathWithoutLang === '/' ? `/${code}/` : `/${code}${pathWithoutLang}`, siteUrl).href;
+const alternateLinks = Object.keys(languages).map((code) => ({
+  code,
+  href: localizedHref(code),
+}));
+// x-default 指向默认语言版本
+const xDefaultHref = localizedHref(defaultLang);
+
+// 站点级 Organization 结构化数据（品牌实体 + Logo，全站输出，用于 Google 知识面板）
+const organizationData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'LINGFLUX',
+  url: new URL('/', siteUrl).href,
+  logo: new URL('/logo.png', siteUrl).href,
+  description:
+    'Hardware development tutorials, board and module references, and 3D printing resources in 9 languages.',
+  sameAs: [
+    'https://github.com/ling3ye',
+    'https://www.youtube.com/@lingshunlab',
+  ],
+};
 ---
 
 <!doctype html>
@@ -85,11 +135,16 @@ const imageUrl = new URL(image, siteUrl).href;
 		<!-- SEO 元信息 -->
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
-		<meta name="keywords" content="硬件开发,Arduino,ESP32,Raspberry Pi,STM32,嵌入式系统,IoT" />
 		{robots && <meta name="robots" content={robots} />}
 
 		<!-- Canonical URL -->
 		<link rel="canonical" href={canonicalUrl} />
+
+		<!-- hreflang：多语言备选链接（含 x-default） -->
+		{alternateLinks.map(({ code, href }) => (
+			<link rel="alternate" hreflang={code} href={href} />
+		))}
+		<link rel="alternate" hreflang="x-default" href={xDefaultHref} />
 
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website" />
@@ -97,7 +152,12 @@ const imageUrl = new URL(image, siteUrl).href;
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={imageUrl} />
-		<meta property="og:locale" content={lang} />
+		{isDefaultOg && <meta property="og:image:width" content="1200" />}
+		{isDefaultOg && <meta property="og:image:height" content="630" />}
+		<meta property="og:locale" content={ogLocale} />
+		{ogLocaleAlternates.map((loc) => (
+			<meta property="og:locale:alternate" content={loc} />
+		))}
 
 		<!-- Twitter Card -->
 		<meta name="twitter:card" content="summary_large_image" />
@@ -122,6 +182,8 @@ const imageUrl = new URL(image, siteUrl).href;
 		{structuredData && (
 			<script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
 		)}
+		<!-- 站点级 Organization 结构化数据（全站） -->
+		<script type="application/ld+json" set:html={JSON.stringify(organizationData)} is:inline />
 	</head>
 	<body>
 		<!-- 页头导航 -->

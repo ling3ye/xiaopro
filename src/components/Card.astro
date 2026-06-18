@@ -27,7 +27,7 @@
 
 import Tag from './Tag.astro';
 import { useTranslations } from '../utils/i18n';
-import type { SupportedLocale } from '../i18n/config';
+import { defaultLang, type SupportedLocale } from '../i18n/config';
 
 // 获取组件属性
 interface Props {
@@ -61,7 +61,7 @@ const {
   featured = false,
   brand,
   specs,
-  locale = 'zh-cn',
+  locale = defaultLang,
   affiliateUrl,
   makerWorldUrl,
   priceRange,
