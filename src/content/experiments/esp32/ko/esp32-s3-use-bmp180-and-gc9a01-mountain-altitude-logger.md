@@ -42,6 +42,10 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 ![](https://img.lingflux.com/2026/06/9cedc6308f5ac8b32bb260be186b9298.jpg)
 
+
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BbqvEXOn6Xo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 부품 설명
