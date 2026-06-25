@@ -42,7 +42,9 @@ Article goal: **From zero wiring to successful upload, fully reproduce this effe
 
 The round display shows real-time air quality ADC value, status level (EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER), and historical trend line. Gauge color gradients from green to red as air quality worsens, with a rhythmic "breathing" glow on the outer ring. The bottom-left corner records minimum and maximum values since power-on.
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

@@ -43,7 +43,9 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 圆屏实时显示当前空气质量 ADC 数值、状态等级（EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER）和历史趋势折线；表盘颜色随空气质量从绿渐变到红，外圈带节奏感"呼吸"光效。屏幕左下角同时记录本次上电后的最低值和最高值。
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

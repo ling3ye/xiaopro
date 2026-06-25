@@ -43,7 +43,9 @@ Obiettivo di questo articolo: **dallo zero al funzionamento completo, riprodurre
 
 Lo schermo circolare mostra in tempo reale il valore ADC della qualità dell'aria attuale, lo stato di qualità (ECCellenTE / BUONO / ACCETtabile / MODERATO / SCARSO / PERICOLO) e il grafico storico del trend; il colore dell'indicatore passa dal verde al rosco in base alla qualità dell'aria, con un effetto glow "respirante" sul bordo esterno. Nell'angolo in basso a sinistra dello schermo vengono registrati anche i valori minimi e massimi dall'accensione.
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## Descrizione dei componenti

@@ -42,7 +42,9 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 圓屏即時顯示當前空氣品質 ADC 數值、狀態等級（EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER）和歷史趨勢折線；錶盤顏色隨空氣品質從綠漸變到紅，外圈帶節奏感「呼吸」光效。螢幕左下角同時記錄本次上電後的最低值和最高值。
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

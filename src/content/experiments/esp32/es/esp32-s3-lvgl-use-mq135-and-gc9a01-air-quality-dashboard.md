@@ -42,7 +42,9 @@ Objetivo de este artículo: **Desde cero con las conexiones hasta una carga exit
 
 La pantalla circular muestra en tiempo real el valor ADC de calidad del aire actual, el nivel de estado (EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER) y el gráfico de tendencias históricas; el color del indicador cambia gradualmente de verde a rojo según la calidad del aire, con un efecto de iluminación de "respiración" rítmico en el círculo exterior. La esquina inferior izquierda de la pantalla también registra el valor mínimo y máximo desde el encendido actual.
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

@@ -43,7 +43,9 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 원형 디스플레이에 현재 공기질 ADC 수치, 상태 등급（EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER）및 역사적 추세 그래프를 실시간으로 표시합니다. 게이지 색상은 공기질에 따라 녹색에서 적색으로 점진적으로 변하며, 외부 링은 리듬감 있는 "호흡" 발광 효과가 있습니다. 화면 왼쪽 하단에는 전원 켜진 후 최소값과 최대값이 동시에 기록됩니다.
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

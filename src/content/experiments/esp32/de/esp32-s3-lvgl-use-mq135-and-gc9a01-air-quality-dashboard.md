@@ -43,7 +43,9 @@ Ziel dieses Artikels: **Von der ersten Verkabelung bis zum erfolgreichen Hochlad
 
 Das Runddisplay zeigt in Echtzeit den aktuellen Luftqualitäts-ADC-Wert, den Status (EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER) und den historischen Trendverlauf; die Anzeigefarbe verläuft von grün nach rot entsprechend der Luftqualität, der Außenrand hat einen rhythmischen "atmenden" Leuchteffekt. Die linke untere Ecke zeichnet gleichzeitig den niedrigsten und höchsten Wert seit dem Einschalten auf.
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

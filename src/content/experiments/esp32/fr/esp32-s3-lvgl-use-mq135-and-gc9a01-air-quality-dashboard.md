@@ -42,7 +42,9 @@ Objectif de cet article : **du câblage zéro au flashage réussi, reproduire co
 
 L'écran circulaire affiche en temps réel la valeur ADC de la qualité de l'air actuelle, le niveau de statut (EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER) et la courbe de tendance historique ; la couleur de la jauge passe du vert au rouge selon la qualité de l'air, avec un effet de lueur "respiratoire" rythmique sur le cercle extérieur. Le coin inférieur gauche de l'écran enregistre également les valeurs minimales et maximales depuis le dernier démarrage.
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

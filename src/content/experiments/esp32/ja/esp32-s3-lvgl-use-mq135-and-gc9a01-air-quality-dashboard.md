@@ -42,7 +42,9 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 円形ディスプレイが現在の空気品質ADC値、ステータスレベル（EXCELLENT / GOOD / FAIR / MODERATE / POOR / DANGER）、履歴トレンド折れ線グラフをリアルタイム表示。ゲージ色は空気品質に応じて緑から赤へグラデーション変化し、外周にはリズム感のある「呼吸」光効果。画面左下には起動後の最小値・最大値を同時記録。
 
+<br>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2M6HRdpfW-Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 
