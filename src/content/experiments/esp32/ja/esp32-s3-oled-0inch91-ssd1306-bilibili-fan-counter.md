@@ -10,7 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **一言でいうと**：ESP32-S3 + 0.91" OLED + Bilibili API で、「バネダンピングリバウンド」するデスクトップフォロワーカウンターを作り、スマホを取り出してデータを確認する手間をなくします。
 
-# ESP32-S3 + 0.91" OLED で作るデスクトップ Bilibili フォロワー「ストレス解消」カウンター（バネダンピング物理揺れ付き！）
 
 難易度：⭐⭐☆☆☆（初心者でも挑戦可）
 想定時間：30 分
@@ -36,6 +35,10 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 最終的に実現したのは、エレガントな三段構成の洗練されたレイアウトです。左側には縦書きの「FANS」ラベルと機械的な矢印マーク、中央には今回の実験の魂である「24ピクセル高・数字のみの太字・局所クリップウィンドウ付き」**物理ダンピングスクロールホイールの大数字**、右側には本日のフォロワー増減数（当日の増減を自動計算し、上下の三角矢印付き）と、システムの Wi-Fi 信号強度、そしてハートビートインジケーターです。
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

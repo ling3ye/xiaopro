@@ -10,7 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **En une phrase :** ESP32-S3 + OLED 0,91\" + API Bilibili, pour fabriquer un compteur d'abonnés de bureau qui « rebondit comme un ressort amorti » — finis les allers-retours sur le téléphone pour vérifier les statistiques.
 
-# ESP32-S3 + OLED 0,91\" pour un compteur d'abonnés Bilibili « satisfaisant » (avec oscillation physique à ressort amorti !)
 
 Difficulté : ⭐⭐☆☆☆ (accessible aux débutants)
 Temps estimé : 30 minutes
@@ -36,6 +35,10 @@ Avec ce petit écran OLED, j'ai réalisé un compteur d'abonnés Bilibili de bur
 Le résultat que j'ai obtenu est une mise en page élégante en trois sections : à gauche, le logo « FANS » en vertical et une flèche d'indication mécanique ; au centre, l'âme de l'expérience — un **compteur à rouleaux physiques amortis en gros chiffres** de 24 pixels de haut, gras, avec sa propre fenêtre de découpe locale ; à droite, le gain d'abonnés du jour (calcul automatiquement, avec une flèche triangulaire de hausse/baisse), ainsi que la force du signal Wi-Fi et un témoin de pulsation.
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

@@ -10,8 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **一句话摘要**：ESP32-S3 + 0.91" OLED + B站 API，做一个会「弹簧阻尼回弹」的桌面粉丝计数器，告别天天掏手机刷数据。
 
-# ESP32-S3 + 0.91" OLED 打造桌面 B站粉丝「解压」计数器（带弹簧阻尼物理抖动！）
-
 难度：⭐⭐☆☆☆（新手可上手）
 预计时间：30 分钟
 测试环境：Arduino IDE 2.3.8 + ESP32 主板支持包 v3.3.10 + U8g2 v2.36.19 + ArduinoJson v7.4.3
@@ -36,6 +34,10 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 最终我实现的效果是一个优雅的三段式精致布局：左侧竖排硬核的 “FANS” 标识和机械指示箭头；中间是本次实验的灵魂——24像素高、纯数字粗体、自带局部裁切视窗的**物理阻尼滚动轮大字**；右侧则是今日粉丝增量（自动计算今日涨跌幅并配有升降三角箭头）以及系统 Wi-Fi 信号强度和心跳指示灯。
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

@@ -10,8 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **Resumen en una línea**: ESP32-S3 + OLED de 0.91" + la API de Bilibili para hacer un contador de seguidores de escritorio que «rebota como un muelle amortiguado» y dejar de sacar el móvil a cada rato para consultar las cifras.
 
-# ESP32-S3 + OLED de 0.91" para crear un contador de seguidores de Bilibili «satisfactorio» (¡con rebote físico de muelle amortiguado!)
-
 Dificultad: ⭐⭐☆☆☆ (aptos para principiantes)
 Tiempo estimado: 30 minutos
 Entorno de pruebas: Arduino IDE 2.3.8 + paquete de placa ESP32 v3.3.10 + U8g2 v2.36.19 + ArduinoJson v7.4.3
@@ -36,6 +34,10 @@ Con esta pequeña pantalla OLED he montado un contador de seguidores de Bilibili
 El resultado que conseguí es una elegante disposición refinada en tres secciones: a la izquierda, la etiqueta «FANS» en vertical y una flecha indicadora mecánica; en el centro, el alma de este experimento: un **gran número en rueda de desplazamiento con física amortiguada** de 24 píxeles de alto, en negrita y con una ventana de recorte local; a la derecha, el incremento de seguidores del día (calcula automáticamente la variación diaria con triángulos de subida/bajada), junto con la intensidad de la señal Wi-Fi y un indicador de latido del sistema.
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

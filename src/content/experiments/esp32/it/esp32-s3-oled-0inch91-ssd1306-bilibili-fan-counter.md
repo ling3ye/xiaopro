@@ -10,7 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **In breve:** ESP32-S3 + OLED 0,91" + API di Bilibili per un contatore follower da scrivania che «rimbalza a molla smorzata»: addio al tirare fuori il telefono ogni momento per controllare i numeri.
 
-# ESP32-S3 + OLED 0,91" per un contatore follower Bilibili da scrivania «soddisfacente» (con animazione fisica a molla smorzata!)
 
 Difficoltà: ⭐⭐☆☆☆ (adatto ai principianti)
 Tempo stimato: 30 minuti
@@ -36,6 +35,10 @@ Con questo piccolo schermo OLED ho realizzato un contatore follower Bilibili da 
 Il risultato finale è un'elegante disposizione rifinita in tre sezioni: sulla sinistra l'etichetta verticale «FANS» con la freccia meccanica indicatrice; al centro l'anima di questo esperimento — il grande contatore a cifre **con animazione fisica a molla smorzata**, alto 24 pixel, in grassetto e solo numeri, con una finestra di ritaglio locale; sulla destra l'incremento giornaliero dei follower (calcolato automaticamente con triangoli su/giù) e l'indicatore della potenza del segnale Wi-Fi con il lampeggio di heartbeat.
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

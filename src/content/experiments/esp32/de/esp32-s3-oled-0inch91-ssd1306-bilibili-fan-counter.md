@@ -10,8 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **Kurz gesagt:** ESP32-S3 + 0,91" OLED + Bilibili API – ein Desktop-Follower-Zähler mit „federnder Dämpfung", damit du nicht ständig das Handy zücken musst, um die Zahlen zu checken.
 
-# ESP32-S3 + 0,91" OLED: Desktop-Bilibili-Follower-Zähler zum Stressabbau (mit federnder Dämpfung und physikalischer Schwingung!)
-
 Schwierigkeit: ⭐⭐☆☆☆ (auch für Anfänger geeignet)
 Geschätzte Dauer: 30 Minuten
 Getestet mit: Arduino IDE 2.3.8 + ESP32-Boardpaket v3.3.10 + U8g2 v2.36.19 + ArduinoJson v7.4.3
@@ -36,6 +34,10 @@ Mit diesem kleinen OLED-Display habe ich einen magischen, befriedigenden Desktop
 Am Ende habe ich ein elegantes, dreiteiliges Layout umgesetzt: links ein vertikales, Hardcore-„FANS"-Logo mit mechanischem Richtungs-Pfeil; in der Mitte die Seele dieses Experiments – ein 24 Pixel hoher, rein numerischer Fettschrift-Zähler mit lokalem Clipping-Fenster als **physikalisch gedämpftes großes Rollrad**; rechts der heutige Follower-Zuwachs (mit automatischer Tagesbilanz und Auf-/Abwärts-Dreieckspfeilen) sowie die Wi-Fi-Signalstärke und ein Heartbeat-Indikator.
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

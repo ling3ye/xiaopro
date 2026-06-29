@@ -10,7 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **TL;DR**: ESP32-S3 + 0.91" OLED + Bilibili API = a desktop follower counter with buttery spring-damped physics animation. Stop checking your phone for stats.
 
-# ESP32-S3 + 0.91" OLED Desktop Bilibili Follower Counter (with Spring-Damped Physics Bounce!)
 
 Difficulty: ⭐⭐☆☆☆ (beginner-friendly)
 Estimated time: 30 minutes
@@ -36,6 +35,10 @@ I built a mesmerizing, satisfying desktop Bilibili follower counter out of this 
 The final effect is an elegant three-zone layout: a vertical "FANS" label and mechanical arrow on the left; the soul of the project in the middle - 24-pixel-tall, bold, pure-digit numbers in a clipped viewport with a **physics-damped scrolling odometer**; and on the right, today's follower delta (automatically computed with up/down triangles) along with Wi-Fi signal strength and a heartbeat indicator.
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

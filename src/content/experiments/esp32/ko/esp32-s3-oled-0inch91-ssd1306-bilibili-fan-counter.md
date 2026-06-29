@@ -10,7 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **한 줄 요약**: ESP32-S3 + 0.91" OLED + Bilibili API로 '스프링 댐핑 반동'이 있는 데스크톱 팔로워 카운터를 만들어, 매일 휴대폰을 꺼내 데이터를 새로고침하던 수고를 덜어보세요.
 
-# ESP32-S3 + 0.91" OLED로 만드는 데스크톱 Bilibili 팔로워 '스트레스 해소' 카운터 (스프링 댐핑 물리 흔들림 탑재!)
 
 난이도: ⭐⭐☆☆☆ (초보자도 시작 가능)
 예상 소요 시간: 30분
@@ -36,6 +35,10 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 최종적으로 완성한 결과는 우아한 3단 정교 레이아웃이에요. 왼쪽에는 세로로 배열된 강렬한 "FANS" 레이블과 기계식 표시 화살표, 가운데에는 이번 실험의 핵심인 24픽셀 높이의 순수 숫자 굵은 글씨, 부분 클리핑 윈도우가 있는 **물리 댐핑 스크롤 휠 대형 숫자**가 자리 잡고 있어요. 오른쪽에는 오늘의 팔로워 증감(자동으로 오늘의 등락폭을 계산하고 상승/하강 삼각 화살표 표시)과 시스템 Wi-Fi 신호 강도 및 하트비트 표시등이 표시돼요.
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 

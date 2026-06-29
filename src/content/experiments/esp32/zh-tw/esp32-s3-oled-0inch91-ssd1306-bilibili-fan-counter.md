@@ -10,8 +10,6 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 
 > **一句話摘要**：ESP32-S3 + 0.91" OLED + Bilibili API，做一個會「彈簧阻尼回彈」的桌面粉絲計數器，告別天天掏手機刷資料。
 
-# ESP32-S3 + 0.91" OLED 打造桌面 Bilibili 粉絲「解壓」計數器（附彈簧阻尼物理抖動！）
-
 難度：⭐⭐☆☆☆（新手可上手）
 預計時間：30 分鐘
 測試環境：Arduino IDE 2.3.8 + ESP32 開發板支援包 v3.3.10 + U8g2 v2.36.19 + ArduinoJson v7.4.3
@@ -36,6 +34,11 @@ image: "https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg"
 最終我實現的效果是一個優雅的三段式精緻佈局：左側直排硬核的「FANS」標識和機械指示箭頭；中間是本次實驗的靈魂——24像素高、純數字粗體、自帶局部裁切視窗的**物理阻尼滾動輪大字**；右側則是今日粉絲增量（自動計算今日漲跌幅並配有升降三角箭頭）以及系統 Wi-Fi 訊號強度和心跳指示燈。
 
 ![](https://img.lingflux.com/2026/06/13648c6923d1cb24486cb082105d8d59.jpg)
+
+<br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NEaawjnVx0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 
 ---
 
