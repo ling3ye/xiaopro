@@ -42,6 +42,9 @@ Ce tuto raconte comment j'ai utilisé un ESP32 et un afficheur e-paper 7,5\" pou
 
 Le résultat final : un afficheur e-paper noir / blanc / rouge posé sur le bureau, qui affiche calmement le cours, la variation en %, le plus haut et le plus bas du jour, ainsi que le volume traité ; bourse de HK donc rouge = hausse et noir = baisse, on comprend l'humeur d'un seul coup d'œil ; à la clôture, sur la pause déjeuner ou le week-end, il « fait le mort » et rafraîchit rarement, et dès la reprise il reprend son rythme — bref, il ne va pas clignoter tout seul à 3 h du matin pour te flanquer la trouille.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 > Cette démo utilise l'API gratuite de Tencent Finance, du coup j'ai pris le cours de Tencent Holdings comme exemple, sans aucune autre arrière-pensée. Cet article ne constitue pas un conseil en investissement. Investir comporte des risques, sois prudent.
 >
 > Les choses importantes, il faut les dire trois fois !!!
@@ -572,6 +575,99 @@ void fetchStockData() {
 **Troisième étape, pas de re-dessin si le prix n'a pas bougé** : un rafraîchissement d'e-paper prend plusieurs secondes et clignote ; le code mémorise donc le dernier prix dessiné dans `lastPriceF`, saute le rafraîchissement si la valeur est identique, et ne redessine vraiment que quand le prix a changé — un bon cru de rafraîchissements économisé.
 
 **Quatrième étape, diagnostic de la broche BUSY** : dès le démarrage, on lit le niveau de la broche BUSY. Si elle n'est pas au niveau haut attendu, c'est presque sûrement un souci de câblage ou d'alimentation — un avertissement précoce qui t'évite de dépanner pendant deux heures avant de réaliser qu'un fil était mal branché.
+
+## Un simple programme « Hello World »
+
+Voici un code de test minimal, pratique pour vérifier que tout fonctionne : le code précédent, avec toute la partie réseau, paraît bien complexe et gêne la compréhension.
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. Définir les broches de l'e-paper
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. Construire l'instance du driver (pour tester rapidement différents modèles de driver)
+// Pendant les tests, ne garder qu'une option décommentée, commenter les autres avec //
+
+// Option A : GDEW075Z08 (800x480, chip driver GD7965)
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option B : GDEW075Z09 (640x384, chip driver UC8179 / IL0371)
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option C : GDEH075Z90 (880x528, chip driver SSD1677) — gourmand en mémoire, utilise la pagination HEIGHT / 2
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option D : GDEW075Z08 (800x480, une autre variante basée sur le chip UC8179)
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option E : GDEY075Z08 (800x480, chip driver UC8179)
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. [ÉTAPE CLÉ] Comme on utilise des broches SPI non standard, il faut d'abord initialiser manuellement le bus SPI de l'ESP32-S3
+  // Ordre des paramètres : SCK, MISO (-1 = aucun), MOSI, SS (-1 = non assigné pour le moment)
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. Initialiser l'écran
+  Serial.println("Initializing e-Paper...");
+  display.init(115200);
+  display.setRotation(0); // 0 = orientation paysage standard
+
+  // 5. Commencer à dessiner une page simple
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. Une fois le rafraîchissement terminé, mettre l'écran en veille profonde pour le protéger et couper l'alimentation
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // Garder la boucle vide pour éviter des rafraîchissements répétés qui abîment l'e-paper
+  delay(1000);
+}
+
+// Fonction de dessin minimale
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // Effacer l'écran (tout blanc)
+    display.fillScreen(GxEPD_WHITE);
+
+    // 1. Bande rouge en haut
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. Grand texte noir au milieu
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. Indication en rouge en bas
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## Dépannage courant
 

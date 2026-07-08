@@ -42,6 +42,9 @@ Adafruit GFX Library v1.12.6
 
 最終效果就是：桌上一塊黑白紅三色的電子紙，安靜地顯示股價、漲跌幅、當日最高最低價和成交額；港股紅漲黑跌，一眼就能看懂心情；收盤、午休、週末的時候它會自動「裝死」少刷新，開盤了再恢復正常節奏，不會半夜還在偷偷刷屏嚇自己。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 > 由於這次演示使用的是騰訊財經的免費 API，所以我就拿騰訊控股的股價作為演示，並無其他意思。本文不提供任何投資建議，投資有風險，請小心謹慎。
 >
 > 重要的事情，要說三遍！！！
@@ -572,6 +575,99 @@ void fetchStockData() {
 **第三步，價格沒變就不重繪**：電子紙刷新一次要好幾秒還會閃爍，所以程式碼裡用 `lastPriceF` 記住上一次畫的價格，沒變化就跳過，只有真的變了才重新刷屏，能省不少刷新次數。
 
 **第四步，BUSY 腳位診斷**：開機第一時間讀一下 BUSY 腳位電位，如果不是預期的高電位，大概率是接線或供電有問題，提前給自己一個提醒，省得排查到最後才發現是接線錯了。
+
+## 簡單 Hello World 程式
+
+貼出一個極簡的測試程式碼，方便測試，因為之前的程式碼加上網路，顯得非常複雜不方便你的理解。
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. 定義電子紙接腳
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. 建構驅動實例（用於快速測試不同的驅動型號）
+// 測試時，每次只保留一個取消註解，其餘的用 // 註解掉
+
+// 選項 A: GDEW075Z08 (800x480, 驅動晶片 GD7965)
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 選項 B: GDEW075Z09 (640x384, 驅動晶片 UC8179 / IL0371)
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 選項 C: GDEH075Z90 (880x528, 驅動晶片 SSD1677) - 記憶體佔用大，使用 HEIGHT / 2 分頁
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 選項 D: GDEW075Z08 (800x480, 另一種採用 UC8179 晶片的版本)
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 選項 E: GDEY075Z08 (800x480, 驅動晶片 UC8179)
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. 【關鍵步】由於使用了非預設 SPI 接腳，必須先手動初始化 ESP32-S3 的 SPI 匯流排
+  // 參數順序：SCK, MISO(-1 表示無), MOSI, SS(-1 暫不指定)
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. 初始化顯示螢幕
+  Serial.println("Initializing e-Paper...");
+  display.init(115200);
+  display.setRotation(0); // 0 為標準橫屏
+
+  // 5. 開始簡單的頁面繪製
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. 刷新完畢後讓螢幕進入深度休眠，保護螢幕並徹底斷電
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // 保持空迴圈，避免重複刷新損傷電子紙
+  delay(1000);
+}
+
+// 極簡的繪製函式
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // 清屏（全白）
+    display.fillScreen(GxEPD_WHITE);
+
+    // 1. 頂部的紅條
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. 中間的黑色大字
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. 底部的紅字提示
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## 常見問題排查
 

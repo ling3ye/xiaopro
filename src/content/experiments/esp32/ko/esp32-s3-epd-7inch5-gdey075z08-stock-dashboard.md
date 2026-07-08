@@ -42,6 +42,9 @@ Adafruit GFX Library v1.12.6
 
 최종 결과물은 이래요. 책상 위에 검/흰/빨 3색 전자종이가 가격, 등락률, 당일 최고/최저가, 거래대금을 조용히 띄워줘요. 홍콩 증시는 빨강=상승, 검정=하락이라 한눈에 기분을 읽을 수 있죠. 장 마감, 점심시간, 주말에는 자동으로 '죽은 척'하며 새로고침을 줄이고, 개장하면 다시 원래 주기로 돌아와요. 한밤중에 몰래 화면 갱신하다 깜짝 놀라는 일도 없죠.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 > 이번 데모는 텐센트 재정의 무료 API를 사용하기 때문에, 텐센트 지주의 주가를 데모로 사용했을 뿐 다른 의도는 없습니다. 본문은 어떠한 투자 권유도 하지 않으며, 투자에는 위험이 따르니 신중하게 판단해 주세요.
 >
 > 중요한 일은 세 번 말해야 합니다!!!
@@ -572,6 +575,99 @@ void fetchStockData() {
 **세 번째, 가격이 안 변했으면 다시 그리지 않아요.** 전자종이는 한 번 갱신하는 데 몇 초가 걸리고 깜빡이기까지 해요. 그래서 코드에서는 `lastPriceF`로 마지막에 그린 가격을 기억해 두고, 변화가 없으면 건너뛰고 진짜 바뀌었을 때만 다시 갱신해요. 갱신 횟수를 꽤 줄일 수 있어요.
 
 **네 번째, BUSY 핀 진단.** 부팅 직후 BUSY 핀의 전압을 바로 읽어요. 예상한 high가 아니라면 십중팔구 배선이나 전원 문제라서, 미리 알림을 받아두는 거예요. 나중에 배선 잘못이라는 걸 겨우 깨닫는 일을 막죠.
+
+## 간단한 Hello World 프로그램
+
+테스트하기 쉽도록 아주 최소한의 테스트 코드를 올려요. 앞선 코드는 네트워크까지 섞여 있어서 복잡하고 이해하는 걸 방해하거든요.
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. 전자종이 핀 정의
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. 드라이버 인스턴스 생성(다양한 드라이버 모델을 빠르게 테스트하기 위함)
+// 테스트할 때는 한 번에 하나만 주석 해제하고, 나머지는 // 로 주석 처리하세요
+
+// 옵션 A: GDEW075Z08(800x480, 드라이버 IC GD7965)
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 옵션 B: GDEW075Z09(640x384, 드라이버 IC UC8179 / IL0371)
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 옵션 C: GDEH075Z90(880x528, 드라이버 IC SSD1677) — 메모리를 많이 써서 HEIGHT / 2 페이징 사용
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 옵션 D: GDEW075Z08(800x480, UC8179 칩을 쓰는 또 다른 버전)
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 옵션 E: GDEY075Z08(800x480, 드라이버 IC UC8179)
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. 【핵심 단계】기본값이 아닌 SPI 핀을 사용하므로, 먼저 ESP32-S3의 SPI 버스를 수동으로 초기화해야 해요
+  // 매개변수 순서: SCK, MISO(-1은 없음), MOSI, SS(-1은 일단 미지정)
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. 디스플레이 초기화
+  Serial.println("Initializing e-Paper...");
+  display.init(115200);
+  display.setRotation(0); // 0은 표준 가로 방향
+
+  // 5. 간단한 페이지 그리기 시작
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. 새로고침이 끝나면 화면을 보호하고 전원을 완전히 끄기 위해 딥슬립에 진입
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // 빈 루프를 유지해서, 반복 새로고침이 전자종이를 손상시키지 않게 해요
+  delay(1000);
+}
+
+// 최소 그리기 함수
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // 화면 지우기(전체 흰색)
+    display.fillScreen(GxEPD_WHITE);
+
+    // 1. 상단의 빨간 띠
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. 가운데의 큰 검정 글자
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. 하단의 빨간 안내 문구
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## 자주 묻는 문제 해결
 

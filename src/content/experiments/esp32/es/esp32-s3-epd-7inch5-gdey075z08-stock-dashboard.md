@@ -42,6 +42,9 @@ Este tutorial cuenta cómo, con un ESP32 y una pantalla de tinta electrónica de
 
 El resultado final: una pantalla de tinta electrónica en blanco, negro y rojo sobre la mesa, mostrando en silencio el precio, la variación porcentual, el máximo y el mínimo del día y el volumen contratado. En la bolsa de HK el rojo sube y el negro baja, así de un vistazo ya entiendes el mood del día. Cuando hay cierre, descanso de mediodía o fin de semana, el aparato «se hace el muerto» y refresca mucho menos; cuando abre el mercado vuelve al ritmo normal. No te va a estar actualizando a escondidas a medianoche para darte sustos.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 > Como en esta demo usamos la API gratuita de Tencent Finance, he cogido la cotización de Tencent Holdings como ejemplo, sin ninguna otra intención. Este artículo no ofrece asesoramiento financiero; invertir conlleva riesgo, ten cuidado.
 >
 > ¡Las cosas importantes se dicen tres veces!!!
@@ -572,6 +575,99 @@ void fetchStockData() {
 **Tercera clave: si el precio no cambia, no redibuja.** Un refresco de la pantalla de tinta electrónica tarda varios segundos y además parpadea. Por eso el código recuerda el último precio pintado en `lastPriceF`; si es idéntico, se salta el refresco y solo actualiza la pantalla cuando el precio ha cambiado de verdad. Te ahorra muchos refrescos.
 
 **Cuarta clave: diagnóstico del pin BUSY.** Nada más arrancar, el código lee el nivel del pin BUSY; si no está al nivel alto esperado, casi seguro que hay un problema de cableado o de alimentación. Te avisa antes de tiempo para que no termines depurando solo para descubrir que tenías un pin mal puesto.
+
+## Un sencillo programa «Hello World»
+
+Aquí tienes un código de prueba mínimo y fácil de ejecutar: con toda la lógica de red del código anterior, este resulta complicado y poco práctico para entenderlo.
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. Definir los pines de la pantalla de tinta electrónica
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. Construir la instancia del driver (para probar rápidamente distintos modelos de driver)
+// Al probar, deja solo una opción sin comentar y comenta las demás con //
+
+// Opción A: GDEW075Z08 (800x480, chip driver GD7965)
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Opción B: GDEW075Z09 (640x384, chip driver UC8179 / IL0371)
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Opción C: GDEH075Z90 (880x528, chip driver SSD1677) — mucho consumo de memoria, usa paginación HEIGHT / 2
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Opción D: GDEW075Z08 (800x480, otra variante con chip UC8179)
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Opción E: GDEY075Z08 (800x480, chip driver UC8179)
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. [PASO CLAVE] Como se usan pines SPI no predeterminados, hay que inicializar manualmente el bus SPI del ESP32-S3 primero
+  // Orden de parámetros: SCK, MISO (-1 indica ninguno), MOSI, SS (-1, sin asignar por ahora)
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. Inicializar la pantalla
+  Serial.println("Initializing e-Paper...");
+  display.init(115200);
+  display.setRotation(0); // 0 = orientación horizontal estándar
+
+  // 5. Empezar a dibujar una página sencilla
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. Tras el refresco, poner la pantalla en reposo profundo para protegerla y cortar por completo la alimentación
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // Mantener el bucle vacío para evitar refrescos repetidos que dañen la tinta electrónica
+  delay(1000);
+}
+
+// Función de dibujo mínima
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // Limpiar la pantalla (todo blanco)
+    display.fillScreen(GxEPD_WHITE);
+
+    // 1. Barra roja superior
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. Texto negro grande en el centro
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. Aviso rojo en la parte inferior
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## Diagnóstico de problemas habituales
 

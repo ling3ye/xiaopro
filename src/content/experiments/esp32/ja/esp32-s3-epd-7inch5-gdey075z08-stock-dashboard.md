@@ -42,6 +42,9 @@ Adafruit GFX Library v1.12.6
 
 最終的な仕上がりはこんな感じです。机の上に黒・白・赤の 3 色電子ペーパーが鎮座し、静かに株価、変動率、当日の最高値・最安値、出来高を表示します。香港市場は赤＝上昇、黒＝下落なので、今日の気分が一目でわかります。クローズ・昼休み・週末は自動で「死んだふり」をして更新を減らし、寄り付きが近づくとまた本来のペースに戻ります。真夜中にこっそり画面を書き換えて自分をびっくりさせることもありません。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 > 今回のデモでは騰訊財経の無料 API を使っているため、デモ用に騰訊控股の株価を取り上げています。他意はありません。本記事は投資助言を一切提供しません。投資にはリスクがありますので、慎重にご判断ください。
 >
 > 重要なことは 3 回言う！！！
@@ -572,6 +575,99 @@ void fetchStockData() {
 **第三歩、価格が変わらなければ再描画しない：** 電子ペーパーは 1 回の書き換えに数秒かかり、その間にちらつきも出ます。そのためコード内で `lastPriceF` に前回描画した価格を記憶し、変わらなければスキップします。本当に変わったときだけ書き換えるので、更新回数を大幅に減らせます。
 
 **第四歩、BUSY ピン診断：** 起動直後に BUSY ピンのレベルを確認します。期待される HIGH になっていなければ、確率高めで配線か給電に問題があるので、最後までトラブルシューティングしてから配線ミスに気づくような事態を防げます。
+
+## シンプルな Hello World プログラム
+
+テストしやすいように、ごく最小限のテストコードを載せておきます。前のコードはネットワーク処理が混ざっていて複雑なので、理解のじゃまになります。
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. 電子ペーパーのピンを定義
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. ドライバのインスタンスを生成（いろいろなドライバ型番を手早く試すため）
+// テスト時は毎回1つだけコメント解除し、残りは // でコメントアウトすること
+
+// オプション A: GDEW075Z08（800x480、ドライバIC GD7965）
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// オプション B: GDEW075Z09（640x384、ドライバIC UC8179 / IL0371）
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// オプション C: GDEH075Z90（880x528、ドライバIC SSD1677）— メモリ消費が大きいので HEIGHT / 2 のページングを使用
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// オプション D: GDEW075Z08（800x480、UC8179 を採用する別バージョン）
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// オプション E: GDEY075Z08（800x480、ドライバIC UC8179）
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. 【重要】デフォルト以外の SPI ピンを使うため、まず手動で ESP32-S3 の SPI バスを初期化する必要がある
+  // 引数の順序: SCK, MISO（-1 はなしを意味する）, MOSI, SS（-1 は当面未指定）
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. ディスプレイを初期化
+  Serial.println("Initializing e-Paper...");
+  display.init(115200);
+  display.setRotation(0); // 0 は標準の横向き
+
+  // 5. シンプルなページの描画を開始
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. リフレッシュ完了後、画面を保護して完全に通電を切るためディープスリープにする
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // 空のループのままにし、電子ペーパーを傷める繰り返しリフレッシュを避ける
+  delay(1000);
+}
+
+// 最小限の描画関数
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // 画面クリア（全面白）
+    display.fillScreen(GxEPD_WHITE);
+
+    // 1. 上部の赤い帯
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. 中央の大きな黒字
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. 下部の赤い注意書き
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## よくあるトラブルシューティング
 

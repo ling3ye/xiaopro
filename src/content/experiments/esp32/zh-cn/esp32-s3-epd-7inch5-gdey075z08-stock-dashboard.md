@@ -24,7 +24,7 @@ Adafruit GFX Library v1.12.6
 > **TL;DR（快速上手）：**
 >
 > 1. 接线：EPD 的 SDI→GPIO11，SCL→GPIO12，CS→GPIO10，DC→GPIO9，RES→GPIO8，BUSY→GPIO7，VCC 接 3.3V，GND 共地
-> 2. 装库：GxEPD2、Adafruit GFX Library（WiFi、HTTPClient 是 ESP32 自带的，不用另装）
+> 2. 安装库：GxEPD2、Adafruit GFX Library（WiFi、HTTPClient 是 ESP32 自带的，不用另装）
 > 3. 改代码里的 `ssid` 和 `password` 为你自己的 WiFi
 > 4. 烧录，等屏幕刷出第一版价格，收工
 
@@ -41,6 +41,9 @@ Adafruit GFX Library v1.12.6
 ## 实验效果
 
 最终效果就是：桌上一块黑白红三色的墨水屏，安静地显示股价、涨跌幅、当日最高最低价和成交额；港股红涨黑跌，一眼就能看懂心情；收盘、午休、周末的时候它会自动"装死"少刷新，开盘了再恢复正常节奏，不会半夜还在偷偷刷屏吓自己。
+
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > 由于这次演示使用的是腾讯财经的免费 API，所以我就拿腾讯控股的股价作为演示，并无其他意思。本文不提供任何投资建议，投资有风险，请小心谨慎。
 >
@@ -572,6 +575,99 @@ void fetchStockData() {
 **第三步，价格没变就不重绘**：墨水屏刷新一次要好几秒还会闪烁，所以代码里用 `lastPriceF` 记住上一次画的价格，没变化就跳过，只有真的变了才重新刷屏，能省不少刷新次数。
 
 **第四步，BUSY 引脚诊断**：开机第一时间读一下 BUSY 引脚电平，如果不是预期的高电平，大概率是接线或供电有问题，提前给自己一个提醒，省得排查到最后才发现是接线错了。
+
+## 简单Hello World程序
+
+贴出一个极简的测试代码，方便测试，因为之前的代码加上网络，显得非常复杂不方便你的理解。
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. 定义墨水屏引脚
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. 构造驱动实例（用于快速测试下不同的驱动型号）
+// 测试时，每次只保留一个取消注释，其余的用 // 注释掉
+
+// 选项 A: GDEW075Z08 (800x480, 驱动芯片 GD7965) 
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 选项 B: GDEW075Z09 (640x384, 驱动芯片 UC8179 / IL0371)
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 选项 C: GDEH075Z90 (880x528, 驱动芯片 SSD1677) - 内存占用大，使用 HEIGHT / 2 分页
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 选项 D: GDEW075Z08 (800x480, 另一种采用 UC8179 芯片的版本) 
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// 选项 E: GDEY075Z08 (800x480, 驱动芯片 UC8179) 
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. 【关键步】由于使用了非默认SPI引脚，必须先手动初始化 ESP32-S3 的 SPI 总线
+  // 参数顺序：SCK, MISO(-1表示无), MOSI, SS(-1暂不指定)
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. 初始化显示屏
+  Serial.println("Initializing e-Paper...");
+  display.init(115200); 
+  display.setRotation(0); // 0 为标准横屏
+
+  // 5. 开始简单的页面绘制
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. 刷新完毕后让屏幕进入深度休眠，保护屏幕并彻底断电
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // 保持空循环，避免重复刷新损伤墨水屏
+  delay(1000);
+}
+
+// 极简的绘制函数
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // 清屏（全白）
+    display.fillScreen(GxEPD_WHITE); 
+
+    // 1. 顶部的红条
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. 中间的黑色大字
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. 底部的红字提示
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## 常见问题排查
 

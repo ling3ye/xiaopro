@@ -42,6 +42,9 @@ This tutorial records how I used an ESP32 and a 7.5" e-paper panel to build an a
 
 The end result is a black/white/red tri-color e-paper panel sitting quietly on the desk, showing the price, change percentage, the day's high/low, and turnover. HK convention is red = up, black = down, so a single glance tells you what mood you're in. During market close, lunch break, and weekends it automatically "plays dead" and refreshes rarely; once trading resumes it returns to its normal cadence — no more midnight refreshes spooking yourself.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/y-SnIM3DxUE?si=Z7g5KeeUtolxDj1T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 > Since this demo uses Tencent Finance's free API, I'm using Tencent Holdings's stock price as the example — no other reason. This article provides NO investment advice. Investing carries risk — please be careful.
 >
 > Important things bear repeating — thrice!!!
@@ -574,6 +577,99 @@ void fetchStockData() {
 **Step 3 — skip the redraw if the price hasn't moved.** An e-paper refresh takes several seconds and visibly flickers, so the sketch remembers the last drawn price in `lastPriceF`. If the value hasn't changed, the refresh is skipped entirely. Only a real change triggers a redraw — saving quite a few refresh cycles.
 
 **Step 4 — BUSY pin diagnostic.** The very first thing at boot is to read the BUSY pin level. If it isn't the expected HIGH, it's almost always a wiring or power issue. Telling yourself up front saves you from troubleshooting for an hour only to discover a miswired pin.
+
+## A Simple Hello World Program
+
+Here's a minimal test sketch that's easy to run — the earlier code, with all the networking mixed in, looks complicated and gets in the way of understanding.
+
+```c
+#include <GxEPD2_3C.h>
+#include <Adafruit_GFX.h>
+#include <SPI.h>
+
+// 1. Define the e-paper pins
+#define EPD_MOSI 11  // SDI / MOSI
+#define EPD_CLK  12  // SCL / SCK
+#define EPD_CS   10  // CS
+#define EPD_DC   9   // DC
+#define EPD_RST  8   // RES / RESET
+#define EPD_BUSY 7   // BUSY
+
+// 2. Construct the driver instance (handy for quickly trying different driver models)
+// When testing, uncomment only one at a time; comment the rest out with //
+
+// Option A: GDEW075Z08 (800x480, driver IC GD7965)
+// GxEPD2_3C<GxEPD2_750c_Z08, GxEPD2_750c_Z08::HEIGHT> display(GxEPD2_750c_Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option B: GDEW075Z09 (640x384, driver IC UC8179 / IL0371)
+// GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(GxEPD2_750c(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option C: GDEH075Z90 (880x528, driver IC SSD1677) — heavy on memory, so it uses HEIGHT / 2 paging
+// GxEPD2_3C<GxEPD2_750c_Z90, GxEPD2_750c_Z90::HEIGHT / 2> display(GxEPD2_750c_Z90(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option D: GDEW075Z08 (800x480, another variant built on the UC8179 IC)
+// GxEPD2_3C<GxEPD2_750c_GDEW075Z08, GxEPD2_750c_GDEW075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEW075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+// Option E: GDEY075Z08 (800x480, driver IC UC8179)
+GxEPD2_3C<GxEPD2_750c_GDEY075Z08, GxEPD2_750c_GDEY075Z08::HEIGHT / 2> display(GxEPD2_750c_GDEY075Z08(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY));
+
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // 3. [KEY STEP] Because we're using non-default SPI pins, the ESP32-S3 SPI bus must be initialized manually first
+  // Argument order: SCK, MISO (-1 means none), MOSI, SS (-1 means not assigned yet)
+  SPI.begin(EPD_CLK, -1, EPD_MOSI, -1);
+
+  // 4. Initialize the display
+  Serial.println("Initializing e-Paper...");
+  display.init(115200);
+  display.setRotation(0); // 0 = standard landscape orientation
+
+  // 5. Start drawing a simple page
+  Serial.println("Rendering test page...");
+  drawSimplePage();
+
+  // 6. Once the refresh is done, put the screen into deep sleep to protect it and cut power completely
+  display.powerOff();
+  Serial.println("Done! Screen is now in deep sleep.");
+}
+
+void loop() {
+  // Keep the loop empty to avoid repeated refreshes wearing out the e-paper
+  delay(1000);
+}
+
+// Minimal drawing function
+void drawSimplePage() {
+  display.firstPage();
+  do {
+    // Clear the screen (all white)
+    display.fillScreen(GxEPD_WHITE);
+
+    // 1. Red bar at the top
+    display.fillRect(0, 0, display.width(), 50, GxEPD_RED);
+    display.setTextColor(GxEPD_WHITE);
+    display.setTextSize(3);
+    display.setCursor(30, 15);
+    display.print("ESP32-S3 TEST");
+
+    // 2. Large black text in the middle
+    display.setTextColor(GxEPD_BLACK);
+    display.setTextSize(5);
+    display.setCursor(50, 180);
+    display.print("Hello World!");
+
+    // 3. Red hint text at the bottom
+    display.setTextColor(GxEPD_RED);
+    display.setTextSize(2);
+    display.setCursor(50, 300);
+    display.print("7.5 inch E-Paper Display Works!");
+
+  } while (display.nextPage());
+}
+```
 
 ## Troubleshooting
 
