@@ -13,7 +13,7 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > 難易度：⭐⭐☆☆☆（ジャンパーワイヤー数本でOK）
 > 所要時間：45分
-> テスト環境：Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> テスト環境：Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -201,8 +201,8 @@ Arduino IDE → ツール → ライブラリを管理、検索して以下2つ�
  * ESP32-S3 + GC9A01 円形ディスプレイ空気品質ダッシュボード v3.1
  * "極簡テックスタイル" - 円形プログレスバー + リアルタイムトレンド折れ線 + 呼吸光効果
  *
- * テスト環境：Arduino IDE 2.3.2 / ESP32 Core 3.x
- * 依存ライブラリ：lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * テスト環境：Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * 依存ライブラリ：lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

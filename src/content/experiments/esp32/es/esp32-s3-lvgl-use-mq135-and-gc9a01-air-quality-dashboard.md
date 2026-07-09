@@ -13,7 +13,7 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > Dificultad: ⭐⭐☆☆☆ (listo para usar con unos pocos cables Dupont)
 > Tiempo estimado: 45 minutos
-> Entorno de prueba: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> Entorno de prueba: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -201,8 +201,8 @@ Abre Arduino IDE → Herramientas → Administrar bibliotecas, busca e instala l
  * ESP32-S3 + Panel de calidad del aire con pantalla circular GC9A01 v3.1
  * "Estilo tecnológico minimalista" - barra de progreso de arco + gráfico de tendencias en tiempo real + iluminación de "respiración"
  *
- * Entorno de prueba: Arduino IDE 2.3.2 / ESP32 Core 3.x
- * Bibliotecas dependientes: lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * Entorno de prueba: Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * Bibliotecas dependientes: lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

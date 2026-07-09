@@ -15,7 +15,7 @@ image: "https://img.lingflux.com/2026/05/a6a0b0037d4fd0650665e49e7364d65d.jpg"
 テスト環境：
 Arduino IDE 2.3.8
 Arduino_GFX_Library 1.6.5
-ESP32 Arduino Core 3.3.8
+ESP32 Arduino Core 3.3.10
 
 ---
 

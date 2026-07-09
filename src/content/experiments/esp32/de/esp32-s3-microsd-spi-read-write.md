@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # ESP32-S3 Micro-SD-Kartenmodul: Vollstaendiges Tutorial (SPI-Modus + Arduino-Code)
 
-> Schwierigkeit: ⭐⭐☆☆☆ (mit etwas Grundkenntnissen direkt umsetzbar) Geschaetzte Dauer: 30 Minuten Getestet mit: Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> Schwierigkeit: ⭐⭐☆☆☆ (mit etwas Grundkenntnissen direkt umsetzbar) Geschaetzte Dauer: 30 Minuten Getestet mit: Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ Keine zusaetzliche Installation noetig!
 
 Die in diesem Artikel verwendeten `SPI.h` und `SD.h` sind bereits im **ESP32 Arduino Core** enthalten. Sobald das ESP32-Board-Paket in der Arduino IDE installiert ist, kann direkt kompiliert werden.
 
-Falls das Board-Paket noch nicht installiert ist: In der Arduino IDE unter Werkzeuge → Board-Verwalter nach `esp32` suchen und das Paket von **Espressif Systems** installieren (getestete Version: **ESP32 Arduino Core 3.0.x**).
+Falls das Board-Paket noch nicht installiert ist: In der Arduino IDE unter Werkzeuge → Board-Verwalter nach `esp32` suchen und das Paket von **Espressif Systems** installieren (getestete Version: **ESP32 Arduino Core 3.3.10**).
 
 ------
 

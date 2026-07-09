@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/05/d991a873016f98577b8ed80aefa9d67b.jpg"
 
 Difficulty: 2/5 (beginner-friendly)
 Estimated Time: 30 minutes
-Tested with: Arduino IDE 2.3.8 + FastLED v3.10.3 + ESP32 Arduino Core 3.3.8
+Tested with: Arduino IDE 2.3.8 + FastLED v3.10.3 + ESP32 Arduino Core 3.3.10
 
 ---
 

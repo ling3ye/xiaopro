@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # ESP32-S3 で Micro SD カードモジュールを動かす完全チュートリアル（SPI モード + Arduino コード）
 
-> 難易度：⭐⭐☆☆☆（少しの基礎知識があればOK） 所要時間：30 分 テスト環境：Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> 難易度：⭐⭐☆☆☆（少しの基礎知識があればOK） 所要時間：30 分 テスト環境：Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ SD カードモジュールは、ESP32 に「カードリーダー」を取り�
 
 本記事で使用する `SPI.h` と `SD.h` は、**ESP32 Arduino Core** にすでに内蔵されています。Arduino IDE に ESP32 のボードサポートパッケージがインストールされていれば、そのままコンパイルできます。
 
-まだボードパッケージをインストールしていない場合は、Arduino IDE → ツール → ボードマネージャで `esp32` を検索し、**Espressif Systems** が提供しているパッケージをインストールしてください（本記事のテストバージョン：**ESP32 Arduino Core 3.0.x**）。
+まだボードパッケージをインストールしていない場合は、Arduino IDE → ツール → ボードマネージャで `esp32` を検索し、**Espressif Systems** が提供しているパッケージをインストールしてください（本記事のテストバージョン：**ESP32 Arduino Core 3.3.10**）。
 
 ------
 

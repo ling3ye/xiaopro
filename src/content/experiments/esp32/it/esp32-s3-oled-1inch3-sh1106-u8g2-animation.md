@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg"
 
 Difficolta: (adatto ai principianti)
 Tempo stimato: 30 minuti
-Ambiente di test: Arduino IDE 2.3.8 · U8g2 v2.35.30 · ESP32 Board Package 3.3.8
+Ambiente di test: Arduino IDE 2.3.8 · U8g2 v2.35.30 · ESP32 Board Package 3.3.10
 
 ---
 

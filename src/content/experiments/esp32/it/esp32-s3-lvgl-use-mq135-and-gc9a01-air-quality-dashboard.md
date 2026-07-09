@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > Difficoltà: ⭐⭐☆☆☆ (basta qualche cavo dupont per iniziare)
 > Tempo stimato: 45 minuti
-> Ambiente di test: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> Ambiente di test: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -201,8 +201,8 @@ Apri Arduino IDE → Strumenti → Gestione librerie, cerca e installa queste du
  * ESP32-S3 + GC9A01 dashboard qualità dell'aria su schermo circolare v3.1
  * "Stile tech minimale" - arco di progresso + grafico trend real-time + glow pulsante
  *
- * Ambiente di test: Arduino IDE 2.3.2 / ESP32 Core 3.x
- * Librerie dipendenti: lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * Ambiente di test: Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * Librerie dipendenti: lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

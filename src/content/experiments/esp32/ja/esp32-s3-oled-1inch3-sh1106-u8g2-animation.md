@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/05/5b0acee583b859615b68c15453b18a1f.jpg"
 
 難易度：⭐⭐☆☆☆（初心者でも挑戦可能）
 所要時間：30 分
-テスト環境：Arduino IDE 2.3.8 ・ U8g2 v2.35.30 ・ ESP32 Board Package 3.3.8
+テスト環境：Arduino IDE 2.3.8 ・ U8g2 v2.35.30 ・ ESP32 Board Package 3.3.10
 
 ---
 

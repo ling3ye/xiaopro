@@ -14,9 +14,9 @@ En este articulo te explico en detalle como usar un **ESP32** para controlar una
 
 OS: MacOS
 
-Arduino IDE Version: 2.3.7
+Arduino IDE Version: 2.3.8
 
-esp32 Version:  3.3.5
+esp32 Version:  3.3.10
 
 TFT_eSPI Version: 2.5.43
 

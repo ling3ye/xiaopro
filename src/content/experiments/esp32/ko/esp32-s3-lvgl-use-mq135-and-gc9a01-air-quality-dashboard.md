@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > 난이도：⭐⭐☆☆☆（몇 개의 점퍼선만 있으면 시작 가능）
 > 예상 시간：45분
-> 테스트 환경：Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> 테스트 환경：Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -202,8 +202,8 @@ Arduino IDE 열기 → 도구 → 라이브러리 관리，다음 두 라이브�
  * ESP32-S3 + GC9A01 원형 디스플레이 공기질 대시보드 v3.1
  * "极简科技风" - 원형 프로그레스 바 + 실시간 추세 그래프 + 호흡 발광
  *
- * 테스트 환경：Arduino IDE 2.3.2 / ESP32 Core 3.x
- * 의존 라이브러리：lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * 테스트 환경：Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * 의존 라이브러리：lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

@@ -14,7 +14,7 @@ image: "https://img.ling.lux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > Schwierigkeit: ⭐⭐☆☆☆ (Mit wenigen Jumperkabeln loslegen)
 > Geschätzte Zeit: 45 Minuten
-> Testumgebung: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> Testumgebung: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -202,8 +202,8 @@ Arduino IDE öffnen → Werkzeuge → Bibliotheken verwalten, suche und installi
  * ESP32-S3 + GC9A01 Runddisplay-Luftqualitätsdashboard v3.1
  * "Minimalistischer Tech-Stil" - Bogenfortschrittsanzeige + Echtzeit-Trendlinie + Pulsierendes Leuchten
  *
- * Testumgebung: Arduino IDE 2.3.2 / ESP32 Core 3.x
- * Abhängigkeiten: lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * Testumgebung: Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * Abhängigkeiten: lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

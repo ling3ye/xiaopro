@@ -13,7 +13,7 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > Difficulty: ⭐⭐☆☆☆ (Easy with just a few jumper wires)
 > Time Required: 45 minutes
-> Test Environment: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> Test Environment: Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -201,8 +201,8 @@ Open Arduino IDE → Tools → Manage Libraries, search and install these two:
  * ESP32-S3 + GC9A01 Round Air Quality Gauge v3.1
  * "Minimalist Tech Style" - Arc progress + Real-time trend + Breathing glow
  *
- * Test Environment: Arduino IDE 2.3.2 / ESP32 Core 3.x
- * Dependencies: lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * Test Environment: Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * Dependencies: lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

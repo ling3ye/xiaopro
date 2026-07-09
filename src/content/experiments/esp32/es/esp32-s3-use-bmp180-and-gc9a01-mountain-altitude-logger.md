@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 > Dificultad: ⭐⭐⭐☆☆ (si ya has soldado unos cuantos cables Dupont, lo tendrás dominado)
 > Tiempo estimado: 45 minutos
-> Entorno de pruebas: Arduino IDE 2.3.2 · Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.0.x
+> Entorno de pruebas: Arduino IDE 2.3.8 · Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.3.10
 
 ---
 
@@ -166,7 +166,7 @@ Abre Arduino IDE → Herramientas → Administrar bibliotecas, busca e instala l
 | Adafruit BMP085 Library | Adafruit | Driver del sensor de presión BMP180 / BMP085 |
 | Adafruit Unified Sensor | Adafruit | Dependencia de la librería anterior, instálala también |
 
-> **Versiones probadas con éxito**: Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.2 · ESP32 Arduino Core 3.0.x
+> **Versiones probadas con éxito**: Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10
 > Si usas un ESP32 Core antiguo (serie 1.x), parte de la inicialización de SPI difiere ligeramente; lo recomendable es actualizar directamente a 3.x y ahorrarte dolores de cabeza.
 
 ---

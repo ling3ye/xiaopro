@@ -13,7 +13,7 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 > Schwierigkeit: ⭐⭐⭐☆☆ (schaffst du locker, wenn du schon mal ein paar Dupont-Kabel verlötet hast)
 > Geschätzte Zeit: 45 Minuten
-> Getestet mit: Arduino IDE 2.3.2 · Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.0.x
+> Getestet mit: Arduino IDE 2.3.8 · Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.3.10
 
 ---
 
@@ -166,7 +166,7 @@ Warum dieses Modell: Ein Runddisplay und das Thema „Bergsteiger-Uhr" passen pe
 | Adafruit BMP085 Library | Adafruit | Treiber für BMP180 / BMP085-Drucksensor |
 | Adafruit Unified Sensor | Adafruit | Abhängigkeit der vorherigen Library, zusammen installieren |
 
-> **Getestete Versionen**: Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.2 · ESP32 Arduino Core 3.0.x
+> **Getestete Versionen**: Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10
 > Falls du noch eine ältere ESP32-Core-Version (1.x-Serie) nutzt, unterscheidet sich die SPI-Initialisierung leicht. Am besten direkt auf 3.x upgraden, dann umgehst du die typischen Stolpersteine.
 
 ---

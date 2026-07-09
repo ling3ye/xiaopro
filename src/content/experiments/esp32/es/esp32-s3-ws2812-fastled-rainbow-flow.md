@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/05/d991a873016f98577b8ed80aefa9d67b.jpg"
 
 Dificultad: ⭐⭐☆☆☆ (adecuado para principiantes)
 Tiempo estimado: 30 minutos
-Entorno de prueba: Arduino IDE 2.3.8 + FastLED v3.10.3 + ESP32 Arduino Core 3.3.8
+Entorno de prueba: Arduino IDE 2.3.8 + FastLED v3.10.3 + ESP32 Arduino Core 3.3.10
 
 ---
 

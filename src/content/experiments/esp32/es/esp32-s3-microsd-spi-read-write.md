@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # Tutorial completo: ESP32-S3 con módulo Micro SD (modo SPI + código Arduino)
 
-> Dificultad: ⭐⭐☆☆☆ (con unos conocimientos básicos basta) Tiempo estimado: 30 minutos Entorno de prueba: Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> Dificultad: ⭐⭐☆☆☆ (con unos conocimientos básicos basta) Tiempo estimado: 30 minutos Entorno de prueba: Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ Por qué elegimos este módulo: tamaño compacto, pocas conexiones (el modo SPI 
 
 Las librerías `SPI.h` y `SD.h` ya vienen incluidas en el **ESP32 Arduino Core**. Si ya tienes instalado el soporte de placas ESP32 en tu Arduino IDE, puedes compilar directamente.
 
-Si aún no tienes el paquete de placas, ve a Arduino IDE → Herramientas → Gestor de placas, busca `esp32` e instala el paquete de **Espressif Systems** (versión probada en este artículo: **ESP32 Arduino Core 3.0.x**).
+Si aún no tienes el paquete de placas, ve a Arduino IDE → Herramientas → Gestor de placas, busca `esp32` e instala el paquete de **Espressif Systems** (versión probada en este artículo: **ESP32 Arduino Core 3.3.10**).
 
 ------
 

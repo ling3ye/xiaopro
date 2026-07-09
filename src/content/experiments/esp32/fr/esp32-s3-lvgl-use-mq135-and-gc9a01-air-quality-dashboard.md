@@ -13,7 +13,7 @@ image: "https://img.lingluft.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > Difficulté : ⭐⭐☆☆☆ (quelques fils Dupont suffisent pour commencer)
 > Temps estimé : 45 minutes
-> Environnement de test : Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> Environnement de test : Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -201,8 +201,8 @@ Ouvrez Arduino IDE → Outils → Gérer les bibliothèques, recherchez et insta
  * ESP32-S3 + Écran circulaire GC9A01 tableau de bord qualité de l'air v3.1
  * "Style technologique minimaliste" - barre de progression arc + courbe de tendance temps réel + lueur respiratoire
  *
- * Environnement de test : Arduino IDE 2.3.2 / ESP32 Core 3.x
- * Bibliothèques dépendantes : lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * Environnement de test : Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * Bibliothèques dépendantes : lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

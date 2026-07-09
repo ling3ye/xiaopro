@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 > Difficulty: ⭐⭐⭐☆☆ (if you've soldered a few Dupont jumpers, you're ready)
 > Estimated time: 45 minutes
-> Tested with: Arduino IDE 2.3.2 · Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.0.x
+> Tested with: Arduino IDE 2.3.8 · Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.3.10
 
 ---
 
@@ -166,7 +166,7 @@ Open Arduino IDE → Tools → Manage Libraries, search for and install the foll
 | Adafruit BMP085 Library | Adafruit | BMP180 / BMP085 barometric sensor driver |
 | Adafruit Unified Sensor | Adafruit | Dependency of the library above, install it together |
 
-> **Verified working versions:** Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.2 · ESP32 Arduino Core 3.0.x
+> **Verified working versions:** Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10
 > If you're on an older ESP32 Core (the 1.x series), some of the SPI initialization differs slightly. It's recommended to just upgrade to 3.x and save yourself the headaches.
 
 ---

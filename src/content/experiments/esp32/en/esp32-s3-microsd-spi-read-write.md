@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # ESP32-S3 Micro SD Card Module Complete Tutorial (SPI Mode + Arduino Code)
 
-> Difficulty: 2/5 (some basics needed) Estimated time: 30 minutes Tested on: Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> Difficulty: 2/5 (some basics needed) Estimated time: 30 minutes Tested on: Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -117,7 +117,7 @@ None to install!
 
 The `SPI.h` and `SD.h` libraries used in this guide are both built into the **ESP32 Arduino Core**. As long as your Arduino IDE has the ESP32 board support package installed, you're good to go.
 
-If you haven't installed the board package yet, go to Arduino IDE -> Tools -> Board Manager, search for `esp32`, and install the package from **Espressif Systems** (tested version: **ESP32 Arduino Core 3.0.x**).
+If you haven't installed the board package yet, go to Arduino IDE -> Tools -> Board Manager, search for `esp32`, and install the package from **Espressif Systems** (tested version: **ESP32 Arduino Core 3.3.10**).
 
 ------
 

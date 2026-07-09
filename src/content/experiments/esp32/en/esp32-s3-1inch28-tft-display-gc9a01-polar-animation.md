@@ -15,7 +15,7 @@ Estimated time: 30 minutes
 Tested with:
 Arduino IDE 2.3.8
 Arduino_GFX_Library 1.6.5
-ESP32 Arduino Core 3.3.8
+ESP32 Arduino Core 3.3.10
 
 ---
 

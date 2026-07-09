@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 > 難易度：⭐⭐⭐☆☆（ジャンパワイヤを数回ハンダ付けしたことがあれば大丈夫）
 > 所要時間：45 分
-> テスト環境：Arduino IDE 2.3.2 · Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.0.x
+> テスト環境：Arduino IDE 2.3.8 · Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.3.10
 
 ---
 
@@ -166,7 +166,7 @@ Arduino IDE → ツール → ライブラリを管理 を開き、以下の 3 �
 | Adafruit BMP085 Library | Adafruit | BMP180 / BMP085 気圧センサードライバ |
 | Adafruit Unified Sensor | Adafruit | 1 つ上のライブラリの依存、一緒にインストール |
 
-> **動作確認済みバージョン**：Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.2 · ESP32 Arduino Core 3.0.x
+> **動作確認済みバージョン**：Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10
 > 古い ESP32 Core（1.x 系）を使っている場合、SPI 初期化方法が少し異なります。ハマりを避けるため、3.x へのアップグレードを推奨します。
 
 ---

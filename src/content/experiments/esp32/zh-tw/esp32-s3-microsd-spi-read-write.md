@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # ESP32-S3 驅動 Micro SD 卡模組完整教學（SPI 模式 + Arduino 程式碼）
 
-> 難度：⭐⭐☆☆☆（有一點基礎就能上手） 預計時間：30 分鐘 測試環境：Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> 難度：⭐⭐☆☆☆（有一點基礎就能上手） 預計時間：30 分鐘 測試環境：Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ SD 卡模組就像是給 ESP32 裝了一個「讀卡機」。ESP32 本身沒有 
 
 本文用到的 `SPI.h` 和 `SD.h` 都已經內建在 **ESP32 Arduino Core** 裡了。只要你的 Arduino IDE 已經安裝了 ESP32 的開發板支援包，直接編譯就行。
 
-如果還沒裝開發板套件，在 Arduino IDE → 工具 → 開發板管理員 裡搜尋 `esp32`，安裝 **Espressif Systems** 出的那個套件（本文測試版本：**ESP32 Arduino Core 3.0.x**）。
+如果還沒裝開發板套件，在 Arduino IDE → 工具 → 開發板管理員 裡搜尋 `esp32`，安裝 **Espressif Systems** 出的那個套件（本文測試版本：**ESP32 Arduino Core 3.3.10**）。
 
 ------
 

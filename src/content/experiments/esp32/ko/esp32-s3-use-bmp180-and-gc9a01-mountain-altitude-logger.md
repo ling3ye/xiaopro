@@ -13,7 +13,7 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 > 난이도: ⭐⭐⭐☆☆ (듀폰트 선 몇 번 납땜해 본 정도면 충분)
 > 예상 소요 시간: 45분
-> 테스트 환경: Arduino IDE 2.3.2 · Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.0.x
+> 테스트 환경: Arduino IDE 2.3.8 · Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.3.10
 
 ---
 
@@ -165,7 +165,7 @@ Arduino IDE를 열고 툴 → 라이브러리 관리로 이동해 다음 세 가
 | Adafruit BMP085 Library | Adafruit | BMP180 / BMP085 기압 센서 구동 |
 | Adafruit Unified Sensor | Adafruit | 위 라이브러리의 의존 항목, 함께 설치 |
 
-> **테스트 통과 버전**: Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.2 · ESP32 Arduino Core 3.0.x
+> **테스트 통과 버전**: Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10
 > 구버전 ESP32 Core(1.x 시리즈)를 사용 중이라면 SPI 초기화 방식이 약간 다를 수 있습니다. 문제를 겪지 않으려면 3.x로 바로 업그레이드하는 것을 권장합니다.
 
 ---

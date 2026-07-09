@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # Guide complet : piloter un module Micro SD avec l'ESP32-S3 (mode SPI + code Arduino)
 
-> Difficulte : ⭐⭐☆☆☆ (accessible avec un minimum de bases) Temps estime : 30 minutes Environnement de test : Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> Difficulte : ⭐⭐☆☆☆ (accessible avec un minimum de bases) Temps estime : 30 minutes Environnement de test : Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ Pas besoin d'installer quoi que ce soit !
 
 Les bibliotheques `SPI.h` et `SD.h` utilisees ici sont deja integrees dans **ESP32 Arduino Core**. Tant que tu as installe le support des cartes ESP32 dans l'Arduino IDE, tu peux compiler directement.
 
-Si ce n'est pas encore fait, va dans Arduino IDE → Outils → Gestionnaire de cartes, cherche `esp32`, et installe le paquet de **Espressif Systems** (version testee pour ce guide : **ESP32 Arduino Core 3.0.x**).
+Si ce n'est pas encore fait, va dans Arduino IDE → Outils → Gestionnaire de cartes, cherche `esp32`, et installe le paquet de **Espressif Systems** (version testee pour ce guide : **ESP32 Arduino Core 3.3.10**).
 
 ------
 

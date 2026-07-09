@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/cc83e55f42460646d2fd372496989222.jpg"
 
 > 難度：⭐⭐⭐☆☆（焊過幾次杜邦線就能上手）
 > 預估時間：45 分鐘
-> 測試環境：Arduino IDE 2.3.2 · Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.0.x
+> 測試環境：Arduino IDE 2.3.8 · Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · ESP32 Arduino Core 3.3.10
 
 ---
 
@@ -165,7 +165,7 @@ GC9A01 是 1.28 英吋圓形 TFT 彩屏的驅動 IC，負責接收 SPI 資料並
 | Adafruit BMP085 Library | Adafruit | BMP180 / BMP085 氣壓感測器驅動 |
 | Adafruit Unified Sensor | Adafruit | 上一個函式庫的相依套件，一起安裝 |
 
-> **測試通過版本**：Arduino_GFX_Library v1.4.9 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.2 · ESP32 Arduino Core 3.0.x
+> **測試通過版本**：Arduino_GFX_Library v1.6.5 · Adafruit BMP085 Library v1.2.4 · Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10
 > 如果你用的是舊版 ESP32 Core（1.x 系列），部分 SPI 初始化方式略有差異，建議直接升級到 3.x，省得踩坑。
 
 ---

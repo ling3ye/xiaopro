@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # ESP32-S3 e Micro SD Card: Guida Completa alla Lettura/Scrittura via SPI con Arduino
 
-> Difficoltà: ⭐⭐☆☆☆ (basta un minimo di basi per iniziare) Tempo stimato: 30 minuti Ambiente di test: Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> Difficoltà: ⭐⭐☆☆☆ (basta un minimo di basi per iniziare) Tempo stimato: 30 minuti Ambiente di test: Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ Non serve installare nulla!
 
 Le librerie `SPI.h` e `SD.h` usate in questa guida sono già incluse nell'**ESP32 Arduino Core**. Se hai già installato il supporto alla scheda ESP32 nell'Arduino IDE, puoi compilare direttamente.
 
-Se non hai ancora il pacchetto della scheda, cerca `esp32` in Arduino IDE → Strumenti → Gestore schede e installa il pacchetto di **Espressif Systems** (versione testata in questa guida: **ESP32 Arduino Core 3.0.x**).
+Se non hai ancora il pacchetto della scheda, cerca `esp32` in Arduino IDE → Strumenti → Gestore schede e installa il pacchetto di **Espressif Systems** (versione testata in questa guida: **ESP32 Arduino Core 3.3.10**).
 
 ------
 

@@ -14,7 +14,7 @@ image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 
 > 难度：⭐⭐☆☆☆（几根杜邦线就能上手）
 > 预计时间：45 分钟
-> 测试环境：Arduino IDE 2.3.8 · ESP32 Arduino Core 3.x · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
+> 测试环境：Arduino IDE 2.3.8 · ESP32 Arduino Core 3.3.10 · lvgl v9.5.0 · Arduino_GFX_Library v1.6.5
 
 ---
 
@@ -202,8 +202,8 @@ GC9A01 是一款 1.28 英寸圆形 TFT LCD 显示屏，通过 SPI 接口接收�
  * ESP32-S3 + GC9A01 圆屏空气质量仪表盘 v3.1
  * "极简科技风" - 弧形进度条 + 实时趋势折线 + 呼吸发光
  *
- * 测试环境：Arduino IDE 2.3.2 / ESP32 Core 3.x
- * 依赖库：lvgl v9.2.x + Arduino_GFX_Library v1.4.x
+ * 测试环境：Arduino IDE 2.3.8 / ESP32 Core 3.3.10
+ * 依赖库：lvgl v9.5.0 + Arduino_GFX_Library v1.6.5
  */
 
 #include <Arduino.h>

@@ -12,7 +12,7 @@ image: "https://img.lingflux.com/2026/04/a52d9db02d07cc13df512e06920e4603.jpg"
 
 # ESP32-S3 Micro SD 카드 모듈 완벽 가이드 (SPI 모드 + Arduino 코드)
 
-> 난이도: ⭐⭐☆☆☆ (기초만 있으면 바로 시작 가능) 예상 소요 시간: 30분 테스트 환경: Arduino IDE 2.3.x + ESP32 Arduino Core 3.x
+> 난이도: ⭐⭐☆☆☆ (기초만 있으면 바로 시작 가능) 예상 소요 시간: 30분 테스트 환경: Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10
 
 ------
 
@@ -118,7 +118,7 @@ SD 카드 모듈은 ESP32에 "카드 리더기"를 달아주는 역할을 합니
 
 이 글에서 사용하는 `SPI.h`와 `SD.h`는 모두 **ESP32 Arduino Core**에 내장되어 있습니다. Arduino IDE에 ESP32 보드 지원 패키지만 설치되어 있으면 바로 컴파일할 수 있습니다.
 
-보드 패키지가 아직 설치되지 않았다면, Arduino IDE → 도구 → 보드 매니저에서 `esp32`를 검색하여 **Espressif Systems**에서 제공하는 패키지를 설치하세요 (이 글의 테스트 버전: **ESP32 Arduino Core 3.0.x**).
+보드 패키지가 아직 설치되지 않았다면, Arduino IDE → 도구 → 보드 매니저에서 `esp32`를 검색하여 **Espressif Systems**에서 제공하는 패키지를 설치하세요 (이 글의 테스트 버전: **ESP32 Arduino Core 3.3.10**).
 
 ------
 
