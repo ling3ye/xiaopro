@@ -27,6 +27,9 @@ image: "https://img.lingflux.com/2026/07/39d31272f2976bb195ecea554654502d.jpg"
 
 一块 ESP32-S3 定时从 AQICN.ORG 拉取空气质量数据，刷新到墨水屏上，画面包含 AQI 大数字、12 项细分指标（PM2.5、PM10、温湿度、风速等）以及 PM2.5 和紫外线的七日预测柱状图，断电也不花屏，放桌上就是个"电子风水表"，很好的桌搭。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 元件说明
 
 **ESP32-S3 开发板** 是一颗带 WiFi 的 SoC 开发板，负责联网拉数据、跑逻辑、通过 SPI 把画面推给屏幕，是整个项目的大脑。选它是因为引脚多、算力够、自带 WiFi，不用额外配网络模块。

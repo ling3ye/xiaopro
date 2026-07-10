@@ -29,6 +29,9 @@ Ho rimediato, spendendo pochissimo, un display e-paper bianco e nero sul mercato
 
 Un ESP32-S3 preleva a intervalli regolari i dati sulla qualità dell'aria da AQICN.ORG e li aggiorna sull'e-paper: sullo schermo compaiono il numero grande dell'AQI, 12 indicatori di dettaglio (PM2.5, PM10, temperatura e umidità, velocità del vento, ecc.) e i grafici a barre delle previsioni a sette giorni per PM2.5 e raggi UV. Scollegando l'alimentazione l'immagine resta lì: sulla scrivania diventa una specie di «barometro elettronico dell'aria», un bell'oggetto da tenere a portata di mano.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Descrizione dei componenti
 
 **La scheda di sviluppo ESP32-S3** è una SoC con il Wi-Fi integrato: si occupa di andare in rete a recuperare i dati, eseguire la logica e spingere il disegno allo schermo via SPI; è il cervello di tutto il progetto. L'ho scelta perché ha tanti pin, calcolo sufficiente e il Wi-Fi incorporato, senza dover aggiungere un modulo di rete esterno.

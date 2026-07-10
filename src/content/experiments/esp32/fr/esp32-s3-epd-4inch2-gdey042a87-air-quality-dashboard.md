@@ -27,6 +27,9 @@ J'ai dégoté pour une quinzaine de yuans un écran e-paper noir et blanc d'occa
 
 Un ESP32-S3 interroge régulièrement AQICN.ORG pour récupérer les données de qualité de l'air et les rafraîchir sur l'e-paper : un grand chiffre AQI, 12 indicateurs détaillés (PM2.5, PM10, température et humidité, vitesse du vent, etc.) ainsi que des histogrammes de prévision sur 7 jours pour le PM2.5 et l'indice UV ; l'image tient même hors tension. Posé sur le bureau, ça fait une sorte de « boussole feng shui électronique », un très bel objet de déco de bureau.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Description des composants
 
 **La carte de développement ESP32-S3** est une carte SoC avec Wi-Fi : elle se connecte au réseau pour récupérer les données, exécute la logique et pousse l'image à l'écran via SPI. C'est le cerveau du projet. Je l'ai choisie parce qu'elle a beaucoup de broches, assez de puissance de calcul et un Wi-Fi intégré — pas besoin de module réseau supplémentaire.

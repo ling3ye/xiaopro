@@ -29,6 +29,9 @@ Für ein paar Euro habe ich auf dem Gebrauchtmarkt ein Schwarz-Weiß-E-Paper-Dis
 
 Ein ESP32-S3 holt regelmäßig die Luftqualitätsdaten von AQICN.ORG und refreshed sie auf das E-Paper-Display. Das Bild zeigt einen großen AQI-Wert, 12 Detailkennzahlen (PM2.5, PM10, Temperatur, Luftfeuchte, Windgeschwindigkeit usw.) sowie Balkendiagramme für die 7-Tage-Vorhersage von PM2.5 und UV-Index. Auch ohne Strom bleibt das Bild erhalten – auf dem Schreibtisch wird es zum kleinen „elektronischen Wettergläschen" und einer schönen Desktop-Dekoration.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Komponenten-Übersicht
 
 **ESP32-S3-Entwicklerboard** ist ein SoC-Board mit WiFi. Es holt die Daten aus dem Netz, erledigt die Logik und schiebt das Bild per SPI zum Display – das Gehirn des gesamten Projekts. Ich habe es gewählt, weil es viele Pins, genug Rechenleistung und eingebautes WiFi mitbringt, sodass kein extra Netzwerkmodul nötig ist.

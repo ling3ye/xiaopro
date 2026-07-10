@@ -27,6 +27,9 @@ image: "https://img.lingflux.com/2026/07/39d31272f2976bb195ecea554654502d.jpg"
 
 1 枚の ESP32-S3 が一定間隔で AQICN.ORG から空気品質データを取得し、電子ペーパーに表示します。画面には AQI の大きな数字、12 項目の詳細指標（PM2.5、PM10、温湿度、風速など）、そして PM2.5 と紫外線の 7 日間予測の棒グラフが含まれ、電源を切っても画面は消えません。机の上に置けば「電子風水計」のようなもので、デスク周りの良いアクセントになります。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## パーツ説明
 
 **ESP32-S3 開発ボード**は WiFi 搭載の SoC 開発ボードで、ネットワークからデータを取得し、ロジックを走らせ、SPI 経由で画面に描画データを送る、プロジェクト全体の頭脳です。これを選んだのは、ピン数が多く、演算能力が十分で、WiFi を内蔵しているため、別途ネットワークモジュールを用意する必要がないからです。

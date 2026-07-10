@@ -29,6 +29,9 @@ I picked up a black-and-white e-paper panel at a secondhand market for next to n
 
 An ESP32-S3 pulls air-quality data from AQICN.ORG on a timer and refreshes it onto the e-paper panel. The screen shows a big AQI number, 12 detailed metrics (PM2.5, PM10, temperature/humidity, wind speed, etc.), plus a 7-day forecast bar chart for PM2.5 and UV. The image survives power-off, and sitting on the desk it's basically a "desktop weather oracle" — a great little desk setup.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Component Overview
 
 **ESP32-S3 dev board** is a WiFi-equipped SoC dev board that handles networking, runs the logic, and pushes the frame to the panel over SPI — the brain of the whole project. I picked it because it has plenty of GPIO, enough horsepower, and built-in WiFi, so there's no need for an extra network module.

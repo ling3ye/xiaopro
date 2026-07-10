@@ -27,6 +27,9 @@ image: "https://img.lingflux.com/2026/07/39d31272f2976bb195ecea554654502d.jpg"
 
 ESP32-S3 한 장이 AQICN.ORG에서 주기적으로 공기질 데이터를 가져와 전자종이에 새로 그려줘요. 화면에는 AQI 큰 숫자, 12가지 세부 지표(PM2.5, PM10, 온습도, 풍속 등), 그리고 PM2.5와 자외선의 7일 예측 막대그래프가 담겨요. 전원을 꺼도 화면이 남아 있어서 책상 위에 올려두면 '전자 풍수계'처럼 쓸 수 있고, 훌륭한 데스크 셋업 아이템이에요.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/foEGSZWcxEE?si=cjtzAEnatEL7e4NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 부품 설명
 
 **ESP32-S3 개발 보드**는 WiFi가 내장된 SoC 개발 보드예요. 인터넷에서 데이터를 가져오고, 로직을 돌리고, SPI로 화면에 그림을 밀어 넣는, 프로젝트 전체의 뇌예요. 이 보드를 고른 이유는 핀이 많고 연산력이 충분하며 WiFi가 내장되어 있어서 따로 네트워크 모듈을 추가하지 않아도 되기 때문이에요.
