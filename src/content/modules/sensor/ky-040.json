@@ -1,0 +1,127 @@
+{
+  "brand": "Generic (KY-040)",
+  "category": "sensor",
+  "model": "KY-040 Rotary Encoder Module",
+  "specs": {
+    "zh-cn": {
+      "类型": "增量式旋转编码器（360° 无限旋转，输出相对转动方向和步数，非绝对角度）",
+      "工作电压": "3.3V ~ 5V",
+      "每圈步进数": "20 步（20 个棘轮定位点）",
+      "输出信号": "A 相（CLK）/ B 相（DT）/ 按键（SW）",
+      "输出方式": "正交格雷码（A/B 相相位差 90°，通过两相先后顺序判断旋转方向）",
+      "接口类型": "数字 GPIO（模块已板载上拉电阻）",
+      "按键功能": "内置按压按键，按下时 SW 引脚输出低电平",
+      "引脚数量": "5Pin（CLK, DT, SW, +, GND）",
+      "引脚定义": "CLK(A 相输出, 接中断引脚), DT(B 相输出, 判断方向), SW(按键输出, 按下为低电平), +(电源正 3.3~5V), GND(地)",
+      "适用场景": "菜单选择、音量/油门等无极调节、参数微调、人机交互旋钮"
+    },
+    "zh-tw": {
+      "類型": "增量式旋轉編碼器（360° 無限旋轉，輸出相對轉動方向和步數，非絕對角度）",
+      "工作電壓": "3.3V ~ 5V",
+      "每圈步進數": "20 步（20 個棘輪定位點）",
+      "輸出訊號": "A 相（CLK）/ B 相（DT）/ 按鍵（SW）",
+      "輸出方式": "正交格雷碼（A/B 相相位差 90°，透過兩相先後順序判斷旋轉方向）",
+      "介面類型": "數位 GPIO（模組已板載上拉電阻）",
+      "按鍵功能": "內建按壓按鍵，按下時 SW 腳位輸出低電位",
+      "引腳數量": "5Pin（CLK, DT, SW, +, GND）",
+      "引腳定義": "CLK(A 相輸出, 接中斷腳位), DT(B 相輸出, 判斷方向), SW(按鍵輸出, 按下為低電位), +(電源正 3.3~5V), GND(地)",
+      "適用場景": "選單選擇、音量/油門等無段調節、參數微調、人機互動旋鈕"
+    },
+    "en": {
+      "Type": "Incremental rotary encoder (360° endless rotation, outputs relative direction and steps, not absolute angle)",
+      "Operating Voltage": "3.3V ~ 5V",
+      "Steps per Revolution": "20 steps (20 detent positions)",
+      "Output Signals": "Phase A (CLK) / Phase B (DT) / Push button (SW)",
+      "Output Mode": "Quadrature Gray code (A/B phases 90° out of phase; rotation direction is derived from which phase leads)",
+      "Interface": "Digital GPIO (module has onboard pull-up resistors)",
+      "Button Function": "Built-in push button; SW pin outputs LOW when pressed",
+      "Pin Count": "5-pin (CLK, DT, SW, +, GND)",
+      "Pin Definition": "CLK(phase A output, attach to interrupt pin), DT(phase B output, determines direction), SW(button output, LOW when pressed), +(power+, 3.3~5V), GND(ground)",
+      "Applications": "Menu navigation, stepless control such as volume/throttle, parameter fine-tuning, human-interface knobs"
+    },
+    "ja": {
+      "タイプ": "インクリメンタル型ロータリーエンコーダ（360° 無限回転、相対的な回転方向とステップ数を出力、絶対角ではない）",
+      "動作電圧": "3.3V ~ 5V",
+      "1 回転あたりのステップ": "20 ステップ（20 個のクリック位置）",
+      "出力信号": "A 相（CLK）/ B 相（DT）/ プッシュボタン（SW）",
+      "出力方式": "直交グレイコード（A/B 相は 90° 位相差、どちらの相が先行するかで回転方向を判定）",
+      "インターフェース": "デジタル GPIO（モジュールにプルアップ抵抗を実装済み）",
+      "ボタン機能": "内蔵プッシュボタン、押すと SW ピンが Low 出力",
+      "ピン数": "5Pin（CLK, DT, SW, +, GND）",
+      "ピン定義": "CLK(A 相出力, 割込ピンに接続), DT(B 相出力, 方向判定), SW(ボタン出力, 押下で Low), +(電源+, 3.3~5V), GND(GND)",
+      "用途": "メニュー選択、音量/スロットル等の無段階調整、パラメータ微調整、ヒューマンインターフェースのノブ"
+    },
+    "ko": {
+      "유형": "증분형 로터리 엔코더(360° 무한 회전, 상대적 회전 방향과 스텝 수를 출력, 절대 각도 아님)",
+      "작동 전압": "3.3V ~ 5V",
+      "회전당 스텝 수": "20 스텝(20개의 디텐트 위치)",
+      "출력 신호": "A상(CLK) / B상(DT) / 푸시 버튼(SW)",
+      "출력 방식": "직교 그레이 코드(A/B상이 90° 위상차, 어느 상이 선행하는지로 회전 방향 판별)",
+      "인터페이스": "디지털 GPIO(모듈에 온보드 풀업 저항 내장)",
+      "버튼 기능": "내장 푸시 버튼, 누르면 SW 핀이 Low 출력",
+      "핀 수": "5핀(CLK, DT, SW, +, GND)",
+      "핀 정의": "CLK(A상 출력, 인터럽트 핀에 연결), DT(B상 출력, 방향 판별), SW(버튼 출력, 누르면 Low), +(전원+, 3.3~5V), GND(접지)",
+      "용도": "메뉴 선택, 볼륨/스로틀 등 무단 조절, 파라미터 미세 조정, 휴먼 인터페이스 노브"
+    },
+    "es": {
+      "Tipo": "Codificador rotativo incremental (giro infinito 360°, emite dirección y pasos relativos, no ángulo absoluto)",
+      "Tensión de operación": "3.3V ~ 5V",
+      "Pasos por revolución": "20 pasos (20 posiciones de detén)",
+      "Señales de salida": "Fase A (CLK) / Fase B (DT) / Botón (SW)",
+      "Modo de salida": "Código Gray cuadratura (fases A/B desfasadas 90°, la dirección se deduce de qué fase lidera)",
+      "Interfaz": "GPIO digital (el módulo incluye resistencias pull-up integradas)",
+      "Función del botón": "Botón pulsador integrado; el pin SW muestra LOW al pulsar",
+      "Cantidad de pines": "5 pines (CLK, DT, SW, +, GND)",
+      "Definición de pines": "CLK(salida fase A, al pin de interrupción), DT(salida fase B, determina dirección), SW(salida del botón, LOW al pulsar), +(alimentación+, 3.3~5V), GND(tierra)",
+      "Aplicaciones": "Navegación de menús, control sin pasos como volumen/acelerador, ajuste fino de parámetros, perillas de interfaz humana"
+    },
+    "de": {
+      "Typ": "Inkrementaler Drehgeber (endlose 360°-Drehung, gibt relative Richtung und Schritte aus, kein absoluter Winkel)",
+      "Betriebsspannung": "3,3V ~ 5V",
+      "Schritte pro Umdrehung": "20 Schritte (20 Rastpositionen)",
+      "Ausgangssignale": "Phase A (CLK) / Phase B (DT) / Taster (SW)",
+      "Ausgabeart": "Quadratur-Gray-Code (A/B-Phasen um 90° versetzt; Drehrichtung aus der führenden Phase abgeleitet)",
+      "Schnittstelle": "Digitaler GPIO (Modul hat integrierte Pull-up-Widerstände)",
+      "Tastfunktion": "Eingebauter Drucktaster; SW-Pin liegt bei LOW, wenn gedrückt",
+      "Pin-Anzahl": "5-Pin (CLK, DT, SW, +, GND)",
+      "Pin-Definition": "CLK(Ausgang Phase A, an Interrupt-Pin), DT(Ausgang Phase B, bestimmt Richtung), SW(Taster-Ausgang, LOW beim Drücken), +(Versorgung+, 3,3~5V), GND(Masse)",
+      "Anwendungen": "Menünavigation, stufenlose Steuerung wie Lautstärke/Gas, Feinjustierung von Parametern, Bedienknaufe"
+    },
+    "fr": {
+      "Type": "Codeur rotatif incrémental (rotation continue 360°, sort une direction et des pas relatifs, pas un angle absolu)",
+      "Tension de fonctionnement": "3,3V ~ 5V",
+      "Pas par révolution": "20 pas (20 positions de détente)",
+      "Signaux de sortie": "Phase A (CLK) / Phase B (DT) / Bouton-poussoir (SW)",
+      "Mode de sortie": "Code Gray en quadrature (phases A/B déphasées de 90° ; la direction se déduit de la phase qui précède)",
+      "Interface": "GPIO numérique (le module intègre des résistances de pull-up)",
+      "Fonction du bouton": "Bouton-poussoir intégré ; la broche SW passe à LOW lorsqu'on appuie",
+      "Nombre de broches": "5 broches (CLK, DT, SW, +, GND)",
+      "Définition des broches": "CLK(sortie phase A, sur broche d'interruption), DT(sortie phase B, détermine la direction), SW(sortie du bouton, LOW à l'appui), +(alimentation+, 3,3~5V), GND(masse)",
+      "Applications": "Navigation dans les menus, contrôle sans cran tel que volume/accélérateur, réglage fin de paramètres, molettes d'interface humaine"
+    },
+    "it": {
+      "Tipo": "Encoder rotativo incrementale (rotazione continua 360°, fornisce direzione e passi relativi, non angolo assoluto)",
+      "Tensione di funzionamento": "3,3V ~ 5V",
+      "Passi per giro": "20 passi (20 posizioni di scatto)",
+      "Segnali di uscita": "Fase A (CLK) / Fase B (DT) / Pulsante (SW)",
+      "Modalità di uscita": "Codice Gray in quadratura (fasi A/B sfasate di 90°; la direzione si ricava dalla fase che guida)",
+      "Interfaccia": "GPIO digitale (il modulo ha resistori di pull-up integrati)",
+      "Funzione del pulsante": "Pulsante integrato; il pin SW va a LOW quando premuto",
+      "Numero pin": "5 pin (CLK, DT, SW, +, GND)",
+      "Definizione pin": "CLK(uscita fase A, sul pin di interrupt), DT(uscita fase B, determina la direzione), SW(uscita pulsante, LOW alla pressione), +(alimentazione+, 3,3~5V), GND(massa)",
+      "Applicazioni": "Navigazione menu, controllo senza scatti come volume/acceleratore, messa a punto fine dei parametri, manopole di interfaccia uomo-macchina"
+    }
+  },
+  "image": "",
+  "keywords": {
+    "zh-cn": ["KY-040", "旋转编码器", "增量式编码器", "EC11", "旋钮模块", "Arduino输入"],
+    "zh-tw": ["KY-040", "旋轉編碼器", "增量式編碼器", "EC11", "旋鈕模組", "Arduino輸入"],
+    "en": ["KY-040", "rotary encoder", "incremental encoder", "EC11", "knob module", "Arduino input"],
+    "ja": ["KY-040", "ロータリーエンコーダ", "インクリメンタルエンコーダ", "EC11", "ノブモジュール", "Arduino入力"],
+    "ko": ["KY-040", "로터리 엔코더", "증분형 엔코더", "EC11", "노브 모듈", "아두이노 입력"],
+    "es": ["KY-040", "codificador rotativo", "encoder incremental", "EC11", "módulo de perilla", "entrada Arduino"],
+    "de": ["KY-040", "Drehgeber", "inkrementeller Encoder", "EC11", "Drehknob-Modul", "Arduino-Eingang"],
+    "fr": ["KY-040", "codeur rotatif", "encodeur incrémental", "EC11", "module molette", "entrée Arduino"],
+    "it": ["KY-040", "encoder rotativo", "encoder incrementale", "EC11", "modulo manopola", "ingresso Arduino"]
+  }
+}
