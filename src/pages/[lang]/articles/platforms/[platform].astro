@@ -3,7 +3,7 @@ import Layout from '../../../../layouts/Layout.astro';
 import Card from '../../../../components/Card.astro';
 import Breadcrumb from '../../../../components/Breadcrumb.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { useTranslations, getLocalizedPath, type UIKey } from '../../../../utils/i18n';
 import { languages, type SupportedLocale } from '../../../../i18n/config';
 
 export async function getStaticPaths() {
@@ -25,6 +25,8 @@ export async function getStaticPaths() {
 const { lang, platform } = Astro.params;
 const currentLocale: SupportedLocale = lang as SupportedLocale;
 const t = useTranslations(currentLocale);
+
+const platformLabel = t(`articles.platform.${platform}` as UIKey);
 
 // 核心过滤逻辑：筛选包含指定 platform 的文章
 const allArticles = await getCollection('articles', ({ id, data }) => {
@@ -48,20 +50,12 @@ const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAG
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
-  { label: `${platform.toUpperCase()} 平台`, current: true }
+  { label: platformLabel, current: true }
 ];
-
-const platformLabel = {
-  mac: 'Mac',
-  windows: 'Windows',
-  linux: 'Linux',
-  web: 'Web',
-  'cross-platform': '跨平台'
-}[platform] || platform;
 ---
 <Layout
-  title={`${platformLabel} 平台文章 - ${t('nav.articles')}`}
-  description={`在 ${platformLabel} 平台上的所有技术文章和教程`}
+  title={`${platformLabel} - ${t('nav.articles')}`}
+  description={t('articles.platform.listingMeta').replace('{platform}', platformLabel)}
   lang={lang}
   currentPath={`/${lang}/articles/platforms/${platform}`}
 >
@@ -72,9 +66,9 @@ const platformLabel = {
   <section class="category-page">
     <div class="container">
       <header class="category-header">
-        <h1 class="category-title">{platformLabel} 平台</h1>
+        <h1 class="category-title">{platformLabel}</h1>
         <p class="category-description">
-          共 {allArticles.length} 篇文章在 {platformLabel} 平台
+          {t('articles.listing.articleCount').replace('{count}', allArticles.length)} · {platformLabel}
         </p>
       </header>
 

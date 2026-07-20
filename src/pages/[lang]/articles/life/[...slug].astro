@@ -1,11 +1,11 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
 import Breadcrumb from '../../../../components/Breadcrumb.astro';
-import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { getEntry } from 'astro:content';
+import { useTranslations, getLocalizedPath, type UIKey } from '../../../../utils/i18n';
 import type { SupportedLocale } from '../../../../i18n/config';
 
 const DOMAIN = 'life';
-const DOMAIN_LABEL = '生活';
 
 export async function getStaticPaths() {
   const paths: any[] = [];
@@ -41,13 +41,13 @@ const currentLocale: SupportedLocale = lang as SupportedLocale;
 const t = useTranslations(currentLocale);
 
 const relatedBoardEntries = article.data.relatedBoards
-  ? await Promise.all(article.data.relatedBoards.map((ref: any) => ref.resolve()))
+  ? await Promise.all(article.data.relatedBoards.map((ref: any) => getEntry('boards', ref.id || String(ref))))
   : [];
 
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
-  { label: DOMAIN_LABEL, href: getLocalizedPath(`/articles/${DOMAIN}`, currentLocale) },
+  { label: t('articles.domain.life'), href: getLocalizedPath(`/articles/${DOMAIN}`, currentLocale) },
   { label: article.data.title, current: true }
 ];
 
@@ -86,10 +86,10 @@ const structuredData = {
             </div>
           )}
           <div class="article-meta">
-            <span class="meta-badge domain-badge">{DOMAIN_LABEL}</span>
-            <span class="meta-badge format-badge">{article.data.format}</span>
+            <span class="meta-badge domain-badge">{t('articles.domain.life')}</span>
+            <span class="meta-badge format-badge">{t(`articles.format.${article.data.format}` as UIKey)}</span>
             {article.data.platforms && article.data.platforms.map((p: string) => (
-              <span class="meta-badge platform-badge">{p}</span>
+              <span class="meta-badge platform-badge">{t(`articles.platform.${p}` as UIKey)}</span>
             ))}
             <time class="article-date" datetime={(article.data.date as Date).toISOString()}>
               {(article.data.date as Date).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN', {
@@ -112,7 +112,7 @@ const structuredData = {
 
         {relatedBoardEntries.length > 0 && (
           <section class="related-hardware">
-            <h2>相关硬件</h2>
+            <h2>{t('ui.related')}</h2>
             <div class="hardware-grid">
               {relatedBoardEntries.map(board => (
                 <a href={getLocalizedPath(`/boards/${board.id}`, currentLocale)} class="hardware-card">

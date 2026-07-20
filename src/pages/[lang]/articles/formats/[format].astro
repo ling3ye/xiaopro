@@ -3,16 +3,8 @@ import Layout from '../../../../layouts/Layout.astro';
 import Card from '../../../../components/Card.astro';
 import Breadcrumb from '../../../../components/Breadcrumb.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
+import { useTranslations, getLocalizedPath, type UIKey } from '../../../../utils/i18n';
 import { languages, type SupportedLocale } from '../../../../i18n/config';
-
-const formatLabel = {
-  tutorial: '教程',
-  'prompt-list': '提示词清单',
-  opinion: '观点评论',
-  cheatsheet: '速查表',
-  news: '新闻'
-};
 
 export async function getStaticPaths() {
   const paths: any[] = [];
@@ -34,6 +26,8 @@ const { lang, format } = Astro.params;
 const currentLocale: SupportedLocale = lang as SupportedLocale;
 const t = useTranslations(currentLocale);
 
+const formatLabel = t(`articles.format.${format}` as UIKey);
+
 // 按体裁筛选文章
 const allArticles = await getCollection('articles', ({ id, data }) => {
   if (!id.startsWith(`${lang}/`)) return false;
@@ -53,12 +47,12 @@ const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAG
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
-  { label: formatLabel[format as keyof typeof formatLabel], current: true }
+  { label: formatLabel, current: true }
 ];
 ---
 <Layout
-  title={`${formatLabel[format as keyof typeof formatLabel]} - ${t('nav.articles')}`}
-  description={`所有${formatLabel[format as keyof typeof formatLabel]}类型的文章`}
+  title={`${formatLabel} - ${t('nav.articles')}`}
+  description={t('articles.format.listingMeta').replace('{format}', formatLabel)}
   lang={lang}
   currentPath={`/${lang}/articles/formats/${format}`}
 >
@@ -69,8 +63,8 @@ const breadcrumbItems = [
   <section class="category-page">
     <div class="container">
       <header class="category-header">
-        <h1 class="category-title">{formatLabel[format as keyof typeof formatLabel]}</h1>
-        <p class="category-description">共 {allArticles.length} 篇文章</p>
+        <h1 class="category-title">{formatLabel}</h1>
+        <p class="category-description">{t('articles.listing.articleCount').replace('{count}', allArticles.length)}</p>
       </header>
 
       <div class="articles-grid">

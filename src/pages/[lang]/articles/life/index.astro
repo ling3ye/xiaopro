@@ -7,7 +7,6 @@ import { useTranslations, getLocalizedPath } from '../../../../utils/i18n';
 import { languages, type SupportedLocale } from '../../../../i18n/config';
 
 const DOMAIN = 'life';
-const DOMAIN_LABEL = '生活';
 
 export async function getStaticPaths() {
   const paths: any[] = [];
@@ -38,12 +37,12 @@ const currentArticles = allArticles.slice(startIndex, startIndex + ITEMS_PER_PAG
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
-  { label: DOMAIN_LABEL, current: true }
+  { label: t('articles.domain.life'), current: true }
 ];
 ---
 <Layout
-  title={`${DOMAIN_LABEL} 文章 - ${t('nav.articles')}`}
-  description={`生活随笔文章，共 ${allArticles.length} 篇`}
+  title={`${t('articles.domain.life')} - ${t('nav.articles')}`}
+  description={`${t('articles.domain.life.blurb')} · ${t('articles.listing.articleCount').replace('{count}', allArticles.length)}`}
   lang={lang}
   currentPath={`/${lang}/articles/${DOMAIN}`}
 >
@@ -54,8 +53,8 @@ const breadcrumbItems = [
   <section class="category-page">
     <div class="container">
       <header class="category-header">
-        <h1 class="category-title">{DOMAIN_LABEL}</h1>
-        <p class="category-description">生活随笔和技术之外的故事</p>
+        <h1 class="category-title">{t('articles.domain.life')}</h1>
+        <p class="category-description">{t('articles.domain.life.blurb')}</p>
         <div class="category-stats">
           <span class="stat-item">
             <span class="stat-value">{startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, allArticles.length)}</span>
