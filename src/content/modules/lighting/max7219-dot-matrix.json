@@ -1,0 +1,127 @@
+{
+  "brand": "other",
+  "category": "lighting",
+  "model": "MAX7219 8x8 LED Dot Matrix Module",
+  "specs": {
+    "zh-cn": {
+      "类型": "LED 点阵显示驱动模块",
+      "驱动芯片": "MAX7219",
+      "显示阵列": "8×8（64 颗 LED）",
+      "通信接口": "3 线 SPI（DIN/CLK/CS）",
+      "工作电压": "4.0V ~ 5.5V（模块通常 5V）",
+      "亮度调节": "16 级数字亮度（PWM）",
+      "段驱动电流": "最大 40mA",
+      "级联方式": "DOUT→DIN 菊花链级联",
+      "串行时钟": "最高 10 MHz",
+      "引脚定义": "VCC, GND, DIN(数据输入), CS(片选), CLK(时钟), DOUT(级联输出)"
+    },
+    "zh-tw": {
+      "類型": "LED 點矩陣顯示驅動模組",
+      "驅動晶片": "MAX7219",
+      "顯示陣列": "8×8（64 顆 LED）",
+      "通訊介面": "3 線 SPI（DIN/CLK/CS）",
+      "工作電壓": "4.0V ~ 5.5V（模組通常 5V）",
+      "亮度調節": "16 級數位亮度（PWM）",
+      "段驅動電流": "最大 40mA",
+      "級聯方式": "DOUT→DIN 菊花鏈級聯",
+      "序列時脈": "最高 10 MHz",
+      "引腳定義": "VCC, GND, DIN(資料輸入), CS(晶片選擇), CLK(時脈), DOUT(級聯輸出)"
+    },
+    "en": {
+      "Type": "LED Dot Matrix Display Driver Module",
+      "Driver Chip": "MAX7219",
+      "Display Array": "8×8 (64 LEDs)",
+      "Interface": "3-wire SPI (DIN/CLK/CS)",
+      "Operating Voltage": "4.0V ~ 5.5V (module typically 5V)",
+      "Brightness Control": "16-level digital brightness (PWM)",
+      "Segment Drive Current": "up to 40mA",
+      "Cascading": "DOUT→DIN daisy-chain",
+      "Serial Clock": "up to 10 MHz",
+      "Pin Definition": "VCC, GND, DIN(data in), CS(chip select), CLK(clock), DOUT(cascade out)"
+    },
+    "ja": {
+      "タイプ": "LEDドットマトリクス表示ドライバーモジュール",
+      "ドライバーチップ": "MAX7219",
+      "表示配列": "8×8（64個のLED）",
+      "通信インターフェース": "3線 SPI（DIN/CLK/CS）",
+      "動作電圧": "4.0V ~ 5.5V（モジュールは通常5V）",
+      "輝度調整": "16段階デジタル輝度（PWM）",
+      "セグメント駆動電流": "最大40mA",
+      "カスケード接続": "DOUT→DIN デイジーチェーン",
+      "シリアルクロック": "最大10 MHz",
+      "ピン定義": "VCC, GND, DIN(データ入力), CS(チップセレクト), CLK(クロック), DOUT(カスケード出力)"
+    },
+    "ko": {
+      "유형": "LED 도트 매트릭스 표시 드라이버 모듈",
+      "드라이버 칩": "MAX7219",
+      "표시 어레이": "8×8(64개 LED)",
+      "통신 인터페이스": "3선 SPI(DIN/CLK/CS)",
+      "작동 전압": "4.0V ~ 5.5V(모듈은 일반적으로 5V)",
+      "밝기 조절": "16단계 디지털 밝기(PWM)",
+      "세그먼트 구동 전류": "최대 40mA",
+      "캐스케이드 연결": "DOUT→DIN 데이지 체인",
+      "직렬 클록": "최대 10 MHz",
+      "핀 정의": "VCC, GND, DIN(데이터 입력), CS(칩 셀렉트), CLK(클록), DOUT(캐스케이드 출력)"
+    },
+    "es": {
+      "Tipo": "Módulo controlador de matriz de puntos LED",
+      "Chip controlador": "MAX7219",
+      "Matriz de visualización": "8×8 (64 LED)",
+      "Interfaz": "SPI de 3 hilos (DIN/CLK/CS)",
+      "Voltaje de operación": "4.0V ~ 5.5V (el módulo suele ser de 5V)",
+      "Control de brillo": "Brillo digital de 16 niveles (PWM)",
+      "Corriente de segmento": "Hasta 40mA",
+      "Cascada": "DOUT→DIN conexión en cadena (daisy-chain)",
+      "Reloj serie": "Hasta 10 MHz",
+      "Definición de pines": "VCC, GND, DIN(entrada de datos), CS(selección de chip), CLK(reloj), DOUT(salida en cascada)"
+    },
+    "de": {
+      "Typ": "LED-Punktmatrix-Anzeigetreiber-Modul",
+      "Treiberchip": "MAX7219",
+      "Anzeigematrix": "8×8 (64 LEDs)",
+      "Schnittstelle": "3-Draht SPI (DIN/CLK/CS)",
+      "Betriebsspannung": "4,0 V ~ 5,5 V (Modul meist 5 V)",
+      "Helligkeitsregelung": "16-stufige digitale Helligkeit (PWM)",
+      "Segment-Treiberstrom": "Bis zu 40 mA",
+      "Kaskadierung": "DOUT→DIN Daisy-Chain",
+      "Serieller Takt": "Bis zu 10 MHz",
+      "Pin-Definition": "VCC, GND, DIN(Dateneingang), CS(Chip-Select), CLK(Takt), DOUT(Kaskadenausgang)"
+    },
+    "fr": {
+      "Type": "Module pilote de matrice à points LED",
+      "Puce pilote": "MAX7219",
+      "Matrice d'affichage": "8×8 (64 LED)",
+      "Interface": "SPI 3 fils (DIN/CLK/CS)",
+      "Tension de fonctionnement": "4,0 V ~ 5,5 V (le module est généralement en 5 V)",
+      "Réglage de la luminosité": "Luminosité numérique 16 niveaux (PWM)",
+      "Courant de segment": "Jusqu'à 40 mA",
+      "Cascade": "DOUT→DIN en guirlande (daisy-chain)",
+      "Horloge série": "Jusqu'à 10 MHz",
+      "Définition des broches": "VCC, GND, DIN(entrée de données), CS(sélection de puce), CLK(horloge), DOUT(sortie en cascade)"
+    },
+    "it": {
+      "Tipo": "Modulo driver a matrice di punti LED",
+      "Chip driver": "MAX7219",
+      "Matrice di visualizzazione": "8×8 (64 LED)",
+      "Interfaccia": "SPI a 3 fili (DIN/CLK/CS)",
+      "Tensione di funzionamento": "4,0 V ~ 5,5 V (il modulo è generalmente a 5 V)",
+      "Regolazione luminosità": "Luminosità digitale a 16 livelli (PWM)",
+      "Corrente di segmento": "Fino a 40 mA",
+      "Cascata": "DOUT→DIN a catena (daisy-chain)",
+      "Clock seriale": "Fino a 10 MHz",
+      "Definizione pin": "VCC, GND, DIN(ingresso dati), CS(chip select), CLK(clock), DOUT(uscita cascata)"
+    }
+  },
+  "image": "https://img.lingflux.com/2026/07/47600d4280d7a2274f9f47a726329beb.jpg",
+  "keywords": {
+    "zh-cn": ["MAX7219", "8x8点阵", "LED点阵", "点阵模块", "SPI显示", "LED驱动"],
+    "zh-tw": ["MAX7219", "8x8點矩陣", "LED點矩陣", "點矩陣模組", "SPI顯示", "LED驅動"],
+    "en": ["MAX7219", "8x8 dot matrix", "LED matrix", "matrix module", "SPI display", "LED driver"],
+    "ja": ["MAX7219", "8x8ドットマトリクス", "LEDマトリクス", "マトリクスモジュール", "SPIディスプレイ", "LEDドライバー"],
+    "ko": ["MAX7219", "8x8 도트 매트릭스", "LED 매트릭스", "매트릭스 모듈", "SPI 디스플레이", "LED 드라이버"],
+    "es": ["MAX7219", "matriz 8x8", "matriz LED", "módulo de matriz", "pantalla SPI", "driver LED"],
+    "de": ["MAX7219", "8x8-Punktmatrix", "LED-Matrix", "Matrix-Modul", "SPI-Display", "LED-Treiber"],
+    "fr": ["MAX7219", "matrice 8x8", "matrice LED", "module matrice", "affichage SPI", "pilote LED"],
+    "it": ["MAX7219", "matrice 8x8", "matrice LED", "modulo matrice", "display SPI", "driver LED"]
+  }
+}
