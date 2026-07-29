@@ -31,6 +31,9 @@ image: "https://img.lingflux.com/2026/07/47600d4280d7a2274f9f47a726329beb.jpg"
 
 上電後，點矩陣螢幕會自動進入一段循環：先是正立平穩地漏沙，然後模擬向左、向右傾倒，沙粒會跟著堆出自然的斜角，最後整體「翻轉」一次，沙漏倒過來重新開始漏。整個過程不需要按任何按鈕，我目前的實驗是沒有使用陀螺儀的，翻轉是寫死的角度資料。程式碼裡內建了一個「假陀螺儀」狀態機在自動切換姿態。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 元件說明

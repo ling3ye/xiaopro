@@ -31,6 +31,9 @@ image: "https://img.lingflux.com/2026/07/47600d4280d7a2274f9f47a726329beb.jpg"
 
 電源を入れると、点字マトリクスは自動的にあるループに入ります。まずは正立で安定して砂が落ち、次に左や右に傾倒する動作をシミュレートし、砂粒はそれに応じて自然な角度で積み上がり、最後に全体が 1 回「反転」して、砂時計が逆さまになって再び砂が落ち始めます。一連の動作にボタン操作は不要で、本記事の実験ではジャイロを使用しておらず、反転は角度データとして固定値に書き込んでいます。コード内には「擬似ジャイロ」状態機が内蔵されており、姿勢を自動的に切り替えています。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 部品の説明

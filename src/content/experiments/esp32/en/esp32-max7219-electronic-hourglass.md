@@ -31,6 +31,9 @@ Have you ever scrolled past one of those electronic hourglasses where grains of 
 
 After power-on, the dot matrix automatically enters a loop: first it pours sand smoothly in the upright orientation, then it simulates tilting left and right so the sand piles up at a natural slope, and finally it does a full "flip," turning the hourglass upside down so the pouring starts again. The whole process requires no button presses. My current experiment does not use a gyroscope - the tilt angles are hardcoded. The code has a built-in "pseudo-gyroscope" state machine that automatically switches between poses.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Component Notes

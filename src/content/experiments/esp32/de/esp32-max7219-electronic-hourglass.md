@@ -31,6 +31,9 @@ Wenn du im Netz eine elektronische Sanduhr siehst, bei der die Sandkörner Feld 
 
 Nach dem Einschalten geht die Punktmatrix automatisch in eine Schleife über: Zuerst rieselt der Sand in aufrechter Position gleichmäßig, dann wird ein Kippen nach links und rechts simuliert, wobei die Sandkörner natürliche Schrägen bilden, und am Ende wird die ganze Sanduhr einmal „umgedreht", sodass sie invertiert wieder von vorn rieselt. Der gesamte Ablauf braucht keinen einzigen Button. In der aktuellen Version des Experiments kommt kein echtes Gyroskop zum Einsatz; das Kippen läuft über fest einprogrammierte Winkeldaten. Im Code steckt eine „Pseudo-Gyroskop"-Zustandsmaschine, die die Haltungen automatisch umschaltet.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Bauteile

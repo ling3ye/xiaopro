@@ -31,6 +31,9 @@ Entorno de prueba: Arduino IDE 2.3.8 + ESP32 Arduino Core 3.3.10 + MD_MAX72xx v3
 
 Al alimentarlo, la matriz entra automáticamente en un bucle: primero vierte arena de forma estable en vertical, luego simula una inclinación a la izquierda y a la derecha, y los granos forman ángulos de acumulación naturales; por último, "voltea" por completo y el reloj de arena se invierte para empezar a verter de nuevo. Todo el proceso no requiere pulsar ningún botón. Mi experimento actual no utiliza giroscopio: el volteo se basa en datos de ángulo fijados en el código. Dentro del código hay una máquina de estados de "giroscopio simulado" que va cambiando la postura automáticamente.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Descripción de componentes

@@ -31,6 +31,9 @@ Tu as sûrement vu passer sur le web ces sabliers électroniques où les grains 
 
 À la mise sous tension, la matrice entre automatiquement dans une boucle : d'abord le sable s'écoule à la verticale, de façon stable, puis elle simule une inclinaison à gauche puis à droite, les grains formant naturellement des angles de tas, et enfin l'ensemble se « retourne » une fois pour recommencer à l'envers. Aucun bouton à presser ; mon expérimentation actuelle n'utilise pas de gyroscope, le retournement est piloté par des données d'angle écrites en dur. Le code embarque une machine à états de « pseudo-gyroscope » qui enchaîne les postures automatiquement.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Présentation des composants

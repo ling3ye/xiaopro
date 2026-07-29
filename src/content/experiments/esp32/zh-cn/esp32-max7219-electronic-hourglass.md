@@ -31,6 +31,9 @@ image: "https://img.lingflux.com/2026/07/47600d4280d7a2274f9f47a726329beb.jpg"
 
 上电后，点阵屏会自动进入一段循环：先是正立平稳地漏沙，然后模拟向左、向右倾倒，沙粒会跟着堆出自然的斜角，最后整体"翻转"一次，沙漏倒过来重新开始漏。整个过程不需要按任何按钮，我当前的实验是没有使用陀螺仪的，翻转是写死的角度数据。代码里内置了一个"假陀螺仪"状态机在自动切换姿态。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 元件说明

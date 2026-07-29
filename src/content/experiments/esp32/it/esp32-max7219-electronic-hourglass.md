@@ -31,6 +31,9 @@ Anche voi, scorrendo la rete, vi sarete imbattuti in quelle clessidre elettronic
 
 All'accensione, la matrice entra automaticamente in un ciclo: prima la sabbia cade in modo stabile in posizione verticale, poi simula un'inclinazione verso sinistra e verso destra, accumulandosi con angolazioni naturali, infine si "capovolge" e la clessidra si gira per ricominciare da capo. L'intera sequenza non richiede di premere alcun pulsante; l'esperimento attuale non usa un giroscopio: il capovolgimento si basa su angolazioni definite nel codice. È integrato nello sketch uno stato di "pseudo-giroscopio" che cambia automaticamente configurazione.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Descrizione dei componenti

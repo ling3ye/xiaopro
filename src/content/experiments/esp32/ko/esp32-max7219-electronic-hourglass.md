@@ -31,6 +31,9 @@ image: "https://img.lingflux.com/2026/07/47600d4280d7a2274f9f47a726329beb.jpg"
 
 전원을 켜면 도트 매트릭스는 자동으로 하나의 루프에 진입합니다. 먼저 바로 세워 안정적으로 모래를 흘려내리고, 다음엔 왼쪽/오른쪽으로 기울이는 동작을 흉내 내어 모래 알갱이가 자연스러운 경사로 쌓이게 합니다. 마지막에는 한 번 전체적으로 "뒤집기"를 해서 모래시계를 거꾸로 뒤집고 다시 흘러내리기를 시작합니다. 전체 과정에 어떤 버튼도 누를 필요가 없으며, 현재 실험은 자이로스코프를 사용하지 않고 뒤집기 동작은 하드코딩된 각도 데이터로 동작합니다. 코드 내부에는 "가짜 자이로스코프" 상태 머신이 자동으로 자세를 전환하고 있습니다.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XYurztJ4_mQ?si=tlLQb6wfhkILGEFL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 부품 설명
