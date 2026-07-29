@@ -45,7 +45,8 @@ image: "https://img.lingflux.com/2026/07/6c72c55fa63614eb8c2086c24d993d5f.jpg"
 旋轉 KY-040 編碼器加油門，喇叭會從低沉的怠速隆隆聲逐漸過渡到高轉速的引擎轟鳴；按下編碼器按鈕，油門立即歸零，回到怠速狀態。整個聲音過渡平滑，沒有突兀的跳變，聽起來挺像那麼回事。
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## 元件說明

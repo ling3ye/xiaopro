@@ -45,7 +45,8 @@ El objetivo de este artículo es: con **ESP32-S3 + módulo amplificador MAX98357
 Al girar el encoder KY-040 para subir el acelerador, el altavaz pasa gradualmente del retumbar grave del ralentí al rugido agudo de un motor a altas revoluciones; al pulsar el botón del encoder, el acelerador vuelve a cero al instante y se regresa al ralentí. Toda la transición de sonido es suave, sin saltos bruscos, y suena bastante convincente.
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## Descripción de los componentes

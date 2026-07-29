@@ -45,7 +45,8 @@ L'obiettivo di questo articolo è: usare **ESP32-S3 + modulo amplificatore MAX98
 Ruotando l'encoder KY-040 si aumenta l'acceleratore: l'altoparlante passa gradualmente dal rombo profondo del minimo al frastuono del motore ad alti regimi; premendo il pulsante dell'encoder, l'acceleratore torna immediatamente a zero, ripristinando il regime di minimo. L'intera transizione del suono è fluida, senza salti bruschi, e il risultato suona piuttosto convincente.
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## Descrizione dei componenti

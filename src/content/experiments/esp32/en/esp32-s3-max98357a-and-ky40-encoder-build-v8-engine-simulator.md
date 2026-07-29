@@ -45,7 +45,8 @@ The goal of this article: use an **ESP32-S3 + MAX98357A amplifier module + KY-04
 Rotate the KY-040 encoder to open the throttle, and the speaker will transition smoothly from a low idle rumble to a high-rev engine roar; press the encoder button and the throttle instantly drops to zero, returning to idle. The whole sound transition is smooth, with no abrupt jumps, and actually sounds pretty convincing.
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## Component Notes

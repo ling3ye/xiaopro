@@ -45,7 +45,8 @@ L'objectif de cet article : avec un **ESP32-S3 + module amplificateur MAX98357A 
 Tournez l'encodeur KY-040 pour ouvrir l'accélérateur : le haut-parleur passe progressivement d'un grave ronronnement au ralenti à un rugissement de moteur à haut régime ; appuyez sur le bouton de l'encodeur et l'accélérateur retombe immédiatement à zéro, retour au ralenti. Les transitions sonores sont fluides, sans sautillements ni à-coups, et le résultat est étonnamment crédible.
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## Description des composants

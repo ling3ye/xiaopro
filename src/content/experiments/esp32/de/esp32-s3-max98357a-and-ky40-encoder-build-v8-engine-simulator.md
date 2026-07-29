@@ -45,7 +45,8 @@ Das Ziel dieses Artikels: Mit **ESP32-S3 + MAX98357A-Verstärker + KY-040-Drehge
 Dreh den KY-040-Drehgeber, um Gas zu geben: Der Lautsprecher geht vom tiefen Leerlauf-Grollen fließend ins hochtourige Donnern über; drückst du den Drehgeber, fällt das Gas sofort auf Null und der Sound geht zurück in den Leerlauf. Die Übergänge sind weich, ohne Sprünge, klingt echt.
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## Bauteile

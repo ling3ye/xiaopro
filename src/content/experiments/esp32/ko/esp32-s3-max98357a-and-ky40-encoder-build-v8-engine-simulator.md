@@ -45,7 +45,8 @@ image: "https://img.lingflux.com/2026/07/6c72c55fa63614eb8c2086c24d993d5f.jpg"
 KY-040 엔코더를 돌려 스로틀을 올리면, 스피커에서 낮은 아이들 웅웅거림에서 점차 고회전 엔진 포효로 부드럽게 전환됩니다. 엔코더 버튼을 누르면 스로틀이 즉시 0으로 돌아가 아이들 상태로 복귀합니다. 소리 전환이 매끄럽고 튀는 느낌 없이 꽤 그럴싸하게 들립니다.
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## 부품 설명

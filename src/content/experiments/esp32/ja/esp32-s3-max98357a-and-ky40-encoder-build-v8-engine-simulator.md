@@ -45,7 +45,8 @@ image: "https://img.lingflux.com/2026/07/6c72c55fa63614eb8c2086c24d993d5f.jpg"
 KY-040 エンコーダーを回してスロットルを開けると、スピーカーは低く唸るアイドリング音から次第に高回転のエンジン轟音へと移行していく；エンコーダーのボタンを押し込むと、スロットルは即座にゼロになり、アイドリング状態に戻る。サウンドの移行は滑らかで、唐突なジャンプがなく、けっこうそれっぽく聞こえる。
 
 
-
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/30IWSgfp3IY?si=XXwD3KaDonejM5WD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## パーツ説明
