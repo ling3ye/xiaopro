@@ -43,6 +43,9 @@ Dopo l'accensione, il display riproduce automaticamente in ciclo tre animazioni 
 
 Subito dopo l'accensione parte a schermo pieno, senza operazioni aggiuntive: ideale come esperimento di verifica che "questo schermo è davvero vivo".
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Descrizione dei componenti

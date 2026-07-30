@@ -43,6 +43,9 @@ image: "https://img.lingflux.com/2026/07/8f43dd78cc005af725bd601e0a262621.jpg"
 
 전원을 인가하자마자 화면 가득 애니메이션이 나타나고, 별도의 조작이 필요 없어서 "이 화면이 정말 살아 있다"는 것을 확인하는 검증용 실험으로 적합합니다.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 부품 설명

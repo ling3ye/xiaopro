@@ -43,6 +43,9 @@ Après la mise sous tension, l'écran diffuse en boucle trois animations coloré
 
 Dès la mise sous tension, l'écran est rempli d'animations, sans aucune action supplémentaire — parfait comme test de validation du type « cet écran est bel et bien vivant ».
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Composants

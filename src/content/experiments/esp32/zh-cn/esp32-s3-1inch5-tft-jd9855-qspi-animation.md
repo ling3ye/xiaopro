@@ -43,6 +43,9 @@ image: "https://img.lingflux.com/2026/07/8f43dd78cc005af725bd601e0a262621.jpg"
 
 一上电就是满屏动画，不需要额外操作，很适合当"这块屏真的活了"的验证实验。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 元件说明

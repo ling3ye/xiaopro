@@ -43,6 +43,9 @@ image: "https://img.lingflux.com/2026/07/8f43dd78cc005af725bd601e0a262621.jpg"
 
 通電するだけで全面アニメーションになり、追加操作が不要なので、「この画面は本当に生きている」ことを確かめる検証実験にもぴったりです。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 部品説明

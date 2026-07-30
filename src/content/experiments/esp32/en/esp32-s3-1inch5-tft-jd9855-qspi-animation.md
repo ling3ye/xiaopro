@@ -43,6 +43,9 @@ On power-up the screen automatically cycles through three colorful animations ge
 
 The moment you power up you get a full-screen animation — no extra input needed. It's a great "yes, this display is really alive" sanity-check experiment.
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Components

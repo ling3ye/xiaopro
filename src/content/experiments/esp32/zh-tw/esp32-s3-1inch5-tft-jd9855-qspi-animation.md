@@ -43,6 +43,9 @@ image: "https://img.lingflux.com/2026/07/8f43dd78cc005af725bd601e0a262621.jpg"
 
 一上電就是滿螢幕動畫，不需要額外操作，很適合當「這塊螢幕真的活了」的驗證實驗。
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 元件說明

@@ -43,6 +43,9 @@ Nach dem Einschalten spielt das Display automatisch drei Farbanimationen ab, die
 
 Beim Einschalten startet sofort die Vollbild-Animation, kein weiterer Eingriff nötig — hervorragend als Verifikations-Versuch im Sinne von „dieses Display lebt wirklich".
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Komponentenbeschreibung

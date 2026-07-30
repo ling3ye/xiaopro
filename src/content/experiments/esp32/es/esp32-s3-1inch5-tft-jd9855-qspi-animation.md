@@ -43,6 +43,9 @@ Al dar alimentación, la pantalla reproduce automáticamente en bucle tres anima
 
 En cuanto se da alimentación, la pantalla se llena de animaciones, sin necesidad de ninguna acción adicional; ideal como experimento de verificación de que "esta pantalla realmente funciona".
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cqIo77cn1oA?si=Y7RjMyDpAsaN92ug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## Descripción del componente
