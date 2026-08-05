@@ -49,6 +49,10 @@ image: "https://img.lingflux.com/2026/08/b7d201de3550e7561294441b57a205de.jpg"
 
 ![](https://img.lingflux.com/2026/08/032db1082c643b3c0cc44b993101ead1.jpg)
 
+
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/doq81VdEQRI?si=bIy_tzkslkScLqzU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## 一、開発ボード説明：まずこの 5B を正しく認識する

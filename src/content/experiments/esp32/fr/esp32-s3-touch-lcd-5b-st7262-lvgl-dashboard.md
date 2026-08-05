@@ -49,6 +49,10 @@ Tu obtiendras au final un **tableau de bord de télémétrie véhicule animé** 
 
 ![](https://img.lingflux.com/2026/08/032db1082c643b3c0cc44b993101ead1.jpg)
 
+
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/doq81VdEQRI?si=bIy_tzkslkScLqzU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ---
 
 ## I. Description de la carte : d'abord, connaissez cette 5B
