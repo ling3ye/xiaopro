@@ -1,9 +1,6 @@
 ---
 /**
- * 3D打印机 - 列表页和详情页
- *
- * 展示所有3D打印机产品信息，支持参数对比
- * 支持多语言路由
+ * 3D打印机 - 列表页和详情页 · Paper Lab 纸感实验室
  *
  * @route /[lang]/printing/printers/[...path]
  */
@@ -38,7 +35,7 @@ const isListPage = !id;
 
 const allPrinters = await getCollection('printers');
 
-// Detail page data
+// 详情页数据
 let printer: any = undefined;
 let relatedModels: any[] = [];
 
@@ -54,14 +51,14 @@ if (!isListPage) {
   }
 }
 
-// Category names
+// 分类名称
 const categoryNames: Record<string, string> = {
   fdm: t('printer.category.fdm'),
   resin: t('printer.category.resin'),
   sla: t('printer.category.sla'),
 };
 
-// Helper functions
+// 多语言 helpers
 const getLocalizedSpecs = (specs: any) => {
   if (!specs) return {};
   if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
@@ -77,7 +74,7 @@ const getLocalizedKeywords = (keywords: any) => {
   return [];
 };
 
-// Breadcrumb
+// 面包屑
 const breadcrumbItems: any[] = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.printing'), href: getLocalizedPath('/printing', currentLocale) },
@@ -87,8 +84,9 @@ if (!isListPage && printer) {
   breadcrumbItems.push({ label: printer.data.model, current: true });
 }
 
-// Structured data
+// 结构化数据
 let structuredData: any = null;
+const siteUrl = Astro.site || 'https://lingflux.com';
 if (!isListPage && printer) {
   const localizedSpecs = getLocalizedSpecs(printer.data.specs);
   structuredData = {
@@ -97,6 +95,7 @@ if (!isListPage && printer) {
     name: printer.data.model,
     brand: { '@type': 'Brand', name: printer.data.brand },
     description: localizedSpecs ? Object.entries(localizedSpecs).map(([k, v]) => `${k}: ${v}`).join(', ') : '',
+    image: printer.data.image ? new URL(printer.data.image, siteUrl).href : undefined,
   };
 }
 
@@ -107,12 +106,14 @@ const pageDescription = !isListPage && printer
     })()
   : t('printer.listDescription');
 
-// Inject specs data for comparison (list page)
+// 列表页注入对比规格数据
 const specsJson = isListPage
   ? JSON.stringify(Object.fromEntries(
       allPrinters.map(p => [p.id, getLocalizedSpecs(p.data.specs)])
     ))
   : '{}';
+
+const modelIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
 ---
 
 <Layout
@@ -120,290 +121,177 @@ const specsJson = isListPage
   description={pageDescription}
   lang={lang}
   currentPath={`/${lang}/printing/printers/${id || ''}`}
+  image={!isListPage && printer?.data.image ? printer.data.image : undefined}
   structuredData={structuredData}
 >
-  <div class="container">
-    <Breadcrumb items={breadcrumbItems} />
-  </div>
-
-  <!-- 列表页 -->
+  <!-- ============ 列表页 ============ -->
   {isListPage && (
-    <section class="category-page">
-      <div class="container">
-        <header class="category-header">
-          <h1 class="category-title">{t('printing.printers')}</h1>
-          <p class="category-description">{t('printer.listDescription')}</p>
-          <div class="category-stats">
-            <span class="stat-item">
-              <span class="stat-value">{allPrinters.length}</span>
-              <span class="stat-label">{t('printing.printers')}</span>
-            </span>
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <Breadcrumb items={breadcrumbItems} />
+          <span class="eyebrow">SPEC SHEETS · {t('printing.printers')}</span>
+          <h1>{t('printing.printers')}</h1>
+          <p class="lead">{t('printer.listDescription')}</p>
+          <p class="hero-stats">{allPrinters.length} PRINTERS · {t('compare.selectHint')}</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <!-- 分类筛选（全局 JS 驱动） -->
+          <div class="filter-bar" data-filter>
+            <button class="filter-chip active" data-value="all">{t('printer.all')} <span class="count">{allPrinters.length}</span></button>
+            {Object.entries(categoryNames)
+              .filter(([key]) => allPrinters.some(p => p.data.category === key))
+              .map(([key, name]) => (
+                <button class="filter-chip" data-value={key}>
+                  {name} <span class="count">{allPrinters.filter(p => p.data.category === key).length}</span>
+                </button>
+              ))}
           </div>
-        </header>
 
-        <!-- Category filter -->
-        <div class="filter-bar">
-          <button class="filter-btn filter-btn--active">{t('printer.all')}</button>
-          {Object.entries(categoryNames).map(([key, name]) => (
-            <button class="filter-btn" data-filter={key}>{name}</button>
-          ))}
+          <div class="card-grid card-grid--4">
+            {allPrinters.map(p => {
+              const localizedSpecs = getLocalizedSpecs(p.data.specs);
+              return (
+                <div class="compare-item" data-compare-id={p.id} data-cat={p.data.category}>
+                  <label class="compare-check">
+                    <input type="checkbox" class="compare-checkbox" data-compare-id={p.id} />
+                    {t('compare.addToCompare')}
+                  </label>
+                  <Card
+                    type="printer"
+                    title={p.data.model}
+                    link={getLocalizedPath(`/printing/printers/${p.id}`, currentLocale)}
+                    brand={p.data.brand}
+                    specs={localizedSpecs}
+                    image={p.data.image}
+                    priceRange={p.data.priceRange}
+                    catLabel={categoryNames[p.data.category] || p.data.category}
+                    locale={currentLocale}
+                  />
+                  <span class="compare-item-name">{p.data.brand} {p.data.model}</span>
+                </div>
+              );
+            })}
+          </div>
+          <p class="filter-empty" style="display:none;">—</p>
         </div>
+      </section>
 
-        <!-- Printer grid with compare checkboxes -->
-        <div class="printer-grid" id="printer-grid">
-          {allPrinters.map(p => {
-            const localizedSpecs = getLocalizedSpecs(p.data.specs);
-            return (
-              <div class="printer-card-wrapper" data-compare-id={p.id} data-category={p.data.category}>
-                <label class="compare-checkbox-wrapper">
-                  <input type="checkbox" class="compare-checkbox" data-compare-id={p.id} />
-                  <span class="compare-checkbox-label">{t('compare.addToCompare')}</span>
-                </label>
-                <Card
-                  type="printer"
-                  title={p.data.model}
-                  description={`${p.data.brand} - ${Object.entries(localizedSpecs || {}).slice(0, 2).map(([k, v]) => `${k}: ${v}`).join(', ')}`}
-                  link={getLocalizedPath(`/printing/printers/${p.id}`, currentLocale)}
-                  brand={p.data.brand}
-                  specs={localizedSpecs}
-                  image={p.data.image}
-                  priceRange={p.data.priceRange}
-                  locale={currentLocale}
-                />
-                <span class="compare-item-name" style="display:none">{p.data.brand} {p.data.model}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+      <!-- 注入规格数据供对比组件使用 -->
+      <script is:inline set:html={`window.__compareSpecsData = ${specsJson};`} />
+      <CompareWidget collectionType="printers" locale={currentLocale} />
+    </>
   )}
 
-  <!-- 详情页 -->
+  <!-- ============ 详情页 ============ -->
   {!isListPage && printer && (
-    <section class="printer-detail">
-      <div class="container">
-        <header class="printer-header">
-          <div class="printer-badge">{printer.data.brand}</div>
-          <h1 class="printer-title">{printer.data.model}</h1>
-          {printer.data.priceRange && (
-            <div class="printer-price">{printer.data.priceRange}</div>
-          )}
-          <div class="printer-links">
-            {printer.data.officialUrl && (
-              <AffiliateLink url={printer.data.officialUrl} label={t('printer.officialDocs')} type="official" variant="button" locale={currentLocale} />
-            )}
-            {printer.data.affiliateUrl && (
-              <AffiliateLink url={printer.data.affiliateUrl} label={t('printer.buyNow')} type="affiliate" variant="button" locale={currentLocale} />
-            )}
-          </div>
-            <!-- Add to compare button -->
-            <button
-              id="detail-add-compare"
-              class="detail-compare-btn"
-              data-item-id={id}
-              data-item-name={`${printer.data.brand} ${printer.data.model}`}
-              data-item-specs={JSON.stringify(getLocalizedSpecs(printer.data.specs))}
-            >
-              {t('compare.addToCompare')}
-            </button>
-        </header>
+    <main class="container">
+      <div class="article-layout">
+        <article class="article-body">
+          <Breadcrumb items={breadcrumbItems} />
 
-        <div class="printer-layout">
-          <main class="printer-main">
-            <section class="printer-section">
-              <h2 class="section-title">{t('printer.specs')}</h2>
-              <div class="specs-grid">
-                {Object.entries(getLocalizedSpecs(printer.data.specs) || {}).map(([key, value]) => (
-                  <div class="spec-item">
-                    <span class="spec-key">{key}</span>
-                    <span class="spec-value">{String(value)}</span>
-                  </div>
-                ))}
+          <div class="paper-page">
+            <header class="article-head">
+              <div class="meta-row">
+                <span class="chip chip--pen">{printer.data.brand}</span>
+                <span class="chip">{categoryNames[printer.data.category] || printer.data.category}</span>
+                {printer.data.priceRange && <span class="chip chip--green">{printer.data.priceRange}</span>}
               </div>
-            </section>
+              <h1>{printer.data.model}</h1>
+              <div class="detail-actions">
+                {printer.data.officialUrl && (
+                  <AffiliateLink url={printer.data.officialUrl} label={t('printer.officialDocs')} type="official" variant="button" locale={currentLocale} />
+                )}
+                {printer.data.affiliateUrl && (
+                  <AffiliateLink url={printer.data.affiliateUrl} label={t('printer.buyNow')} type="affiliate" variant="button" locale={currentLocale} />
+                )}
+                <button
+                  id="detail-add-compare"
+                  class="btn btn--ghost"
+                  type="button"
+                  data-item-id={id}
+                  data-item-name={`${printer.data.brand} ${printer.data.model}`}
+                  data-item-specs={JSON.stringify(getLocalizedSpecs(printer.data.specs))}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/></svg>
+                  {t('compare.addToCompare')}
+                </button>
+              </div>
+            </header>
 
-            {(() => {
-              const localizedKeywords = getLocalizedKeywords(printer.data.keywords);
-              return localizedKeywords && localizedKeywords.length > 0;
-            })() && (
-              <section class="printer-section">
-                <h2 class="section-title">{t('board.relatedTags')}</h2>
-                <div class="keywords-list">
+            {printer.data.image && (
+              <div class="article-hero-img reveal">
+                <span class="tape" aria-hidden="true"></span>
+                <img src={printer.data.image} alt={printer.data.model} style="object-fit:contain; max-height:320px; margin:0 auto;" />
+              </div>
+            )}
+
+            <!-- 规格参数 -->
+            <div class="prose"><h2>{t('printer.specs')}</h2></div>
+            <div class="spec-grid">
+              {Object.entries(getLocalizedSpecs(printer.data.specs) || {}).map(([key, value]) => (
+                <div class="spec-cell">
+                  <span class="k">{key}</span>
+                  <span class="v">{String(value)}</span>
+                </div>
+              ))}
+            </div>
+
+            <!-- 关键词 -->
+            {getLocalizedKeywords(printer.data.keywords).length > 0 && (
+              <>
+                <div class="prose"><h2>{t('board.relatedTags')}</h2></div>
+                <div class="tag-row">
                   {getLocalizedKeywords(printer.data.keywords).map((keyword: string) => (
-                    <span class="keyword-tag">{keyword}</span>
+                    <span class="chip">{keyword}</span>
                   ))}
                 </div>
-              </section>
+              </>
             )}
-          </main>
+          </div>
+        </article>
 
-          <aside class="printer-sidebar">
+        <!-- 侧边栏 -->
+        <aside class="article-aside">
+          <div class="aside-sticky">
             {relatedModels.length > 0 && (
-              <div class="sidebar-section">
-                <h3 class="sidebar-title">
+              <div class="aside-card">
+                <h4>
+                  <Fragment set:html={modelIcon} />
                   {t('printer.relatedModels')}
                   <span class="count-badge">{relatedModels.length}</span>
-                </h3>
-                <div class="related-list">
+                </h4>
+                <div class="link-list">
                   {relatedModels.slice(0, 5).map(model => {
-                    const slug = model.id.split('/').pop()?.replace('.md', '') || '';
+                    const modelSlug = model.id.split('/').pop()?.replace('.md', '') || '';
                     return (
-                      <a href={getLocalizedPath(`/printing/models/${slug}`, currentLocale)} class="related-item">
-                        <span class="related-title">{model.data.title}</span>
+                      <a href={getLocalizedPath(`/printing/models/${modelSlug}`, currentLocale)}>
+                        {model.data.title}
                       </a>
                     );
                   })}
                 </div>
               </div>
             )}
-          </aside>
-        </div>
+          </div>
+        </aside>
       </div>
-    </section>
+
+      <CompareWidget collectionType="printers" locale={currentLocale} />
+    </main>
   )}
 
+  <!-- 未找到 -->
   {!isListPage && !printer && (
     <section class="not-found">
       <div class="container">
+        <p class="nf-code">ERROR · 404</p>
         <h1>{t('printer.notFound')}</h1>
-        <a href={getLocalizedPath('/printing/printers', currentLocale)} class="btn">{t('printer.backToList')}</a>
+        <a href={getLocalizedPath('/printing/printers', currentLocale)} class="btn btn--primary">{t('printer.backToList')}</a>
       </div>
     </section>
   )}
-
-  <CompareWidget collectionType="printers" locale={currentLocale} />
 </Layout>
-
-{isListPage && (
-  <script define:vars={{ specsData: specsJson }}>
-    // Inject specs data for comparison
-    if (window.__compareSpecsData) {
-      Object.assign(window.__compareSpecsData, specsData);
-    }
-  </script>
-)}
-
-{isListPage && (
-  <script>
-    // Client-side filter
-    function initPrinterFilter() {
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      const cards = document.querySelectorAll('.printer-card-wrapper');
-      const allBtn = filterBtns[0] as HTMLButtonElement;
-
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('filter-btn--active'));
-          btn.classList.add('filter-btn--active');
-          const filter = (btn as HTMLElement).dataset.filter;
-          cards.forEach(card => {
-            const el = card as HTMLElement;
-            if (!filter || el.dataset.category === filter) {
-              el.style.display = '';
-            } else {
-              el.style.display = 'none';
-            }
-          });
-        });
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initPrinterFilter);
-    } else {
-      initPrinterFilter();
-    }
-  </script>
-)}
-
-<style>
-  .category-page { padding: var(--space-3xl) 0; }
-  .category-header { text-align: center; margin-bottom: var(--space-3xl); }
-  .category-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    margin-bottom: var(--space-md);
-    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-primary) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .category-description { font-size: var(--text-lg); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto var(--space-xl); }
-  .category-stats { display: flex; justify-content: center; gap: var(--space-lg); }
-  .stat-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
-  .stat-value { font-size: var(--text-2xl); font-weight: 700; color: var(--color-primary); }
-  .stat-label { font-size: var(--text-sm); color: var(--color-text-tertiary); }
-
-  .filter-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-2xl); }
-  .filter-btn { padding: 8px 16px; background: var(--color-bg-tertiary); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-secondary); font-size: var(--text-sm); cursor: pointer; transition: all var(--transition-fast); }
-  .filter-btn:hover { border-color: var(--color-primary); color: var(--color-text-primary); }
-  .filter-btn--active { background: var(--color-primary); border-color: var(--color-primary); color: white; }
-
-  .printer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-lg); }
-
-  .printer-card-wrapper { position: relative; }
-  .compare-checkbox-wrapper { display: flex; align-items: center; gap: 6px; padding: 6px 10px; margin-bottom: var(--space-xs); cursor: pointer; font-size: var(--text-xs); color: var(--color-text-tertiary); }
-  .compare-checkbox-wrapper:hover { color: var(--color-primary); }
-  .compare-checkbox { width: 16px; height: 16px; accent-color: var(--color-primary); cursor: pointer; }
-  .compare-checkbox-label { user-select: none; }
-
-  .printer-detail { padding: var(--space-3xl) 0; }
-  .printer-header { text-align: center; margin-bottom: var(--space-3xl); }
-  .printer-badge { display: inline-block; padding: 6px 16px; background: rgba(0, 212, 255, 0.15); color: var(--color-primary); border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-md); }
-  .printer-title { font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 700; margin-bottom: var(--space-md); color: var(--color-text-primary); }
-  .printer-price { font-size: var(--text-2xl); font-weight: 700; color: var(--color-warning); margin-bottom: var(--space-md); }
-  .printer-links { display: flex; justify-content: center; gap: var(--space-md); flex-wrap: wrap; }
-
-  .printer-layout { display: grid; grid-template-columns: 1fr; gap: var(--space-3xl); }
-  .printer-section { margin-bottom: var(--space-2xl); }
-  .section-title { font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-lg); color: var(--color-text-primary); }
-  .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md); }
-  .spec-item { display: flex; justify-content: space-between; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md); gap: var(--space-sm); }
-  .spec-key { font-size: var(--text-sm); color: var(--color-text-tertiary); }
-  .spec-value { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-primary); }
-  .keywords-list { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
-  .keyword-tag { display: inline-block; padding: 4px 12px; background: var(--color-bg-tertiary); border-radius: var(--radius-md); color: var(--color-text-secondary); font-size: var(--text-sm); }
-
-  .printer-sidebar { display: flex; flex-direction: column; gap: var(--space-xl); }
-  .sidebar-section { padding: var(--space-md); background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
-  .sidebar-title { display: flex; align-items: center; gap: var(--space-sm); font-size: var(--text-base); font-weight: 600; margin-bottom: var(--space-md); color: var(--color-text-primary); }
-  .count-badge { margin-left: auto; padding: 2px 8px; background: var(--color-primary); color: white; border-radius: var(--radius-sm); font-size: var(--text-xs); }
-  .related-list { display: flex; flex-direction: column; gap: var(--space-sm); }
-  .related-item { display: block; padding: var(--space-sm); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast); }
-  .related-item:hover { background: var(--color-bg-tertiary); }
-  .related-title { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .related-item:hover .related-title { color: var(--color-primary); }
-
-  .not-found { padding: var(--space-5xl, 128px) 0; text-align: center; }
-  .not-found h1 { font-size: var(--text-3xl); margin-bottom: var(--space-xl); color: var(--color-text-secondary); }
-  .btn { display: inline-block; padding: 12px 24px; background: var(--color-primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 500; transition: all var(--transition-fast); }
-  .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-
-  @media (min-width: 1024px) {
-    .printer-layout { grid-template-columns: 1fr 320px; }
-    .printer-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-lg)); }
-  }
-
-  .detail-compare-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: 10px 20px;
-    background: var(--color-bg-tertiary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    color: var(--color-text-primary);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-  }
-  .detail-compare-btn:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-  }
-  .detail-compare-btn--added {
-    background: rgba(0, 212, 255, 0.1);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-  }
-</style>

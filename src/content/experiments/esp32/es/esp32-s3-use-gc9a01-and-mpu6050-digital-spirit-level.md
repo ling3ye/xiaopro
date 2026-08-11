@@ -2,6 +2,9 @@
 title: "ESP32-S3 + GC9A01 + MPU6050 Nivel Digital Completo | SPI + I2C + Arduino"
 boardId: esp32s3
 moduleId: display/tft128-gc9a01
+moduleIds:
+  - display/tft128-gc9a01
+  - sensor/mpu6050
 category: esp32
 date: 2026-06-03
 intro: "Usa ESP32-S3 para controlar una pantalla LCD circular GC9A01 y un sensor de seis ejes MPU6050, mostrando en tiempo real el ángulo de inclinación, el ángulo de balanceo y la temperatura, para crear un nivel digital bonito y práctico."

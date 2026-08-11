@@ -1,37 +1,28 @@
 ---
 /**
- * 开发板 - 列表页和详情页
- *
- * 展示所有开发板硬件信息，支持单个开发板详情查看
- * 支持多语言路由
+ * 开发板 - 列表页和详情页 · Paper Lab 纸感实验室
  *
  * @route /[lang]/boards/[...path]
- *
- * @author Claude Code
- * @version 1.0.0
  */
 
 import Layout from '../../../layouts/Layout.astro';
 import Card from '../../../components/Card.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
+import AffiliateLink from '../../../components/AffiliateLink.astro';
 import { getCollection, getEntry } from 'astro:content';
 import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
 import { languages } from '../../../i18n/config';
 import type { SupportedLocale } from '../../../i18n/config';
 import type { CollectionEntry } from 'astro:content';
 
-// 获取语言参数
 export async function getStaticPaths() {
   const paths: any[] = [];
 
-  // 获取所有开发板
   const boards = await getCollection('boards');
 
   for (const lang of Object.keys(languages)) {
-    // 列表页路径
     paths.push({ params: { lang, path: undefined } });
 
-    // 详情页路径
     boards.forEach((board) => {
       paths.push({ params: { lang, path: board.id } });
     });
@@ -46,10 +37,9 @@ const t = useTranslations(currentLocale);
 
 const isListPage = !id;
 
-// 获取所有开发板
 const allBoards = await getCollection('boards');
 
-// 详情页：获取当前开发板数据
+// 详情页数据
 let board: CollectionEntry<'boards'> | undefined = undefined;
 let relatedExperiments: CollectionEntry<'experiments'>[] = [];
 let relatedSolutions: CollectionEntry<'solutions'>[] = [];
@@ -58,9 +48,6 @@ let currentDoc: any = null;
 if (!isListPage) {
   board = await getEntry('boards', id);
   if (board) {
-    // 获取相关文章 - 只获取当前语言的文章
-    // boardId 是 reference 类型，需要比较其 id 属性
-    // 文章 id 格式：category/lang/slug.md，需要检查是否包含 /lang/
     relatedExperiments = await getCollection('experiments', (entry) => {
       const boardId = entry.data.boardId;
       const boardIdStr = typeof boardId === 'object' && boardId !== null ? boardId.id : String(boardId);
@@ -73,12 +60,10 @@ if (!isListPage) {
       return boardIdStr === id && entry.id.includes(`/${lang}/`);
     });
 
-    // 获取开发板详细文档并筛选
     const allBoardDocs = await getCollection('boardDocs', (entry) => {
       return 'boardId' in entry.data && entry.data.boardId;
     });
 
-    // 根据开发板ID和当前语言筛选文档
     currentDoc = allBoardDocs.find((doc: any) => {
       const docBoardId = (doc.data.boardId as any).id || String(doc.data.boardId);
       return docBoardId === id && doc.id.startsWith(`${lang}/`);
@@ -86,71 +71,61 @@ if (!isListPage) {
   }
 }
 
-// 面包屑导航
+// 面包屑
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.boards'), href: getLocalizedPath('/boards', currentLocale) },
 ];
 
 if (!isListPage && board) {
-  breadcrumbItems.push({
-    label: board.data.model,
-    href: getLocalizedPath(`/boards/${id}`, currentLocale)
-  });
+  breadcrumbItems.push({ label: board.data.model, current: true } as any);
 }
 
-// 构建结构化数据
-let structuredData: any = null;
-const siteUrl = Astro.site || 'https://lingflux.com';
-
-// 获取当前语言的 specs 和 keywords
+// 多语言 specs / keywords
 const getLocalizedSpecs = (specs: any) => {
   if (!specs) return {};
-  // 如果 specs 已经是语言嵌套结构
   if (typeof specs === 'object' && !Array.isArray(specs) && Object.keys(specs).some(k => ['zh-cn', 'zh-tw', 'en', 'ja'].includes(k))) {
     return specs[currentLocale] || specs['zh-cn'] || {};
   }
-  // 如果 specs 是旧格式（平铺结构），直接返回
   return specs;
 };
 
 const getLocalizedKeywords = (keywords: any) => {
   if (!keywords) return [];
-  // 如果 keywords 是字符串数组（旧格式），直接返回
-  if (Array.isArray(keywords)) {
-    return keywords;
-  }
-  // 如果 keywords 是语言嵌套结构
+  if (Array.isArray(keywords)) return keywords;
   if (typeof keywords === 'object' && !Array.isArray(keywords)) {
     return keywords[currentLocale] || keywords['zh-cn'] || [];
   }
   return [];
 };
 
+// 结构化数据
+let structuredData: any = null;
+const siteUrl = Astro.site || 'https://lingflux.com';
+
 if (!isListPage && board) {
   const localizedSpecs = getLocalizedSpecs(board.data.specs);
-  // 开发板详情页的结构化数据
   const boardSpecs = localizedSpecs ? Object.entries(localizedSpecs).map(([k, v]) => `${k}: ${v}`).join(', ') : '';
   structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: board.data.model,
-    brand: {
-      '@type': 'Brand',
-      name: board.data.brand
-    },
+    brand: { '@type': 'Brand', name: board.data.brand },
     description: boardSpecs || `${board.data.brand} ${board.data.model} 开发板`,
     image: board.data.image ? new URL(board.data.image, siteUrl).href : undefined
   };
 }
 
-// 动态 meta description
 const pageDescription = !isListPage && board
   ? (() => {
       const localizedSpecs = getLocalizedSpecs(board.data.specs);
       return localizedSpecs ? Object.entries(localizedSpecs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ') : `${board.data.brand} ${board.data.model} 开发板的详细规格参数与使用说明`;
     })()
   : t('board.listDescription');
+
+const docIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>';
+const boardIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 6V3M15 6V3M9 21v-3M15 21v-3M6 9H3M6 15H3M21 9h-3M21 15h-3"/></svg>';
+const boltIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/></svg>';
 ---
 
 <Layout
@@ -161,156 +136,131 @@ const pageDescription = !isListPage && board
   image={!isListPage && board?.data.image ? board.data.image : undefined}
   structuredData={structuredData}
 >
-  <!-- 面包屑导航 -->
-  <div class="container">
-    <Breadcrumb items={breadcrumbItems} />
-  </div>
-
-  <!-- 列表页 -->
+  <!-- ============ 列表页 ============ -->
   {isListPage && (
-    <section class="category-page">
-      <div class="container">
-        <!-- 页头 -->
-        <header class="category-header">
-          <h1 class="category-title">{t('nav.boards')}</h1>
-          <p class="category-description">
-            {t('footer.description')}
-          </p>
-          <div class="category-stats">
-            <span class="stat-item">
-              <span class="stat-value">{allBoards.length}</span>
-              <span class="stat-label">{t('nav.boards')}</span>
-            </span>
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <Breadcrumb items={breadcrumbItems} />
+          <span class="eyebrow">DATASHEETS · {t('nav.boards')}</span>
+          <h1>{t('nav.boards')}</h1>
+          <p class="lead">{t('board.listDescription')}</p>
+          <p class="hero-stats">{allBoards.length} BOARDS</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <!-- 品牌筛选（全局 JS 驱动） -->
+          <div class="filter-bar" data-filter>
+            <button class="filter-chip active" data-value="all">{t('board.all')} <span class="count">{allBoards.length}</span></button>
+            {Array.from(new Set(allBoards.map(b => b.data.brand))).map(brand => (
+              <button class="filter-chip" data-value={brand}>{brand}</button>
+            ))}
           </div>
-        </header>
 
-        <!-- 品牌筛选（简单实现） -->
-        <div class="filter-bar">
-          <button class="filter-btn filter-btn--active">{t('board.all')}</button>
-          {Array.from(new Set(allBoards.map(b => b.data.brand))).map(brand => (
-            <button class="filter-btn">{brand}</button>
-          ))}
+          <div class="card-grid card-grid--4">
+            {allBoards.map(board => {
+              const localizedSpecs = getLocalizedSpecs(board.data.specs);
+              return (
+                <Card
+                  type="board"
+                  title={board.data.model}
+                  link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
+                  brand={board.data.brand}
+                  specs={localizedSpecs}
+                  image={board.data.image}
+                  catLabel={board.data.brand}
+                  locale={currentLocale}
+                  data-cat={board.data.brand}
+                />
+              );
+            })}
+          </div>
+          <p class="filter-empty" style="display:none;">—</p>
         </div>
-
-        <!-- 开发板列表 -->
-        <div class="board-grid">
-          {allBoards.map(board => {
-            const localizedSpecs = getLocalizedSpecs(board.data.specs);
-            return (
-              <Card
-                type="board"
-                title={board.data.model}
-                description={`${board.data.brand} - ${Object.entries(localizedSpecs || {})
-                  .slice(0, 2)
-                  .map(([k, v]) => `${k}: ${v}`)
-                  .join(', ')}`}
-                link={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
-                brand={board.data.brand}
-                specs={localizedSpecs}
-                image={board.data.image}
-                locale={currentLocale}
-              />
-            );
-          })}
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   )}
 
-  <!-- 详情页 -->
+  <!-- ============ 详情页 ============ -->
   {!isListPage && board && (
-    <section class="board-detail">
-      <div class="container">
-        <!-- 开发板头部 -->
-        <header class="board-header">
-          <div class="board-badge">{board.data.brand}</div>
-          <h1 class="board-title">{board.data.model}</h1>
-          {board.data.officialUrl && (
-            <a
-              href={board.data.officialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="board-link"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-              </svg>
-              {t('board.officialDocs')}
-            </a>
-          )}
-        </header>
+    <main class="container">
+      <div class="article-layout">
+        <article class="article-body">
+          <Breadcrumb items={breadcrumbItems} />
 
-        <div class="board-layout">
-          <!-- 主内容区 -->
-          <main class="board-main">
-            <!-- 规格参数 -->
-            <section class="board-section">
-              <h2 class="section-title">{t('board.specs')}</h2>
-              <div class="specs-grid">
-                {Object.entries(getLocalizedSpecs(board.data.specs) || {}).map(([key, value]) => (
-                  <div class="spec-item">
-                    <span class="spec-key">{key}</span>
-                    <span class="spec-value">{String(value)}</span>
-                  </div>
-                ))}
+          <div class="paper-page">
+            <header class="article-head">
+              <div class="meta-row">
+                <span class="chip chip--pen">{board.data.brand}</span>
+                <span class="chip">{t('nav.boards')}</span>
               </div>
-            </section>
+              <h1>{board.data.model}</h1>
+              <div class="detail-actions">
+                {board.data.officialUrl && (
+                  <AffiliateLink url={board.data.officialUrl} label={t('board.officialDocs')} type="official" variant="button" locale={currentLocale} />
+                )}
+              </div>
+            </header>
+
+            {board.data.image && (
+              <div class="article-hero-img reveal">
+                <span class="tape" aria-hidden="true"></span>
+                <img src={board.data.image} alt={board.data.model} style="object-fit:contain; max-height:320px; margin:0 auto;" />
+              </div>
+            )}
+
+            <!-- 规格参数：数据手册风 -->
+            <div class="prose">
+              <h2>{t('board.specs')}</h2>
+            </div>
+            <div class="spec-grid">
+              {Object.entries(getLocalizedSpecs(board.data.specs) || {}).map(([key, value]) => (
+                <div class="spec-cell">
+                  <span class="k">{key}</span>
+                  <span class="v">{String(value)}</span>
+                </div>
+              ))}
+            </div>
+
+            <!-- 关键词 -->
+            {getLocalizedKeywords(board.data.keywords).length > 0 && (
+              <>
+                <div class="prose"><h2>{t('board.relatedTags')}</h2></div>
+                <div class="tag-row">
+                  {getLocalizedKeywords(board.data.keywords).map((keyword: string) => (
+                    <span class="chip">{keyword}</span>
+                  ))}
+                </div>
+              </>
+            )}
 
             <!-- 开发板详细文档 -->
             {currentDoc && (
-              <section class="board-section">
-                <div class="doc-content prose" set:html={currentDoc.rendered?.html} />
-              </section>
+              <div class="prose" set:html={currentDoc.rendered?.html} />
             )}
+          </div>
+        </article>
 
-            <!-- 关键词标签 -->
-            {(() => {
-                const localizedKeywords = getLocalizedKeywords(board.data.keywords);
-                return localizedKeywords && localizedKeywords.length > 0;
-              })() && (
-              <section class="board-section">
-                <h2 class="section-title">{t('board.relatedTags')}</h2>
-                <div class="keywords-list">
-                  {getLocalizedKeywords(board.data.keywords).map((keyword: string) => (
-                    <a href={`/tags/${keyword}`} class="keyword-tag">
-                      {keyword}
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
-          </main>
-
-          <!-- 侧边栏 -->
-          <aside class="board-sidebar">
-            <!-- 相关实验 -->
+        <!-- 侧边栏 -->
+        <aside class="article-aside">
+          <div class="aside-sticky">
             {relatedExperiments.length > 0 && (
-              <div class="sidebar-section">
-                <h3 class="sidebar-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                  </svg>
+              <div class="aside-card">
+                <h4>
+                  <Fragment set:html={boltIcon} />
                   {t('board.relatedExperiments')}
                   <span class="count-badge">{relatedExperiments.length}</span>
-                </h3>
-                <div class="related-list">
+                </h4>
+                <div class="link-list">
                   {relatedExperiments.slice(0, 5).map(exp => {
-                    // 实验路径格式：category/zh-cn/slug.md
-                    // 需要提取 category 和 slug
                     const pathParts = exp.id.split('/');
-                    const category = pathParts[0]; // esp32, arduino, etc.
-                    const slug = pathParts[pathParts.length - 1].replace(/\.md$/, '');
+                    const category = pathParts[0];
+                    const expSlug = pathParts[pathParts.length - 1].replace(/\.md$/, '');
                     return (
-                      <a
-                        href={getLocalizedPath(`/experiments/${category}/${slug}`, currentLocale)}
-                        class="related-item"
-                      >
-                        <span class="related-title">{exp.data.title}</span>
+                      <a href={getLocalizedPath(`/experiments/${category}/${expSlug}`, currentLocale)}>
+                        {exp.data.title}
                       </a>
                     );
                   })}
@@ -318,431 +268,36 @@ const pageDescription = !isListPage && board
               </div>
             )}
 
-            <!-- 相关方案 -->
             {relatedSolutions.length > 0 && (
-              <div class="sidebar-section">
-                <h3 class="sidebar-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                  </svg>
+              <div class="aside-card">
+                <h4>
+                  <Fragment set:html={docIcon} />
                   {t('board.relatedSolutions')}
                   <span class="count-badge">{relatedSolutions.length}</span>
-                </h3>
-                <div class="related-list">
+                </h4>
+                <div class="link-list">
                   {relatedSolutions.slice(0, 5).map(sol => (
-                    <a
-                      href={getLocalizedPath(`/solutions/${sol.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}
-                      class="related-item"
-                    >
-                      <span class="related-title">{sol.data.title}</span>
+                    <a href={getLocalizedPath(`/solutions/${sol.id.replace(/^[a-z-]+\//, '').replace('.md', '')}`, currentLocale)}>
+                      {sol.data.title}
                     </a>
                   ))}
                 </div>
               </div>
             )}
-          </aside>
-        </div>
+          </div>
+        </aside>
       </div>
-    </section>
+    </main>
   )}
 
-  <!-- 未找到页面 -->
+  <!-- 未找到 -->
   {!isListPage && !board && (
     <section class="not-found">
       <div class="container">
+        <p class="nf-code">ERROR · 404</p>
         <h1>{t('board.notFound')}</h1>
-        <a href={getLocalizedPath('/boards', currentLocale)} class="btn">{t('board.backToList')}</a>
+        <a href={getLocalizedPath('/boards', currentLocale)} class="btn btn--primary">{t('board.backToList')}</a>
       </div>
     </section>
   )}
 </Layout>
-
-<style>
-  /* ============================================
-     分类页样式
-     ============================================ */
-  .category-page {
-    padding: var(--space-3xl) 0;
-  }
-
-  .category-header {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-  }
-
-  .category-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    margin-bottom: var(--space-md);
-    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-warning) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .category-description {
-    font-size: var(--text-lg);
-    color: var(--color-text-secondary);
-    max-width: 600px;
-    margin: 0 auto var(--space-xl);
-  }
-
-  .category-stats {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-lg);
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  .stat-value {
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    color: var(--color-warning);
-  }
-
-  .stat-label {
-    font-size: var(--text-sm);
-    color: var(--color-text-tertiary);
-  }
-
-  .filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-2xl);
-  }
-
-  .filter-btn {
-    padding: 8px 16px;
-    background: var(--color-bg-tertiary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    color: var(--color-text-secondary);
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-  }
-
-  .filter-btn:hover {
-    border-color: var(--color-primary);
-    color: var(--color-text-primary);
-  }
-
-  .filter-btn--active {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: white;
-  }
-
-  .board-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-lg);
-  }
-
-  /* ============================================
-     开发板详情页样式
-     ============================================ */
-  .board-detail {
-    padding: var(--space-3xl) 0;
-  }
-
-  .board-header {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-  }
-
-  .board-badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: var(--color-warning-light);
-    color: var(--color-warning);
-    border-radius: var(--radius-lg);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    margin-bottom: var(--space-md);
-  }
-
-  .board-title {
-    font-size: clamp(2rem, 4vw, 2.5rem);
-    font-weight: 700;
-    margin-bottom: var(--space-md);
-    color: var(--color-text-primary);
-  }
-
-  .board-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: 8px 16px;
-    background: var(--color-bg-tertiary);
-    border-radius: var(--radius-md);
-    color: var(--color-primary);
-    text-decoration: none;
-    font-size: var(--text-sm);
-    transition: all var(--transition-fast);
-  }
-
-  .board-link:hover {
-    background: var(--color-bg-elevated);
-  }
-
-  .board-link svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .board-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-3xl);
-  }
-
-  .board-section {
-    margin-bottom: var(--space-2xl);
-  }
-
-  .doc-content {
-    padding: var(--space-xl) 0;
-    padding-left: 0;
-    padding-right: 0;
-    border-bottom: 1px solid var(--color-border);
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* 限制文档内容的最大宽度以提高可读性 */
-  @media (min-width: 768px) {
-    .doc-content {
-      max-width: 700px;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .doc-content {
-      max-width: 800px;
-    }
-  }
-
-  .doc-content :global(h2) {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    margin-top: var(--space-2xl);
-    margin-bottom: var(--space-md);
-    padding-bottom: var(--space-sm);
-    border-bottom: 2px solid var(--color-primary);
-  }
-
-  .doc-content :global(h3) {
-    font-size: var(--text-lg);
-    font-weight: 600;
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-sm);
-  }
-
-  .doc-content :global(p) {
-    margin-bottom: var(--space-md);
-    line-height: 1.8;
-  }
-
-  .doc-content :global(ul) {
-    margin-bottom: var(--space-md);
-    padding-left: var(--space-lg);
-  }
-
-  .doc-content :global(li) {
-    margin-bottom: var(--space-xs);
-    line-height: 1.6;
-  }
-
-  .doc-content :global(strong) {
-    color: var(--color-primary);
-    font-weight: 600;
-  }
-
-  .section-title {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    margin-bottom: var(--space-lg);
-    color: var(--color-text-primary);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-
-  .section-title svg {
-    width: 20px;
-    height: 20px;
-    color: var(--color-primary);
-  }
-
-  .specs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--space-md);
-  }
-
-  .spec-item {
-    display: flex;
-    justify-content: space-between;
-    padding: var(--space-md);
-    background: var(--color-bg-tertiary);
-    border-radius: var(--radius-md);
-    gap: var(--space-sm);
-  }
-
-  .spec-key {
-    font-size: var(--text-sm);
-    color: var(--color-text-tertiary);
-  }
-
-  .spec-value {
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-text-primary);
-  }
-
-  .keywords-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .keyword-tag {
-    display: inline-block;
-    padding: 4px 12px;
-    background: var(--color-bg-tertiary);
-    border-radius: var(--radius-md);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    font-size: var(--text-sm);
-    transition: all var(--transition-fast);
-  }
-
-  .keyword-tag:hover {
-    background: var(--color-primary);
-    color: white;
-  }
-
-  /* ============================================
-     侧边栏样式
-     ============================================ */
-  .board-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-  }
-
-  .sidebar-section {
-    padding: var(--space-md);
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-  }
-
-  .sidebar-title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-size: var(--text-base);
-    font-weight: 600;
-    margin-bottom: var(--space-md);
-    color: var(--color-text-primary);
-  }
-
-  .sidebar-title svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .count-badge {
-    margin-left: auto;
-    padding: 2px 8px;
-    background: var(--color-primary);
-    color: white;
-    border-radius: var(--radius-sm);
-    font-size: var(--text-xs);
-  }
-
-  .related-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .related-item {
-    display: block;
-    padding: var(--space-sm);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-  }
-
-  .related-item:hover {
-    background: var(--color-bg-tertiary);
-  }
-
-  .related-title {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .related-item:hover .related-title {
-    color: var(--color-primary);
-  }
-
-  /* ============================================
-     未找到页面样式
-     ============================================ */
-  .not-found {
-    padding: var(--space-5xl) 0;
-    text-align: center;
-  }
-
-  .not-found h1 {
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-xl);
-    color: var(--color-text-secondary);
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 12px 24px;
-    background: var(--color-warning);
-    color: white;
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all var(--transition-fast);
-  }
-
-  .btn:hover {
-    background: var(--color-warning-hover);
-    transform: translateY(-2px);
-  }
-
-  /* ============================================
-     响应式设计
-     ============================================ */
-  @media (min-width: 1024px) {
-    .board-layout {
-      grid-template-columns: 1fr 320px;
-    }
-
-    .board-sidebar {
-      position: sticky;
-      top: calc(var(--header-height) + var(--space-lg));
-    }
-  }
-</style>

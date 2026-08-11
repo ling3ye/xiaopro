@@ -1,27 +1,19 @@
 ---
 /**
- * 对比组件 CompareWidget (v4 - 规范化属性对比)
+ * 对比组件 CompareWidget · Paper Lab 纸感实验室
  *
- * v4 变更:
- * - 使用 canonical spec ID 替代语言相关的 key
- * - 属性数据为结构化对象 {value, unit, test_method, ...}
- * - 对比表格使用统一的 spec label 映射
- * - 兼容旧 localStorage 格式, 自动清理
+ * 浮动对比栏 + 快速预览弹窗。
+ * JS 契约（供列表/详情页配合）：
+ * - 列表项勾选：input.compare-checkbox[data-compare-id]，名称容器 .compare-item-name
+ * - 列表页注入规格：window.__compareSpecsData
+ * - 详情页加入按钮：#detail-add-compare[data-item-id][data-item-name][data-item-specs]
  *
  * @component CompareWidget
- *
- * Props:
- * @property {string} collectionType - 'printers' | 'filaments'
- * @property {string} locale - 当前语言
- *
- * @author Claude Code
- * @version 4.0.0
  */
 
 import { useTranslations, getLocalizedPath } from '../utils/i18n';
 import type { SupportedLocale } from '../i18n/config';
 import { specLabels } from '../content/filaments/spec-labels';
-import { specPropertyMeta } from '../content/filaments/spec-registry';
 
 interface Props {
   collectionType: 'printers' | 'filaments';
@@ -46,7 +38,8 @@ if (collectionType === 'filaments') {
 const specLabelsJson = JSON.stringify(specLabelsForJs);
 ---
 
-<div class="compare-host"
+<!-- 数据传递宿主（不可见） -->
+<div class="compare-host-data"
   data-collection-type={collectionType}
   data-spec-labels={collectionType === 'filaments' ? specLabelsJson : '{}'}
   style="display:none;"
@@ -70,7 +63,7 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
       <button class="compare-bar__btn compare-bar__btn--start" id="compare-start" disabled>
         {t('compare.startCompare')}
       </button>
-      <a class="compare-bar__btn compare-bar__btn--page" id="compare-page-link" href={comparePagePath} style="display:none;">
+      <a class="compare-bar__btn compare-bar__btn--page" id="compare-page-link" href={comparePagePath} style="display:none;" aria-label={t('compare.title')}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
           <polyline points="15 3 21 3 21 9"/>
@@ -90,7 +83,7 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
   <div class="compare-modal__content">
     <div class="compare-modal__header">
       <h2 class="compare-modal__title">{t('compare.title')}</h2>
-      <button class="compare-modal__close" id="compare-close">
+      <button class="compare-modal__close" id="compare-close" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"/>
           <line x1="6" y1="6" x2="18" y2="18"/>
@@ -104,7 +97,7 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
           <path d="M15 3h6v6"/><path d="M9 21H3v-6"/>
           <path d="M21 3l-7 7"/><path d="M3 21l7-7"/>
         </svg>
-        打开完整对比页面
+        {t('compare.startCompare')} →
       </a>
     </div>
   </div>
@@ -113,7 +106,7 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
 <script is:inline>
 (function() {
   var MAX_COMPARE = 4;
-  var hostEl = document.querySelector('.compare-host');
+  var hostEl = document.querySelector('.compare-host-data');
   var collectionType = hostEl ? hostEl.getAttribute('data-collection-type') : 'printers';
   var STORAGE_KEY = 'compare_' + collectionType;
 
@@ -145,9 +138,6 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
 
   /**
    * Migrate old localStorage format (string values) to new format.
-   * Old: { id: { "Tensile Strength": "53 MPa", ... } }
-   * New: { id: { "tensile_strength_xy": { value: 53, unit: "MPa" }, ... } }
-   * Detect old format: values are strings, not objects with .value
    */
   function migrateOldFormat() {
     var specs = getSpecs();
@@ -163,7 +153,6 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
       if (needsMigrate) break;
     }
     if (needsMigrate) {
-      // Clear old data — user needs to re-add items
       localStorage.removeItem(STORAGE_KEY + '_specs');
     }
   }
@@ -188,7 +177,6 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
   }
 
   function initCompare() {
-    // Migrate old localStorage format if needed
     migrateOldFormat();
 
     var bar = document.getElementById('compare-bar');
@@ -413,7 +401,6 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
 
   window.__compareSpecsData = window.__compareSpecsData || {};
 
-  // Use requestAnimationFrame to ensure DOM is fully rendered
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       requestAnimationFrame(initCompare);
@@ -424,114 +411,118 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
 })();
 </script>
 
-<style>
-  /* Hidden host for data passing */
-  .compare-host { display: none !important; }
+<style is:global>
+  /* 数据宿主不可见 */
+  .compare-host-data { display: none !important; }
 
+  /* ---------- 浮动对比栏 ---------- */
   .compare-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    background: var(--color-bg-elevated);
-    border-top: 2px solid var(--color-primary);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.3s ease;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(720px, calc(100vw - 32px));
+    z-index: 160;
+    background: var(--card);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-m);
+    box-shadow: var(--shadow-2);
+    animation: compareSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+  @keyframes compareSlideUp {
+    from { transform: translateX(-50%) translateY(120%); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
   }
 
   .compare-bar__inner {
     display: flex;
     align-items: center;
-    gap: var(--space-lg);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--space-md) var(--space-lg);
+    gap: 14px;
+    padding: 12px 16px;
   }
 
-  .compare-bar__info {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    flex-shrink: 0;
-  }
-
-  .compare-bar__icon { width: 24px; height: 24px; color: var(--color-primary); }
+  .compare-bar__info { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .compare-bar__icon { width: 20px; height: 20px; color: var(--accent); }
+  .compare-bar__icon svg { width: 100%; height: 100%; }
 
   .compare-bar__count {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    background: var(--color-primary);
-    color: white;
-    border-radius: 50%;
-    font-size: var(--text-xs);
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    background: var(--accent);
+    color: #fff8f2;
+    border-radius: 999px;
+    font-size: 12px;
     font-weight: 700;
+    font-family: var(--font-mono);
   }
 
-  .compare-bar__label { font-weight: 600; color: var(--color-text-primary); white-space: nowrap; }
-  .compare-bar__items { display: flex; gap: var(--space-sm); flex: 1; overflow-x: auto; }
+  .compare-bar__label { font-weight: 700; color: var(--ink); white-space: nowrap; font-size: 13.5px; }
+  .compare-bar__items { display: flex; gap: 8px; flex: 1; overflow-x: auto; min-width: 0; }
   .compare-bar__chip {
-    padding: 4px 12px;
-    background: var(--color-bg-tertiary);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
+    padding: 5px 12px;
+    background: var(--accent-tint);
+    border: 1px solid rgba(217, 98, 43, 0.35);
+    color: var(--accent-2);
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
     white-space: nowrap;
   }
 
-  .compare-bar__actions { display: flex; gap: var(--space-sm); flex-shrink: 0; }
+  .compare-bar__actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
   .compare-bar__btn {
-    padding: 8px 20px;
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: var(--r-s);
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all var(--transition-fast);
-    border: none;
+    transition: all 0.18s ease;
+    border: 1.5px solid transparent;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 6px;
+    white-space: nowrap;
   }
 
-  .compare-bar__btn--start { background: var(--color-primary); color: white; }
-  .compare-bar__btn--start:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-  .compare-bar__btn--start:disabled { opacity: 0.4; cursor: not-allowed; }
+  .compare-bar__btn--start { background: var(--accent); color: #fff8f2; box-shadow: 0 4px 14px rgba(217, 98, 43, 0.35); }
+  .compare-bar__btn--start:hover:not(:disabled) { background: var(--accent-2); transform: translateY(-1px); }
+  .compare-bar__btn--start:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
   .compare-bar__btn--page {
-    background: var(--color-bg-tertiary);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
+    background: var(--card);
+    color: var(--pen);
+    border-color: var(--line-2);
+    padding: 9px 12px;
   }
-  .compare-bar__btn--page:hover { background: var(--color-primary); color: white; }
-  .compare-bar__btn--page svg { width: 16px; height: 16px; }
+  .compare-bar__btn--page:hover { border-color: var(--pen); color: var(--pen); }
+  .compare-bar__btn--page svg { width: 15px; height: 15px; }
 
   .compare-bar__btn--clear {
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--ink-3);
+    border-color: transparent;
+    padding: 9px 8px;
   }
-  .compare-bar__btn--clear:hover { color: var(--color-error); border-color: var(--color-error); }
+  .compare-bar__btn--clear:hover { color: var(--accent); }
 
-  /* Modal */
-  .compare-modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; }
-  .compare-modal__overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); }
+  /* ---------- 弹窗 ---------- */
+  .compare-modal { position: fixed; inset: 0; z-index: 250; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .compare-modal__overlay { position: absolute; inset: 0; background: rgba(28, 26, 23, 0.5); }
   .compare-modal__content {
     position: relative;
-    width: 95%;
-    max-width: 1000px;
+    width: 100%;
+    max-width: 960px;
     max-height: 85vh;
-    background: var(--color-bg-primary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--paper);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-l);
+    box-shadow: var(--shadow-2);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -540,55 +531,83 @@ const specLabelsJson = JSON.stringify(specLabelsForJs);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
+    padding: 18px 24px;
+    border-bottom: 2px solid var(--ink);
+    background: var(--card);
   }
-  .compare-modal__title { font-size: var(--text-xl); font-weight: 700; color: var(--color-text-primary); }
+  .compare-modal__title { font-family: var(--font-serif); font-size: 19px; font-weight: 700; color: var(--ink); margin: 0; }
   .compare-modal__close {
     width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: var(--radius-md);
-    background: var(--color-bg-tertiary);
-    border: none;
-    color: var(--color-text-secondary);
+    border-radius: var(--r-s);
+    background: var(--card);
+    border: 1px solid var(--line-2);
+    color: var(--ink-2);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.18s ease;
   }
-  .compare-modal__close:hover { color: var(--color-error); background: var(--color-bg-secondary); }
-  .compare-modal__close svg { width: 20px; height: 20px; }
-  .compare-modal__body { padding: var(--space-lg); overflow-y: auto; }
+  .compare-modal__close:hover { color: var(--accent); border-color: var(--accent); }
+  .compare-modal__close svg { width: 18px; height: 18px; }
+  .compare-modal__body { padding: 24px; overflow-y: auto; }
   .compare-modal__footer {
-    padding: var(--space-md) var(--space-lg);
-    border-top: 1px solid var(--color-border);
+    padding: 14px 24px;
+    border-top: 1px dashed var(--line-2);
     display: flex;
     justify-content: center;
+    background: var(--card);
   }
   .compare-modal__full-link {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: 10px 24px;
-    background: var(--color-primary);
-    color: white;
-    border-radius: var(--radius-md);
+    gap: 8px;
+    padding: 10px 22px;
+    background: var(--accent);
+    color: #fff8f2;
+    border-radius: var(--r-s);
     text-decoration: none;
-    font-weight: 600;
-    font-size: var(--text-sm);
-    transition: all var(--transition-fast);
+    font-weight: 700;
+    font-size: 13.5px;
+    transition: all 0.18s ease;
   }
-  .compare-modal__full-link:hover { opacity: 0.9; transform: translateY(-1px); }
-  .compare-modal__full-link svg { width: 18px; height: 18px; }
+  .compare-modal__full-link:hover { background: var(--accent-2); transform: translateY(-1px); }
+  .compare-modal__full-link svg { width: 16px; height: 16px; }
 
-  /* Table */
-  .compare-table-wrapper { overflow-x: auto; }
-  .compare-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
-  .compare-table th, .compare-table td { padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-border); text-align: left; }
-  .compare-table th { background: var(--color-bg-tertiary); font-weight: 600; color: var(--color-text-primary); position: sticky; top: 0; }
-  .compare-table__label-col { width: 180px; min-width: 140px; }
-  .compare-table__label { color: var(--color-text-tertiary); font-weight: 500; white-space: normal; word-break: break-word; line-height: 1.4; }
-  .compare-table__value { color: var(--color-text-primary); }
-  .compare-table__value--highlight { color: var(--color-primary); font-weight: 500; }
-  .compare-table__value--best { background: rgba(0, 255, 136, 0.12); color: var(--color-success); font-weight: 700; }
-  .compare-table__row--diff { background: rgba(0, 212, 255, 0.03); }
-  .compare-table__method { font-size: 0.8em; color: var(--color-text-tertiary); font-style: italic; }
+  /* ---------- 弹窗内对比表 ---------- */
+  .compare-modal .compare-table-wrapper { overflow-x: auto; border: 1px solid var(--line-2); border-radius: var(--r-s); background: var(--card); }
+  .compare-modal .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
+  .compare-modal .compare-table th,
+  .compare-modal .compare-table td { padding: 11px 16px; border-bottom: 1px solid var(--line); text-align: left; }
+  .compare-modal .compare-table thead th {
+    background: var(--paper-2);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    border-bottom: 2px solid var(--ink);
+    position: sticky; top: 0;
+  }
+  .compare-modal .compare-table__label-col { width: 170px; min-width: 130px; }
+  .compare-modal .compare-table__label { color: var(--ink-3); font-weight: 600; white-space: normal; word-break: break-word; line-height: 1.4; font-size: 12.5px; }
+  .compare-modal .compare-table__value { color: #36312a; }
+  .compare-modal .compare-table__value--highlight { color: var(--accent-2); font-weight: 600; background: var(--accent-tint); }
+  .compare-modal .compare-table__value--best { background: var(--green-tint); color: var(--green); font-weight: 700; }
+  .compare-modal .compare-table__value--best::after { content: " ★"; }
+  .compare-modal .compare-table__row--diff .compare-table__label { color: var(--ink); }
+  .compare-modal .compare-table__method { font-size: 0.8em; color: var(--ink-3); font-style: italic; }
+  .compare-modal .compare-table tbody tr:last-child td { border-bottom: none; }
+
+  /* 详情页「加入对比」按钮状态 */
+  .detail-compare-btn--added {
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+    background: var(--green-tint) !important;
+  }
+
+  @media (max-width: 640px) {
+    .compare-bar { bottom: 12px; width: calc(100vw - 24px); }
+    .compare-bar__inner { flex-wrap: wrap; gap: 10px; }
+    .compare-bar__label { display: none; }
+    .compare-bar__items { order: 3; flex-basis: 100%; }
+    .compare-modal__body { padding: 16px; }
+  }
 </style>

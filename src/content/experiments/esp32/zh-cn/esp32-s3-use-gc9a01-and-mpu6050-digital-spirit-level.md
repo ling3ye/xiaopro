@@ -2,6 +2,9 @@
 title: "ESP32-S3 + GC9A01 + MPU6050 制作数字水平仪完整教程｜SPI + I2C + Arduino"
 boardId: esp32s3
 moduleId: display/tft128-gc9a01
+moduleIds:
+  - display/tft128-gc9a01
+  - sensor/mpu6050
 category: esp32
 date: 2026-06-03
 intro: "用 ESP32-S3 驱动 GC9A01 圆形 LCD 和 MPU6050 六轴传感器，实时显示俯仰角、横滚角和温度，制作一个好看又实用的数字水平仪。"

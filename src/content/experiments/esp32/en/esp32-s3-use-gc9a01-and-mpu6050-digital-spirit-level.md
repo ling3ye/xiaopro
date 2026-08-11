@@ -2,6 +2,9 @@
 title: "ESP32-S3 Digital Spirit Level with GC9A01 Round Display and MPU6050 IMU | SPI + I2C + Arduino"
 boardId: esp32s3
 moduleId: display/tft128-gc9a01
+moduleIds:
+  - display/tft128-gc9a01
+  - sensor/mpu6050
 category: esp32
 date: 2026-06-03
 intro: "Build a digital spirit level with ESP32-S3, a GC9A01 round TFT display, and an MPU6050 6-axis IMU — real-time pitch, roll, temperature readouts, and a color-coded moving bubble that reacts to tilt."
