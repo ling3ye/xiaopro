@@ -6,6 +6,26 @@ export default defineConfig({
   // 将此处替换为你自己的购买的域名，注意要带上 https://
   site: 'https://lingflux.com/',
 
+  // Markdown / Shiki 配置：
+  // - github-light 浅色高亮主题，配合 Paper Lab 纸感设计
+  // - transformer 给每个 pre 注入 data-language（供前端生成语言徽标）
+  //   并移除 Shiki 内联背景色，交由全局 CSS 控制
+  markdown: {
+    shikiConfig: {
+      theme: 'github-light',
+      transformers: [
+        {
+          name: 'paper-lab-code',
+          pre(node) {
+            node.properties = node.properties || {};
+            node.properties['data-language'] = this.options.lang || 'text';
+            delete node.properties.style;
+          },
+        },
+      ],
+    },
+  },
+
   // 绑定自定义域名通常不需要设置 base，除非你要部署在该域名的子目录下
 
   integrations: [

@@ -1,14 +1,8 @@
 ---
 /**
- * 实战方案 - 列表页和详情页
- *
- * 展示所有实战方案案例，支持单个案例详情查看
- * 支持多语言路由
+ * 实战方案 - 列表页和详情页 · Paper Lab 纸感实验室
  *
  * @route /[lang]/solutions/[...path]
- *
- * @author Claude Code
- * @version 1.0.0
  */
 
 import Layout from '../../../layouts/Layout.astro';
@@ -20,30 +14,23 @@ import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
 import { languages } from '../../../i18n/config';
 import type { SupportedLocale } from '../../../i18n/config';
 
-// 获取语言参数
 export async function getStaticPaths() {
   const paths: any[] = [];
   const ITEMS_PER_PAGE = 12;
 
-  // 获取所有方案
   const allSolutions = await getCollection('solutions');
 
   for (const lang of Object.keys(languages)) {
-    // 过滤该语言的方案
     const solutions = allSolutions.filter(({ id }) => id.startsWith(`${lang}/`));
 
-    // 计算分页
     const totalItems = solutions.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
 
-    // 为每页生成路径
     for (let page = 1; page <= totalPages; page++) {
-      // 第1页使用空路径，其他页使用 /page/2 等格式
       const pagePath = page === 1 ? undefined : `page/${page}`;
       paths.push({ params: { lang, path: pagePath } });
     }
 
-    // 详情页路径
     solutions.forEach((solution) => {
       const pathParts = solution.id.split('/');
       const slug = pathParts[pathParts.length - 1].replace(/\.md$/, '');
@@ -58,14 +45,8 @@ const { lang, path: slug } = Astro.params;
 const currentLocale: SupportedLocale = lang as SupportedLocale;
 const t = useTranslations(currentLocale);
 
-// 解析路径：判断是否是分页
-// slug 格式可能是：
-// - undefined: 第1页列表
-// - page/2, page/3 等：其他页列表
-// - smart-plant-monitor 等：详情页
 const isListPage = !slug || (slug && slug.startsWith('page/'));
 
-// 分页配置
 const ITEMS_PER_PAGE = 12;
 let currentPage = 1;
 
@@ -74,19 +55,17 @@ if (slug && slug.startsWith('page/')) {
   currentPage = Number(pageNum) || 1;
 }
 
-// 获取所有方案数据
 const allSolutions = await getCollection('solutions', ({ id }) => {
   return id.startsWith(`${lang}/`);
 });
 
-// 计算分页
 const totalItems = allSolutions.length;
 const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
 const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 const endIndex = startIndex + ITEMS_PER_PAGE;
 const currentSolutions = allSolutions.slice(startIndex, endIndex);
 
-// 详情页：获取当前文章数据（仅当不是分页路径时）
+// 详情页数据
 let solution: any = null;
 let board = null;
 let modules: any[] = [];
@@ -106,31 +85,39 @@ if (!isListPage) {
           return getEntry('modules', id);
         })
       );
+      modules = modules.filter(Boolean);
     }
   } else {
     console.warn('Entry not found for ID:', `${lang}/${slug}`);
   }
 }
 
-// 面包屑导航
+// 上一篇 / 下一篇
+let prevSol: any = null;
+let nextSol: any = null;
+const solLink = (s: any) =>
+  getLocalizedPath(`/solutions/${s.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale);
+if (!isListPage && solution) {
+  const idx = allSolutions.findIndex(s => s.id === solution.id);
+  if (idx > 0) prevSol = allSolutions[idx - 1];
+  if (idx >= 0 && idx < allSolutions.length - 1) nextSol = allSolutions[idx + 1];
+}
+
+// 面包屑
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
   { label: t('nav.solutions'), href: getLocalizedPath('/solutions', currentLocale) },
 ];
 
 if (!isListPage && solution) {
-  breadcrumbItems.push({
-    label: solution.data.title,
-    current: true
-  } as any);
+  breadcrumbItems.push({ label: solution.data.title, current: true } as any);
 }
 
-// 构建结构化数据
+// 结构化数据
 let structuredData: any = null;
 const siteUrl = Astro.site || 'https://lingflux.com';
 
 if (!isListPage && solution) {
-  // 文章详情页的结构化数据
   structuredData = {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
@@ -138,28 +125,32 @@ if (!isListPage && solution) {
     description: solution.data.intro || '',
     image: solution.data.image ? new URL(solution.data.image, siteUrl).href : undefined,
     datePublished: solution.data.date ? (solution.data.date as Date).toISOString() : undefined,
-    author: {
-      '@type': 'Organization',
-      name: 'LINGFLUX'
-    },
+    author: { '@type': 'Organization', name: 'LINGFLUX' },
     publisher: {
       '@type': 'Organization',
       name: 'LINGFLUX',
-      logo: {
-        '@type': 'ImageObject',
-        url: new URL('/logo.png', siteUrl).href
-      }
+      logo: { '@type': 'ImageObject', url: new URL('/logo.png', siteUrl).href }
     }
   };
 }
 
-// 动态 meta description
 const pageDescription = !isListPage && solution
   ? solution.data.intro || t('home.hero.description')
   : t('solutions.listDescription');
 
-// 分页页面的 robots 设置
 const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
+
+// 难度 chip 样式
+const difficultyChip: Record<string, string> = {
+  Easy: 'chip--green',
+  Medium: 'chip--accent',
+  Hard: 'chip--ink',
+};
+
+const tocIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>';
+const boardIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 6V3M15 6V3M9 21v-3M15 21v-3M6 9H3M6 15H3M21 9h-3M21 15h-3"/></svg>';
+const moduleIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg>';
+const boltIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/></svg>';
 ---
 
 <Layout
@@ -171,536 +162,178 @@ const robotsMeta = currentPage > 1 ? 'noindex, follow' : undefined;
   robots={robotsMeta}
   structuredData={structuredData}
 >
-  <!-- 面包屑导航 -->
-  <div class="container">
-    <Breadcrumb items={breadcrumbItems} />
-  </div>
-
-  <!-- 列表页 -->
+  <!-- ============ 列表页 ============ -->
   {isListPage && (
-    <section class="category-page">
-      <div class="container">
-        <!-- 页头 -->
-        <header class="category-header">
-          <h1 class="category-title">{t('nav.solutions')}</h1>
-          <p class="category-description">
-            {t('solutions.listDescription')}
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <Breadcrumb items={breadcrumbItems} />
+          <span class="eyebrow">FIELD REPORTS · {t('nav.solutions')}</span>
+          <h1>{t('nav.solutions')}</h1>
+          <p class="lead">{t('solutions.listDescription')}</p>
+          <p class="hero-stats">
+            {startIndex + 1}–{Math.min(endIndex, totalItems)} / {t('solutions.totalItems').replace('{count}', String(totalItems))}
           </p>
-          <div class="category-stats">
-            <span class="stat-item">
-              <span class="stat-value">{startIndex + 1}-{Math.min(endIndex, totalItems)}</span>
-              <span class="stat-label">/ {t('solutions.totalItems', { count: totalItems })}</span>
-            </span>
-          </div>
-        </header>
-
-        <!-- 方案列表 -->
-        <div class="solution-grid">
-          {currentSolutions.map(solution => (
-            <Card
-              type="article"
-              title={solution.data.title}
-              description={solution.data.intro}
-              link={getLocalizedPath(`/solutions/${solution.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
-              tags={['案例']}
-              difficulty={('difficulty' in solution.data ? solution.data.difficulty as 'Easy' | 'Medium' | 'Hard' : undefined)}
-              image={solution.data.image}
-              locale={currentLocale}
-            />
-          ))}
         </div>
+      </section>
 
-        <!-- 分页 -->
-        {totalPages > 1 && (
+      <section class="section">
+        <div class="container">
+          <div class="card-grid">
+            {currentSolutions.map(sol => (
+              <Card
+                type="article"
+                title={sol.data.title}
+                description={sol.data.intro}
+                link={getLocalizedPath(`/solutions/${sol.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
+                tags={[t('solutions.caseTag')]}
+                difficulty={('difficulty' in sol.data ? sol.data.difficulty as 'Easy' | 'Medium' | 'Hard' : undefined)}
+                image={sol.data.image}
+                locale={currentLocale}
+              />
+            ))}
+          </div>
+
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             baseUrl={getLocalizedPath('/solutions', currentLocale)}
             getUrl={(page) => getLocalizedPath(page === 1 ? '/solutions' : `/solutions/page/${page}`, currentLocale)}
           />
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   )}
 
-  <!-- 详情页 -->
+  <!-- ============ 详情页 ============ -->
   {!isListPage && solution && (
-    <section class="article-detail">
-      <div class="container article-layout">
-        <!-- 主内容区 -->
-        <main class="article-main">
-          <!-- 文章头部 -->
-          <header class="article-header">
-            <div class="article-meta">
-              <span class="article-tag article-tag--solution">{t('solutions.caseTag')}</span>
-              {('difficulty' in solution.data) && (
-                <span class={`article-difficulty article-difficulty--${(solution.data.difficulty as string).toLowerCase()}`}>
-                  {solution.data.difficulty}
-                </span>
-              )}
-              {board && (
-                <span class="article-board">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="4" y="4" width="16" height="16" rx="2"/>
-                    <rect x="9" y="9" width="6" height="6"/>
-                  </svg>
-                  {board.data.brand} {board.data.model}
-                </span>
-              )}
-            </div>
-            <h1 class="article-title">{solution.data.title}</h1>
-            {solution.data.intro && (
-              <p class="article-intro">{solution.data.intro}</p>
-            )}
-          </header>
+    <main class="container">
+      <div class="article-layout">
+        <article class="article-body">
+          <Breadcrumb items={breadcrumbItems} />
 
-          <!-- 文章内容 -->
-          <div class="article-content prose" set:html={solution.rendered?.html} />
-        </main>
-
-        <!-- 侧边栏 -->
-        <aside class="article-sidebar">
-          <!-- 相关方案 -->
-          <div class="sidebar-section">
-            <h3 class="sidebar-title">{t('solutions.related')}</h3>
-            <div class="related-list">
-              {allSolutions
-                .filter(s => s.id !== `${lang}/${slug}.md`)
-                .slice(0, 5)
-                .map(related => (
-                  <a
-                    href={getLocalizedPath(`/solutions/${related.id.replace(`${lang}/`, '').replace('.md', '')}`, currentLocale)}
-                    class="related-item"
-                  >
-                    <span class="related-title">{related.data.title}</span>
+          <div class="paper-page">
+            <header class="article-head">
+              <div class="meta-row">
+                <span class="chip chip--accent">{t('solutions.caseTag')}</span>
+                {('difficulty' in solution.data) && (
+                  <span class={`chip ${difficultyChip[solution.data.difficulty as string] || ''}`}>
+                    {solution.data.difficulty}
+                  </span>
+                )}
+                {board && (
+                  <a class="chip" href={getLocalizedPath(`/boards/${board.id}`, currentLocale)}>
+                    <Fragment set:html={boardIcon} />
+                    {board.data.brand} {board.data.model}
+                  </a>
+                )}
+                {modules.map((mod: any) => (
+                  <a class="chip" href={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}>
+                    <Fragment set:html={moduleIcon} />
+                    {mod.data.model}
                   </a>
                 ))}
-            </div>
+              </div>
+              <h1>{solution.data.title}</h1>
+              {solution.data.intro && <p class="intro">{solution.data.intro}</p>}
+            </header>
+
+            {solution.data.image && (
+              <div class="article-hero-img reveal">
+                <span class="tape" aria-hidden="true"></span>
+                <img src={solution.data.image} alt={solution.data.title} />
+              </div>
+            )}
+
+            <!-- 移动端目录（JS 自动填充） -->
+            <nav class="toc-mobile">
+              <details>
+                <summary>
+                  <Fragment set:html={tocIcon} />
+                  INDEX · {t('ui.toc')}
+                  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <div class="toc" data-toc></div>
+              </details>
+            </nav>
+
+            <div class="prose" set:html={solution.rendered?.html} />
+
+            <!-- 上一篇 / 下一篇 -->
+            <nav class="pager-nav" aria-label="More solutions">
+              {prevSol ? (
+                <a href={solLink(prevSol)} class="prev">
+                  <span class="dir">← PREV</span>
+                  <span class="t">{prevSol.data.title}</span>
+                </a>
+              ) : <span></span>}
+              {nextSol ? (
+                <a href={solLink(nextSol)} class="next">
+                  <span class="dir">NEXT →</span>
+                  <span class="t">{nextSol.data.title}</span>
+                </a>
+              ) : <span></span>}
+            </nav>
           </div>
+        </article>
 
-          <!-- 使用的开发板 -->
-          {board && (
-            <div class="sidebar-section">
-              <h3 class="sidebar-title">{t('solutions.usedBoard')}</h3>
-              <a
-                href={getLocalizedPath(`/boards/${board.id}`, currentLocale)}
-                class="hardware-card"
-              >
-                <div class="hardware-info">
-                  <span class="hardware-brand">{board.data.brand}</span>
-                  <span class="hardware-model">{board.data.model}</span>
-                </div>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"/>
-                  <path d="M12 5l7 7-7 7"/>
-                </svg>
-              </a>
+        <!-- 侧边栏 -->
+        <aside class="article-aside">
+          <div class="aside-sticky">
+            <div class="aside-card">
+              <h4><Fragment set:html={tocIcon} />INDEX · {t('ui.toc')}</h4>
+              <nav class="toc" data-toc aria-label={t('ui.toc')}></nav>
             </div>
-          )}
 
-          <!-- 使用的模块列表 -->
-          {modules.length > 0 && (
-            <div class="sidebar-section">
-              <h3 class="sidebar-title">{t('solutions.usedModules')}</h3>
-              <div class="modules-list">
+            {(board || modules.length > 0) && (
+              <div class="aside-card">
+                <h4><Fragment set:html={boardIcon} />PARTS · {t('ui.related')}</h4>
+                {board && (
+                  <a class="hw-card" href={getLocalizedPath(`/boards/${board.id}`, currentLocale)}>
+                    <span class="module-icon"><Fragment set:html={boardIcon} /></span>
+                    <span>
+                      <span class="n">{board.data.model}</span><br />
+                      <span class="r">{t('solutions.usedBoard')} · {board.data.brand}</span>
+                    </span>
+                  </a>
+                )}
                 {modules.map((mod: any) => (
-                  mod && (
-                    <a
-                      href={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}
-                      class="hardware-card"
-                    >
-                      <div class="hardware-info">
-                        <span class="hardware-brand">{mod.data.brand || ''}</span>
-                        <span class="hardware-model">{mod.data.model}</span>
-                      </div>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14"/>
-                        <path d="M12 5l7 7-7 7"/>
-                      </svg>
-                    </a>
-                  )
+                  <a class="hw-card" href={getLocalizedPath(`/modules/${mod.id}`, currentLocale)}>
+                    <span class="module-icon"><Fragment set:html={moduleIcon} /></span>
+                    <span>
+                      <span class="n">{mod.data.model}</span><br />
+                      <span class="r">{t('nav.modules')}{mod.data.brand ? ` · ${mod.data.brand}` : ''}</span>
+                    </span>
+                  </a>
                 ))}
               </div>
+            )}
+
+            <div class="aside-card">
+              <h4><Fragment set:html={boltIcon} />RELATED · {t('solutions.related')}</h4>
+              <div class="link-list">
+                {allSolutions
+                  .filter(s => s.id !== `${lang}/${slug}.md`)
+                  .slice(0, 5)
+                  .map(related => (
+                    <a href={solLink(related)}>{related.data.title}</a>
+                  ))}
+              </div>
             </div>
-          )}
+          </div>
         </aside>
       </div>
-    </section>
+    </main>
   )}
 
-  <!-- 未找到页面 -->
+  <!-- 未找到 -->
   {!isListPage && !solution && (
     <section class="not-found">
       <div class="container">
+        <p class="nf-code">ERROR · 404</p>
         <h1>{t('solutions.notFound')}</h1>
-        <a href={getLocalizedPath('/solutions', currentLocale)} class="btn">{t('solutions.backToList')}</a>
+        <a href={getLocalizedPath('/solutions', currentLocale)} class="btn btn--primary">{t('solutions.backToList')}</a>
       </div>
     </section>
   )}
 </Layout>
-
-<style>
-  /* ============================================
-     分类页样式
-     ============================================ */
-  .category-page {
-    padding: var(--space-3xl) 0;
-  }
-
-  .category-header {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-  }
-
-  .category-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    margin-bottom: var(--space-md);
-    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-success) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .category-description {
-    font-size: var(--text-lg);
-    color: var(--color-text-secondary);
-    max-width: 600px;
-    margin: 0 auto var(--space-xl);
-  }
-
-  .category-stats {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-lg);
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  .stat-value {
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    color: var(--color-success);
-  }
-
-  .stat-label {
-    font-size: var(--text-sm);
-    color: var(--color-text-tertiary);
-  }
-
-  .solution-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-lg);
-    align-items: start;
-  }
-
-  @media (max-width: 1200px) {
-    .solution-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .solution-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* ============================================
-     文章详情页样式
-     ============================================ */
-  .article-detail {
-    padding: var(--space-3xl) 0;
-  }
-
-  .article-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-3xl);
-  }
-
-  .article-header {
-    margin-bottom: var(--space-2xl);
-  }
-
-  .article-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-md);
-  }
-
-  .article-tag {
-    padding: 4px 12px;
-    border-radius: var(--radius-md);
-    background: var(--color-success);
-    color: white;
-    font-size: var(--text-xs);
-    font-weight: 600;
-  }
-
-  .article-tag--solution {
-    background: var(--color-success);
-  }
-
-  .article-difficulty {
-    padding: 4px 12px;
-    border-radius: var(--radius-md);
-    font-size: var(--text-xs);
-    font-weight: 600;
-  }
-
-  .article-difficulty--easy {
-    background: var(--color-success-light);
-    color: var(--color-success);
-  }
-
-  .article-difficulty--medium {
-    background: var(--color-warning-light);
-    color: var(--color-warning);
-  }
-
-  .article-difficulty--hard {
-    background: var(--color-error-light);
-    color: var(--color-error);
-  }
-
-  .article-board {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: 4px 12px;
-    border-radius: var(--radius-md);
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-secondary);
-    font-size: var(--text-xs);
-  }
-
-  .article-board svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .article-title {
-    font-size: clamp(2rem, 4vw, 2.5rem);
-    font-weight: 700;
-    margin-bottom: var(--space-md);
-    color: var(--color-text-primary);
-  }
-
-  .article-intro {
-    font-size: var(--text-lg);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-  }
-
-  .article-content {
-    padding: var(--space-xl) 0;
-    padding-left: 0;
-    padding-right: 0;
-    border-top: 1px solid var(--color-border);
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* 限制文章内容的最大宽度以提高可读性 */
-  @media (min-width: 768px) {
-    .article-content {
-      max-width: 700px;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .article-content {
-      max-width: 800px;
-    }
-  }
-
-  .article-content :global(h2) {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    margin-top: var(--space-2xl);
-    margin-bottom: var(--space-md);
-    padding-bottom: var(--space-sm);
-    border-bottom: 2px solid var(--color-success);
-  }
-
-  .article-content :global(h3) {
-    font-size: var(--text-lg);
-    font-weight: 600;
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-sm);
-  }
-
-  .article-content :global(p) {
-    margin-bottom: var(--space-md);
-    line-height: 1.8;
-  }
-
-  .article-content :global(code) {
-    padding: 2px 6px;
-    background: var(--color-bg-tertiary);
-    border-radius: 4px;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.9em;
-  }
-
-  .article-content :global(pre) {
-    margin: var(--space-md) 0;
-    padding: var(--space-md);
-    background: var(--color-bg-tertiary);
-    border-radius: var(--radius-md);
-    overflow-x: auto;
-  }
-
-  .article-content :global(pre code) {
-    padding: 0;
-    background: none;
-  }
-
-  /* ============================================
-     侧边栏样式
-     ============================================ */
-  .article-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-  }
-
-  .sidebar-section {
-    padding: var(--space-md);
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-  }
-
-  .sidebar-title {
-    font-size: var(--text-base);
-    font-weight: 600;
-    margin-bottom: var(--space-md);
-    color: var(--color-text-primary);
-  }
-
-  .related-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .related-item {
-    display: block;
-    padding: var(--space-sm);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-  }
-
-  .related-item:hover {
-    background: var(--color-bg-tertiary);
-  }
-
-  .related-title {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .related-item:hover .related-title {
-    color: var(--color-success);
-  }
-
-  .hardware-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-md);
-    background: var(--color-bg-tertiary);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-  }
-
-  .hardware-card:hover {
-    background: var(--color-bg-elevated);
-    transform: translateX(4px);
-  }
-
-  .hardware-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .hardware-brand {
-    font-size: var(--text-xs);
-    color: var(--color-primary);
-  }
-
-  .hardware-model {
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-text-primary);
-  }
-
-  .hardware-card svg {
-    width: 16px;
-    height: 16px;
-    color: var(--color-text-tertiary);
-  }
-
-  .modules-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  /* ============================================
-     未找到页面样式
-     ============================================ */
-  .not-found {
-    padding: var(--space-5xl) 0;
-    text-align: center;
-  }
-
-  .not-found h1 {
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-xl);
-    color: var(--color-text-secondary);
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 12px 24px;
-    background: var(--color-success);
-    color: white;
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all var(--transition-fast);
-  }
-
-  .btn:hover {
-    background: var(--color-success-hover);
-    transform: translateY(-2px);
-  }
-
-  /* ============================================
-     响应式设计
-     ============================================ */
-  @media (min-width: 1024px) {
-    .article-layout {
-      grid-template-columns: 1fr 320px;
-    }
-
-    .article-sidebar {
-      position: sticky;
-      top: calc(var(--header-height) + var(--space-lg));
-    }
-  }
-</style>

@@ -1,306 +1,110 @@
 ---
 /**
- * 页脚组件 Footer
+ * 页脚组件 Footer · Paper Lab 纸感实验室
  *
- * 网站底部区域，包含品牌信息、友情链接、社交媒体、版权信息
+ * 网站底部区域：品牌信息、快速导航、友情链接、社交媒体、版权信息
  *
  * @component Footer
- *
- * Props:
- * @property {string} lang - 当前语言代码
- *
- * @author Claude Code
- * @version 2.0.0
  */
 
 import { useTranslations, getLocalizedPath } from '../utils/i18n';
 import { defaultLang } from '../i18n/config';
 
-// 获取组件属性
 interface Props {
   lang?: string;
 }
 
 const { lang = defaultLang } = Astro.props;
 
-// 获取翻译函数
 const t = useTranslations(lang as any);
 
 // 当前年份
 const currentYear = new Date().getFullYear();
 
-// 社交媒体配置
-const socialLinks = [
-  {
-    name: 'GitHub',
-    url: 'https://github.com/ling3ye',
-  },
-  {
-    name: 'YouTube',
-    url: 'https://www.youtube.com/@lingshunlab',
-  },
+// 快速导航
+const quickLinks = [
+  { key: 'nav.home', path: '/' },
+  { key: 'nav.boards', path: '/boards' },
+  { key: 'nav.modules', path: '/modules' },
+  { key: 'nav.experiments', path: '/experiments' },
+  { key: 'nav.solutions', path: '/solutions' },
+  { key: 'nav.printing', path: '/printing' },
+  { key: 'nav.articles', path: '/articles' },
 ];
 
 // 友情链接配置
 const friendLinks = [
-  {
-    name: 'LingShun LAB',
-    url: 'https://www.lingshunlab.com',
-  },
-  {
-    name: 'Maker Onsite',
-    url: 'https://makeronsite.com',
-  },
-  {
-    name: 'Free AI Tool',
-    url: 'https://freeaitool.com',
-  },
-  {
-    name: 'DaShen Tech',
-    url: 'https://dashen-tech.com',
-  },
+  { name: 'LingShun LAB', url: 'https://www.lingshunlab.com' },
+  { name: 'Maker Onsite', url: 'https://makeronsite.com' },
+  { name: 'Free AI Tool', url: 'https://freeaitool.com' },
+  { name: 'DaShen Tech', url: 'https://dashen-tech.com' },
 ];
 
-// 社交媒体图标 SVG
+// 社交媒体配置
+const socialLinks = [
+  { name: 'GitHub', url: 'https://github.com/ling3ye' },
+  { name: 'YouTube', url: 'https://www.youtube.com/@lingshunlab' },
+];
+
 const socialIcons: Record<string, string> = {
-  'GitHub': `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`,
-  'YouTube': `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  'GitHub': `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.35.77 1.05.77 2.12v3.15c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>`,
+  'YouTube': `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 7.2s-.23-1.63-.95-2.35c-.9-.95-1.92-.96-2.38-1.02C16.9 3.5 12 3.5 12 3.5h-.01s-4.9 0-8.16.33c-.47.06-1.48.07-2.38 1.02-.72.72-.95 2.35-.95 2.35S.26 9.12.26 11.03v1.79c0 1.91.24 3.83.24 3.83s.23 1.63.95 2.35c.9.95 2.09.92 2.62 1.02 1.9.18 8.06.33 8.06.33s4.91 0 8.17-.34c.47-.06 1.48-.07 2.38-1.02.72-.72.95-2.35.95-2.35s.24-1.91.24-3.83v-1.79c0-1.91-.24-3.83-.24-3.83ZM9.7 14.98V8.66l6.4 3.17-6.4 3.15Z"/></svg>`,
 };
 ---
 
-<footer class="footer">
-  <div class="footer__inner">
-    <!-- 品牌信息 -->
-    <div class="footer__brand">
-      <a href={getLocalizedPath('/', lang)} class="footer__logo">
-        <svg class="footer__logo-icon" viewBox="0 0 48 48" fill="none">
-          <path d="M24 4L4 14V34L24 44L44 34V14L24 4Z" stroke="#00d4ff" stroke-width="2" fill="none"/>
-          <path d="M24 14V34M14 19L24 24L34 19" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="24" cy="24" r="4" fill="#00d4ff"/>
-        </svg>
-        <span class="footer__logo-text">LINGFLUX</span>
-      </a>
-      <p class="footer__description">
-        {t('footer.description')}
-      </p>
-    </div>
-
-    <!-- 友情链接 -->
-    <div class="footer__section">
-      <h3 class="footer__heading">{t('footer.links')}</h3>
-      <ul class="footer__link-list">
-        {friendLinks.map(link => (
-          <li>
-            <a href={link.url} class="footer__link" target="_blank" rel="noopener noreferrer">
-              {link.name}
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- 品牌信息 -->
+      <div class="footer-brand">
+        <a class="brand" href={getLocalizedPath('/', lang)}>
+          <svg class="brand-logo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M13 3h6M14.5 3v8.2L7.6 23.5A3.4 3.4 0 0 0 10.6 28.5h10.8a3.4 3.4 0 0 0 3-12.3L17.5 11.2V3" stroke="#1c1a17" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10.5 19h11" stroke="#d9622b" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="14" cy="23.5" r="1.6" fill="#d9622b"/>
+            <circle cx="18.5" cy="25" r="1.2" fill="#3b6d11"/>
+          </svg>
+          LINGFLUX
+        </a>
+        <p>{t('footer.description')} · {t('site.slogan')}</p>
+        <div class="social-row">
+          {socialLinks.map(link => (
+            <a class="icon-btn" href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.name}>
+              <Fragment set:html={socialIcons[link.name]} />
             </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+          ))}
+        </div>
+      </div>
 
-    <!-- 社交媒体 -->
-    <div class="footer__section">
-      <h3 class="footer__heading">{t('footer.followUs')}</h3>
-      <div class="footer__social-links">
-        {socialLinks.map(social => (
-          <a
-            href={social.url}
-            class="footer__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={social.name}
-          >
-            <span set:html={socialIcons[social.name]} />
-          </a>
-        ))}
+      <!-- 快速导航 -->
+      <div class="footer-col">
+        <h5>{t('footer.resources')}</h5>
+        <ul>
+          {quickLinks.map(link => (
+            <li><a href={getLocalizedPath(link.path, lang)}>{t(link.key as any)}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- 友情链接 -->
+      <div class="footer-col">
+        <h5>{t('footer.links')}</h5>
+        <ul>
+          {friendLinks.map(link => (
+            <li>
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.name}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
-  </div>
 
-  <!-- 版权信息 -->
-  <div class="footer__bottom">
-    <p class="footer__copyright">
-      &copy; {currentYear} LINGFLUX. {t('footer.allRightsReserved')}
-    </p>
+    <div class="footer-bottom">
+      <span>© {currentYear} LINGFLUX · {t('footer.allRightsReserved')}</span>
+      <span>{t('site.slogan')}</span>
+    </div>
   </div>
 </footer>
-
-<style>
-  /* ============================================
-     页脚组件样式
-     ============================================ */
-
-  .footer {
-    background: var(--color-bg-secondary);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .footer__inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 60px 24px 40px;
-  }
-
-  /* 三栏网格布局 */
-  .footer__inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-
-  /* 品牌区域 */
-  .footer__brand {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .footer__logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-  }
-
-  .footer__logo:hover {
-    opacity: 0.8;
-  }
-
-  .footer__logo-icon {
-    width: 32px;
-    height: 32px;
-    color: var(--color-primary);
-  }
-
-  .footer__logo-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--color-text-primary);
-  }
-
-  .footer__description {
-    color: var(--color-text-secondary);
-    font-size: 14px;
-    line-height: 1.6;
-    max-width: 280px;
-  }
-
-  /* 通用区块样式 */
-  .footer__section {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .footer__heading {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* 友情链接列表 */
-  .footer__link-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .footer__link {
-    color: var(--color-text-secondary);
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .footer__link:hover {
-    color: var(--color-primary);
-  }
-
-  /* 社交媒体链接 */
-  .footer__social-links {
-    display: flex;
-    gap: 12px;
-  }
-
-  .footer__social-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-secondary);
-    transition: all 0.2s ease;
-  }
-
-  .footer__social-link:hover {
-    background: var(--color-primary);
-    color: white;
-    transform: translateY(-2px);
-  }
-
-  .footer__social-link svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  /* 底部版权 */
-  .footer__bottom {
-    border-top: 1px solid var(--color-border);
-    padding: 20px 24px;
-    text-align: center;
-  }
-
-  .footer__copyright {
-    color: var(--color-text-tertiary);
-    font-size: 13px;
-  }
-
-  /* ============================================
-     响应式设计
-     ============================================ */
-
-  /* 平板 - 两栏布局 */
-  @media (min-width: 640px) {
-    .footer__inner {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .footer__brand {
-      grid-column: 1 / -1;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .footer__description {
-      max-width: 400px;
-    }
-  }
-
-  /* 桌面 - 三栏布局 */
-  @media (min-width: 900px) {
-    .footer__inner {
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 60px;
-    }
-
-    .footer__brand {
-      grid-column: 1 / 2;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .footer__description {
-      max-width: 280px;
-    }
-  }
-</style>

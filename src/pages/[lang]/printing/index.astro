@@ -1,18 +1,11 @@
 ---
 /**
- * 3D打印 - 中心页面
- *
- * 3D打印资源的总览页面，展示打印机、耗材、模型三个子栏目入口
- * 支持多语言路由
+ * 3D打印 - 中心页面 · Paper Lab 纸感实验室
  *
  * @route /[lang]/printing/
- *
- * @author Claude Code
- * @version 1.0.0
  */
 
 import Layout from '../../../layouts/Layout.astro';
-import Card from '../../../components/Card.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import { getCollection } from 'astro:content';
 import { useTranslations, getLocalizedPath } from '../../../utils/i18n';
@@ -27,14 +20,14 @@ const { lang } = Astro.params;
 const currentLocale: SupportedLocale = lang as SupportedLocale;
 const t = useTranslations(currentLocale);
 
-// Get counts for each sub-section
+// 各子栏目数量
 const printers = await getCollection('printers');
 const filaments = await getCollection('filaments');
 const models = await getCollection('models', ({ id }) => id.startsWith(`${lang}/`));
 
 const breadcrumbItems = [
   { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
-  { label: t('nav.printing'), href: getLocalizedPath('/printing', currentLocale) },
+  { label: t('nav.printing'), current: true },
 ];
 
 const subSections = [
@@ -45,8 +38,7 @@ const subSections = [
     count: printers.length,
     link: getLocalizedPath('/printing/printers', currentLocale),
     exploreText: t('printing.explorePrinters'),
-    color: 'var(--color-primary)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`,
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>',
   },
   {
     key: 'filaments',
@@ -55,8 +47,7 @@ const subSections = [
     count: filaments.length,
     link: getLocalizedPath('/printing/filaments', currentLocale),
     exploreText: t('printing.exploreFilaments'),
-    color: 'var(--color-success)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/></svg>`,
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>',
   },
   {
     key: 'models',
@@ -65,10 +56,11 @@ const subSections = [
     count: models.length,
     link: getLocalizedPath('/printing/models', currentLocale),
     exploreText: t('printing.exploreModels'),
-    color: 'var(--color-warning)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
   },
 ];
+
+const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 ---
 
 <Layout
@@ -77,46 +69,29 @@ const subSections = [
   lang={lang}
   currentPath={`/${lang}/printing`}
 >
-  <!-- 面包屑导航 -->
-  <div class="container">
-    <Breadcrumb items={breadcrumbItems} />
-  </div>
-
-  <section class="printing-hub">
+  <section class="page-hero">
     <div class="container">
-      <!-- Hero -->
-      <header class="printing-hero">
-        <div class="printing-hero__icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="12 18 12 4 36 4 36 18"/>
-            <path d="M12 36H8a4 4 0 0 1-4-4V22a4 4 0 0 1 4-4h32a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4h-4"/>
-            <rect x="12" y="28" width="24" height="16"/>
-            <line x1="18" y1="34" x2="30" y2="34"/>
-            <line x1="18" y1="38" x2="26" y2="38"/>
-          </svg>
-        </div>
-        <h1 class="printing-hero__title">{t('printing.title')}</h1>
-        <p class="printing-hero__description">{t('printing.description')}</p>
-      </header>
+      <Breadcrumb items={breadcrumbItems} />
+      <span class="eyebrow">WORKSHOP · {t('nav.printing')}</span>
+      <h1>{t('printing.title')}</h1>
+      <p class="lead">{t('printing.description')}</p>
+    </div>
+  </section>
 
-      <!-- 子栏目卡片 -->
-      <div class="printing-sections">
-        {subSections.map(section => (
-          <a href={section.link} class="section-card">
-            <div class="section-card__icon" style={`color: ${section.color}`} set:html={section.icon} />
-            <div class="section-card__content">
-              <h2 class="section-card__title">{section.title}</h2>
-              <p class="section-card__description">{section.description}</p>
-              <div class="section-card__meta">
-                <span class="section-card__count">{section.count}</span>
-                <span class="section-card__explore">
-                  {section.exploreText}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14"/>
-                    <path d="M12 5l7 7-7 7"/>
-                  </svg>
-                </span>
-              </div>
+  <section class="section">
+    <div class="container">
+      <div class="hub-grid">
+        {subSections.map((section, i) => (
+          <a href={section.link} class="hub-card reveal" style={`--d:${(i * 0.07).toFixed(2)}s`}>
+            <span class="hub-icon"><Fragment set:html={section.icon} /></span>
+            <h3>{section.title}</h3>
+            <p>{section.description}</p>
+            <div class="hub-foot">
+              <span class="hub-count">× {section.count}</span>
+              <span class="card-link">
+                {section.exploreText}
+                <Fragment set:html={arrowSvg} />
+              </span>
             </div>
           </a>
         ))}
@@ -124,140 +99,3 @@ const subSections = [
     </div>
   </section>
 </Layout>
-
-<style>
-  .printing-hub {
-    padding: var(--space-3xl) 0;
-  }
-
-  .printing-hero {
-    text-align: center;
-    margin-bottom: var(--space-5xl, 96px);
-  }
-
-  .printing-hero__icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto var(--space-lg);
-    color: var(--color-primary);
-  }
-
-  .printing-hero__icon svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .printing-hero__title {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-    font-weight: 800;
-    margin-bottom: var(--space-md);
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-success) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .printing-hero__description {
-    font-size: var(--text-lg);
-    color: var(--color-text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
-  }
-
-  .printing-sections {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
-  }
-
-  @media (min-width: 768px) {
-    .printing-sections {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .section-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    padding: var(--space-2xl);
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    text-decoration: none;
-    transition: all var(--transition-base);
-  }
-
-  .section-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .section-card__icon {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-  }
-
-  .section-card__icon :global(svg) {
-    width: 100%;
-    height: 100%;
-  }
-
-  .section-card__content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .section-card__title {
-    font-size: var(--text-xl);
-    font-weight: 700;
-    color: var(--color-text-primary);
-    margin: 0;
-  }
-
-  .section-card__description {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    flex: 1;
-  }
-
-  .section-card__meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: var(--space-md);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .section-card__count {
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    color: var(--color-primary);
-  }
-
-  .section-card__explore {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-primary);
-  }
-
-  .section-card__explore svg {
-    width: 16px;
-    height: 16px;
-    transition: transform var(--transition-fast);
-  }
-
-  .section-card:hover .section-card__explore svg {
-    transform: translateX(4px);
-  }
-</style>

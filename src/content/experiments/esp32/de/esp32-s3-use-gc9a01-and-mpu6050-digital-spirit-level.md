@@ -2,6 +2,9 @@
 title: "ESP32-S3 + GC9A01 + MPU6050 Digitale Wasserwaage – Komplettanleitung | SPI + I2C + Arduino"
 boardId: esp32s3
 moduleId: display/tft128-gc9a01
+moduleIds:
+  - display/tft128-gc9a01
+  - sensor/mpu6050
 category: esp32
 date: 2026-06-03
 intro: "ESP32-S3 steuert ein GC9A01 Runddisplay und einen MPU6050 6-Achsen-Sensor, zeigt Nickwinkel, Rollwinkel und Temperatur in Echtzeit an – eine schicke und praktische digitale Wasserwaage zum Selberbauen."

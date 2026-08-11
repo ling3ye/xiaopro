@@ -1,0 +1,156 @@
+---
+/**
+ * 文章详情组件 ArticleDetail · Paper Lab 纸感实验室
+ *
+ * 5 个 domain 文章详情页（ai/hardware/software/devops/life）共享的渲染组件。
+ * 页面负责 getStaticPaths / structuredData / Layout，本组件负责正文区与侧栏。
+ *
+ * @component ArticleDetail
+ */
+
+import { getEntry } from 'astro:content';
+import Breadcrumb from './Breadcrumb.astro';
+import { useTranslations, getLocalizedPath, type UIKey } from '../utils/i18n';
+import type { SupportedLocale } from '../i18n/config';
+
+interface Props {
+  article: any;
+  domain: 'ai' | 'hardware' | 'software' | 'devops' | 'life';
+  lang: SupportedLocale;
+  slug: string;
+}
+
+const { article, domain, lang, slug } = Astro.props;
+const currentLocale = lang;
+const t = useTranslations(currentLocale);
+
+// 解析 relatedBoards
+const relatedBoardEntries = article.data.relatedBoards
+  ? (await Promise.all(
+      article.data.relatedBoards.map((ref: any) => getEntry('boards', ref.id || String(ref)))
+    )).filter(Boolean)
+  : [];
+
+const breadcrumbItems = [
+  { label: t('nav.home'), href: getLocalizedPath('/', currentLocale) },
+  { label: t('nav.articles'), href: getLocalizedPath('/articles', currentLocale) },
+  { label: t(`articles.domain.${domain}` as UIKey), href: getLocalizedPath(`/articles/${domain}`, currentLocale) },
+  { label: article.data.title, current: true }
+];
+
+// domain → chip 样式
+const domainChip: Record<string, string> = {
+  ai: 'chip--accent',
+  hardware: 'chip--pen',
+  software: 'chip--green',
+  devops: 'chip--ink',
+  life: '',
+};
+
+const localeMap: Record<string, string> = {
+  'zh-cn': 'zh-CN', 'zh-tw': 'zh-TW', 'en': 'en-US', 'ja': 'ja-JP',
+  'ko': 'ko-KR', 'es': 'es-ES', 'de': 'de-DE', 'fr': 'fr-FR', 'it': 'it-IT',
+};
+
+const tocIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>';
+const boardIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 6V3M15 6V3M9 21v-3M15 21v-3M6 9H3M6 15H3M21 9h-3M21 15h-3"/></svg>';
+---
+
+<main class="container">
+  <div class="article-layout">
+    <article class="article-body">
+      <Breadcrumb items={breadcrumbItems} />
+
+      <div class="paper-page">
+        <header class="article-head">
+          <div class="meta-row">
+            <span class={`chip ${domainChip[domain]}`}>{t(`articles.domain.${domain}` as UIKey)}</span>
+            <span class="chip">{t(`articles.format.${article.data.format}` as UIKey)}</span>
+            {article.data.platforms && article.data.platforms.map((p: string) => (
+              <span class="chip chip--pen">{t(`articles.platform.${p}` as UIKey)}</span>
+            ))}
+          </div>
+          <h1>{article.data.title}</h1>
+          {article.data.intro && <p class="intro">{article.data.intro}</p>}
+          <div class="byline">
+            <time datetime={(article.data.date as Date).toISOString()}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              {(article.data.date as Date).toLocaleDateString(localeMap[currentLocale] || 'en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}
+            </time>
+            {article.data.tags && article.data.tags.map((tag: string) => (
+              <span class="chip">{tag}</span>
+            ))}
+          </div>
+        </header>
+
+        {article.data.image && (
+          <div class="article-hero-img reveal">
+            <span class="tape" aria-hidden="true"></span>
+            <img src={article.data.image} alt={article.data.title} loading="eager" />
+          </div>
+        )}
+
+        <!-- 移动端目录（JS 自动填充） -->
+        <nav class="toc-mobile">
+          <details>
+            <summary>
+              <Fragment set:html={tocIcon} />
+              INDEX · {t('ui.toc')}
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="toc" data-toc></div>
+          </details>
+        </nav>
+
+        <div class="prose" set:html={article.rendered?.html} />
+
+        <!-- 相关硬件 -->
+        {relatedBoardEntries.length > 0 && (
+          <section class="related-hardware">
+            <h2>{t('ui.related')}</h2>
+            <div class="hardware-grid">
+              {relatedBoardEntries.map((board: any) => (
+                <a href={getLocalizedPath(`/boards/${board.id}`, currentLocale)} class="hw-card">
+                  {board.data.image
+                    ? <img src={board.data.image} alt={board.data.model} loading="lazy" />
+                    : <span class="module-icon"><Fragment set:html={boardIcon} /></span>}
+                  <span>
+                    <span class="n">{board.data.brand} {board.data.model}</span><br />
+                    <span class="r">{t('nav.boards')}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </article>
+
+    <!-- 侧边栏 -->
+    <aside class="article-aside">
+      <div class="aside-sticky">
+        <div class="aside-card">
+          <h4><Fragment set:html={tocIcon} />INDEX · {t('ui.toc')}</h4>
+          <nav class="toc" data-toc aria-label={t('ui.toc')}></nav>
+        </div>
+
+        {relatedBoardEntries.length > 0 && (
+          <div class="aside-card">
+            <h4><Fragment set:html={boardIcon} />PARTS · {t('ui.related')}</h4>
+            {relatedBoardEntries.map((board: any) => (
+              <a class="hw-card" href={getLocalizedPath(`/boards/${board.id}`, currentLocale)}>
+                <span class="module-icon"><Fragment set:html={boardIcon} /></span>
+                <span>
+                  <span class="n">{board.data.model}</span><br />
+                  <span class="r">{t('nav.boards')} · {board.data.brand}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </aside>
+  </div>
+</main>

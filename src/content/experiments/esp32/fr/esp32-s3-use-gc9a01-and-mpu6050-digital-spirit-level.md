@@ -2,6 +2,9 @@
 title: "ESP32-S3 + GC9A01 + MPU6050 : tutoriel complet de niveau à bulle numérique | SPI + I2C + Arduino"
 boardId: esp32s3
 moduleId: display/tft128-gc9a01
+moduleIds:
+  - display/tft128-gc9a01
+  - sensor/mpu6050
 category: esp32
 date: 2026-06-03
 intro: "Utilisez l'ESP32-S3 pour piloter l'écran LCD circulaire GC9A01 et le capteur six axes MPU6050, afficher en temps réel les angles de tangage, de roulis et la température, pour créer un niveau à bulle numérique à la fois élégant et pratique."

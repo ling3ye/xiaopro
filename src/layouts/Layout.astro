@@ -1,25 +1,15 @@
 ---
 /**
- * 基础布局组件 Layout
+ * 基础布局组件 Layout · Paper Lab 纸感实验室
  *
  * 整个网站的基础布局模板，包含：
- * - HTML 文档结构
- * - 头部元信息
- * - 全局样式引入
- * - 页头和页脚
- * - 主体内容插槽
+ * - HTML 文档结构与头部元信息（SEO / OG / hreflang / 结构化数据）
+ * - Paper Lab 全局样式
+ * - 页头 / 页脚 / 回到顶部 / 阅读进度条
+ * - 全局交互脚本：抽屉导航、滚动显现、代码块包装与复制、
+ *   表格自适应包装、TOC 自动生成与 Scrollspy、数字滚动
  *
  * @component Layout
- *
- * Props:
- * @property {string} title - 页面标题
- * @property {string} description - 页面描述
- * @property {string} lang - 语言代码
- * @property {string} currentPath - 当前页面路径
- * @property {boolean} showSidebar - 是否显示侧边栏
- *
- * @author Claude Code
- * @version 1.0.0
  */
 
 import '../styles/global.css';
@@ -27,7 +17,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { ui, languages, defaultLang } from '../i18n/config';
 
-// 获取组件属性
 interface Props {
   title?: string;
   description?: string;
@@ -63,7 +52,6 @@ const imageUrl = new URL(image, siteUrl).href;
 const isDefaultOg = image === '/og-image.png';
 
 // og:locale：Open Graph 规范要求 language_TERRITORY 格式（下划线 + 地区）
-// 否则会被多数社交平台爬虫忽略
 const ogLocaleMap = {
   'zh-cn': 'zh_CN',
   'zh-tw': 'zh_TW',
@@ -82,7 +70,6 @@ const ogLocaleAlternates = Object.keys(languages)
   .filter(Boolean);
 
 // hreflang：推导当前页面在每种语言下的对应 URL
-// currentPath 形如 "/en/experiments/foo" 或 "/en/"，去掉当前语言前缀得到跨语言公共路径
 const langPrefix = `/${lang}`;
 const pathWithoutLang = currentPath.startsWith(langPrefix)
   ? currentPath.slice(langPrefix.length) || '/'
@@ -93,10 +80,9 @@ const alternateLinks = Object.keys(languages).map((code) => ({
   code,
   href: localizedHref(code),
 }));
-// x-default 指向默认语言版本
 const xDefaultHref = localizedHref(defaultLang);
 
-// 站点级 Organization 结构化数据（品牌实体 + Logo，全站输出，用于 Google 知识面板）
+// 站点级 Organization 结构化数据
 const organizationData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -174,9 +160,10 @@ const organizationData = {
 		<!-- 生成器信息 -->
 		<meta name="generator" content={Astro.generator} />
 
-		<!-- 预加载关键资源 -->
+		<!-- 字体：Noto Serif SC（标题衬线） -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet" />
 
 		<!-- 结构化数据 (JSON-LD) -->
 		{structuredData && (
@@ -186,88 +173,307 @@ const organizationData = {
 		<script type="application/ld+json" set:html={JSON.stringify(organizationData)} is:inline />
 	</head>
 	<body>
+		<!-- 阅读进度条（详情页生效） -->
+		<div class="progress-bar" aria-hidden="true"></div>
+
 		<!-- 页头导航 -->
 		<Header lang={lang} currentPath={currentPath} />
 
 		<!-- 主体内容 -->
-		<main class="main">
-			<!-- 主内容插槽 -->
+		<main class="site-main">
 			<slot />
 		</main>
 
 		<!-- 页脚 -->
 		<Footer lang={lang} />
+
+		<!-- 回到顶部 -->
+		<button class="to-top" aria-label="Back to top">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+		</button>
+
+		<!-- Paper Lab 全局交互脚本 -->
+		<script>
+			(function () {
+				'use strict';
+
+				/* ---------- 文案字典（按页面语言） ---------- */
+				var docLang = (document.documentElement.lang || 'en').toLowerCase();
+				var I18N: Record<string, { copy: string; copied: string; failed: string }> = {
+					'zh-cn': { copy: '复制代码', copied: '已复制', failed: '复制失败' },
+					'zh-tw': { copy: '複製程式碼', copied: '已複製', failed: '複製失敗' },
+					'en': { copy: 'Copy code', copied: 'Copied', failed: 'Copy failed' },
+					'ja': { copy: 'コードをコピー', copied: 'コピー済み', failed: 'コピー失敗' },
+					'ko': { copy: '코드 복사', copied: '복사됨', failed: '복사 실패' },
+					'es': { copy: 'Copiar código', copied: 'Copiado', failed: 'Error al copiar' },
+					'de': { copy: 'Code kopieren', copied: 'Kopiert', failed: 'Fehler beim Kopieren' },
+					'fr': { copy: 'Copier le code', copied: 'Copié', failed: 'Échec de la copie' },
+					'it': { copy: 'Copia codice', copied: 'Copiato', failed: 'Copia non riuscita' },
+				};
+				var L = I18N[docLang] || I18N['en'];
+
+				/* ---------- 移动端抽屉导航 ---------- */
+				var toggle = document.querySelector('.nav-toggle');
+				var backdrop = document.querySelector('.nav-backdrop');
+				var drawerClose = document.querySelector('.nav-drawer-close');
+
+				function closeNav() { document.body.classList.remove('nav-open'); }
+				if (toggle) toggle.addEventListener('click', function () { document.body.classList.add('nav-open'); });
+				if (backdrop) backdrop.addEventListener('click', closeNav);
+				if (drawerClose) drawerClose.addEventListener('click', closeNav);
+				document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeNav(); });
+				document.querySelectorAll('.nav-drawer a').forEach(function (a) {
+					a.addEventListener('click', closeNav);
+				});
+
+				/* ---------- 滚动显现动画 ---------- */
+				var revealEls = document.querySelectorAll('.reveal');
+				if ('IntersectionObserver' in window && revealEls.length) {
+					var revealIO = new IntersectionObserver(function (entries) {
+						entries.forEach(function (en) {
+							if (en.isIntersecting) {
+								en.target.classList.add('in');
+								revealIO.unobserve(en.target);
+							}
+						});
+					}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+					revealEls.forEach(function (el) { revealIO.observe(el); });
+				} else {
+					revealEls.forEach(function (el) { el.classList.add('in'); });
+				}
+
+				/* ---------- 数字滚动统计 ---------- */
+				var counters = document.querySelectorAll('[data-count]');
+				if (counters.length && 'IntersectionObserver' in window) {
+					var countIO = new IntersectionObserver(function (entries) {
+						entries.forEach(function (en) {
+							if (!en.isIntersecting) return;
+							var el = en.target as HTMLElement;
+							countIO.unobserve(el);
+							var target = parseInt(el.getAttribute('data-count') || '0', 10);
+							var dur = 1400;
+							var start: number | null = null;
+							function step(ts: number) {
+								if (!start) start = ts;
+								var p = Math.min((ts - start) / dur, 1);
+								var eased = 1 - Math.pow(1 - p, 3);
+								var num = Math.round(target * eased);
+								if (el.firstChild) el.firstChild.nodeValue = String(num);
+								if (p < 1) requestAnimationFrame(step);
+							}
+							requestAnimationFrame(step);
+						});
+					}, { threshold: 0.4 });
+					counters.forEach(function (el) { countIO.observe(el); });
+				}
+
+				/* ---------- 复制文本 ---------- */
+				function copyText(text: string): Promise<void> {
+					if (navigator.clipboard) {
+						return navigator.clipboard.writeText(text);
+					}
+					return new Promise(function (resolve, reject) {
+						var ta = document.createElement('textarea');
+						ta.value = text;
+						ta.style.position = 'fixed';
+						ta.style.opacity = '0';
+						document.body.appendChild(ta);
+						ta.select();
+						try {
+							document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
+						} catch (err) { reject(err); }
+						document.body.removeChild(ta);
+					});
+				}
+
+				var COPY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+				var CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+				/* ---------- 代码块包装：稿纸风 + 复制按钮 ---------- */
+				document.querySelectorAll('.prose pre').forEach(function (pre) {
+					// 已包装过则跳过
+					if (pre.parentElement && pre.parentElement.classList.contains('code-block')) return;
+
+					var lang = pre.getAttribute('data-language') || 'text';
+
+					var wrap = document.createElement('div');
+					wrap.className = 'code-block';
+
+					var head = document.createElement('div');
+					head.className = 'code-head';
+					head.innerHTML =
+						'<span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
+						'<span class="code-lang">' + lang + '</span>';
+
+					var btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'copy-btn';
+					btn.innerHTML = COPY_SVG + '<span>' + L.copy + '</span>';
+					head.appendChild(btn);
+
+					pre.parentNode && pre.parentNode.insertBefore(wrap, pre);
+					wrap.appendChild(head);
+					wrap.appendChild(pre);
+
+					btn.addEventListener('click', function () {
+						var code = pre.querySelector('code');
+						var text = code ? code.innerText : pre.innerText;
+						var label = btn.querySelector('span');
+						copyText(text).then(function () {
+							btn.classList.add('copied');
+							btn.innerHTML = CHECK_SVG + '<span>' + L.copied + '</span>';
+							setTimeout(function () {
+								btn.classList.remove('copied');
+								btn.innerHTML = COPY_SVG + '<span>' + L.copy + '</span>';
+							}, 1800);
+						}).catch(function () {
+							if (label) label.textContent = L.failed;
+							setTimeout(function () {
+								btn.innerHTML = COPY_SVG + '<span>' + L.copy + '</span>';
+							}, 1800);
+						});
+					});
+				});
+
+				/* ---------- 表格自适应包装 ---------- */
+				document.querySelectorAll('.prose table').forEach(function (table) {
+					if (table.parentElement && table.parentElement.classList.contains('table-wrap')) return;
+					var wrap = document.createElement('div');
+					wrap.className = 'table-wrap';
+					table.parentNode && table.parentNode.insertBefore(wrap, table);
+					wrap.appendChild(table);
+				});
+
+				/* ---------- TOC 自动生成（详情页） ---------- */
+				var prose = document.querySelector('.paper-page .prose, .article-body .prose');
+				var tocTargets = document.querySelectorAll('[data-toc]');
+				if (prose && tocTargets.length) {
+					var headings = Array.prototype.slice.call(prose.querySelectorAll('h2[id], h3[id]'));
+					if (headings.length >= 2) {
+						tocTargets.forEach(function (toc) {
+							headings.forEach(function (h: HTMLElement) {
+								var a = document.createElement('a');
+								a.href = '#' + h.id;
+								a.className = h.tagName === 'H3' ? 'lvl-3' : '';
+								var span = document.createElement('span');
+								span.textContent = h.textContent || '';
+								a.appendChild(span);
+								toc.appendChild(a);
+							});
+						});
+					} else {
+						// 标题太少：隐藏 TOC 容器
+						tocTargets.forEach(function (toc) {
+							var card = toc.closest('.aside-card');
+							if (card) (card as HTMLElement).style.display = 'none';
+							var mob = toc.closest('.toc-mobile');
+							if (mob) (mob as HTMLElement).style.display = 'none';
+						});
+					}
+				} else if (tocTargets.length) {
+					tocTargets.forEach(function (toc) {
+						var card = toc.closest('.aside-card');
+						if (card) (card as HTMLElement).style.display = 'none';
+						var mob = toc.closest('.toc-mobile');
+						if (mob) (mob as HTMLElement).style.display = 'none';
+					});
+				}
+
+				/* ---------- 阅读进度条 + 回到顶部 ---------- */
+				var progress = document.querySelector('.progress-bar') as HTMLElement | null;
+				var toTop = document.querySelector('.to-top') as HTMLElement | null;
+				var article = document.querySelector('.paper-page, .article-body') as HTMLElement | null;
+
+				function onScroll() {
+					var y = window.scrollY || window.pageYOffset;
+					if (progress) {
+						var base = article ? article.offsetTop : 0;
+						var total = article ? article.offsetHeight - window.innerHeight + base
+																: document.documentElement.scrollHeight - window.innerHeight;
+						var pct = total > 0 ? Math.min(Math.max((y - base + window.innerHeight * 0.35) / total, 0), 1) * 100 : 0;
+						progress.style.width = pct + '%';
+					}
+					if (toTop) toTop.classList.toggle('show', y > 600);
+				}
+				window.addEventListener('scroll', onScroll, { passive: true });
+				onScroll();
+				if (toTop) {
+					toTop.addEventListener('click', function () {
+						window.scrollTo({ top: 0, behavior: 'smooth' });
+					});
+				}
+
+				/* ---------- TOC Scrollspy ---------- */
+				var tocLinks = document.querySelectorAll('.toc a[href^="#"]');
+				if (tocLinks.length && 'IntersectionObserver' in window) {
+					var map: Record<string, Element> = {};
+					tocLinks.forEach(function (a) {
+						var id = decodeURIComponent(a.getAttribute('href')!.slice(1));
+						var el = document.getElementById(id);
+						if (el) map[id] = a;
+					});
+					var visible: Record<string, boolean> = {};
+					var spyIO = new IntersectionObserver(function (entries) {
+						entries.forEach(function (en) {
+							visible[en.target.id] = en.isIntersecting;
+						});
+						var ids = Object.keys(map);
+						var active: string | null = null;
+						for (var i = 0; i < ids.length; i++) {
+							if (visible[ids[i]]) { active = ids[i]; break; }
+						}
+						if (!active) {
+							var y = window.scrollY + 120;
+							for (var j = ids.length - 1; j >= 0; j--) {
+								var el = document.getElementById(ids[j]);
+								if (el && el.offsetTop <= y) { active = ids[j]; break; }
+							}
+						}
+						tocLinks.forEach(function (a) { a.classList.remove('on'); });
+						if (active && map[active]) map[active].classList.add('on');
+					}, { rootMargin: '-90px 0px -55% 0px', threshold: 0 });
+
+					Object.keys(map).forEach(function (id) {
+						var el = document.getElementById(id);
+						if (el) spyIO.observe(el);
+					});
+				}
+
+				/* ---------- 通用筛选（filter-chip + data-cat） ---------- */
+				document.querySelectorAll('.filter-bar[data-filter]').forEach(function (filterBar) {
+					var chips = filterBar.querySelectorAll('.filter-chip');
+					var scopeSelector = filterBar.getAttribute('data-filter-scope') || '';
+					var scope = scopeSelector ? document.querySelector(scopeSelector) : document;
+					if (!scope) return;
+					var items = scope.querySelectorAll('[data-cat]');
+					var empty = document.querySelector('.filter-empty');
+					chips.forEach(function (chip) {
+						chip.addEventListener('click', function () {
+							chips.forEach(function (c) { c.classList.remove('active'); });
+							chip.classList.add('active');
+							var cat = chip.getAttribute('data-value');
+							var shown = 0;
+							items.forEach(function (item) {
+								var itemCat = item.getAttribute('data-cat') || '';
+								var hit = cat === 'all' || itemCat === cat || itemCat.split(' ').indexOf(cat as string) !== -1;
+								(item as HTMLElement).style.display = hit ? '' : 'none';
+								// 分组区块联动：整组隐藏则隐藏标题
+								var section = item.closest('.category-section');
+								if (hit) shown++;
+							});
+							// 分类区块显隐
+							(scope as Element).querySelectorAll('.category-section').forEach(function (sec) {
+								var anyVisible = Array.prototype.some.call(
+									sec.querySelectorAll('[data-cat]'),
+									function (it: HTMLElement) { return it.style.display !== 'none'; }
+								);
+								(sec as HTMLElement).style.display = anyVisible ? '' : 'none';
+							});
+							if (empty) (empty as HTMLElement).style.display = shown ? 'none' : '';
+						});
+					});
+				});
+			})();
+		</script>
 	</body>
 </html>
-
-<style>
-	/* ============================================
-	   布局特定样式
-	   ============================================ */
-
-	/**
-	 * 主体内容容器
-	 * 考虑到固定页头的高度
-	 */
-	.main {
-		min-height: calc(100vh - var(--header-height));
-		padding-top: var(--header-height);
-	}
-</style>
-
-<style is:global>
-	/* ============================================
-	   全局样式调整（Layout 特有）
-	   ============================================ */
-
-	/**
-	 * 滚动条美化
-	 */
-	::-webkit-scrollbar {
-		width: 8px;
-		height: 8px;
-	}
-
-	::-webkit-scrollbar-track {
-		background: var(--color-bg-primary);
-	}
-
-	::-webkit-scrollbar-thumb {
-		background: var(--color-border);
-		border-radius: 4px;
-	}
-
-	::-webkit-scrollbar-thumb:hover {
-		background: var(--color-border-light);
-	}
-
-	/**
-	 * 选中文字样式
-	 */
-	::selection {
-		background: var(--color-primary);
-		color: white;
-	}
-
-	::-moz-selection {
-		background: var(--color-primary);
-		color: white;
-	}
-
-	/**
-	 * 焦点状态样式（无障碍）
-	 */
-	:focus-visible {
-		outline: 2px solid var(--color-primary);
-		outline-offset: 2px;
-	}
-
-	/**
-	 * 打印媒体查询
-	 */
-	@media print {
-		.main {
-			padding-top: 0;
-		}
-	}
-</style>

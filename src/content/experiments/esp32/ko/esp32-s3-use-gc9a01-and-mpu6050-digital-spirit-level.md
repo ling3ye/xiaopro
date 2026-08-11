@@ -2,6 +2,9 @@
 title: "ESP32-S3 + GC9A01 + MPU6050 디지털 수평기 완벽 가이드｜SPI + I2C + Arduino"
 boardId: esp32s3
 moduleId: display/tft128-gc9a01
+moduleIds:
+  - display/tft128-gc9a01
+  - sensor/mpu6050
 category: esp32
 date: 2026-06-03
 intro: "ESP32-S3으로 GC9A01 원형 LCD와 MPU6050 6축 센서를 구동하여 피치, 롤 각도와 온도를 실시간으로 표시하는 보기 좋고 실용적인 디지털 수평기를 만들어봅니다."
