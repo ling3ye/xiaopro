@@ -5,7 +5,7 @@ moduleId: display/tft128-gc9a01
 category: esp32
 date: 2026-06-25
 intro: "Mit ESP32-S3 + MQ135-Gassensor + GC9A01 1,28-Zoll-Runddisplay und LVGL v9 ein Air-Quality-Dashboard mit animiertem Bogenanzeiger, Echtzeit-Trendlinie und pulsierendem Leuchteffekt erstellen, inklusive vollständiger Verkabelung, Code und Problembehebung."
-image: "https://img.ling.lux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
+image: "https://img.lingflux.com/2026/06/4217f9f4026039eeca35a691450313dc.jpg"
 ---
 
 

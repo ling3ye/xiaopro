@@ -173,7 +173,7 @@ let modules: any[] = [];
 
 if (pageType === 'detail' && currentCategory && currentSlug) {
   // 使用 category 和 slug 查找实验（路径格式：category/zh-cn/article.md）
-  experiment = allExperiments.find(({ id }) => id.startsWith(`${currentCategory}/${lang}/`) && id.endsWith(`/${currentSlug}.md`));
+  experiment = allExperiments.find(({ id }) => id.startsWith(`${currentCategory}/${lang}/`) && id.endsWith(`/${currentSlug}`));
   if (experiment) {
     // 解析关联的开发板
     if ('boardId' in experiment.data && experiment.data.boardId) {

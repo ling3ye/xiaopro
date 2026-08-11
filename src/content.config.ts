@@ -1,19 +1,15 @@
-// src/content/config.ts
+// src/content.config.ts — Astro 7 content layer API
 import { defineCollection, z, reference } from 'astro:content';
+import { glob } from 'astro/loaders';
 
-// 1. 定义 Boards (开发板) 集合
+// 1. Boards (开发板) — data/JSON
 const boards = defineCollection({
-  type: 'data', // 'data' 类型专门用于 JSON/YAML 文件
+  loader: glob({ pattern: '**/*.json', base: './src/content/boards' }),
   schema: z.object({
-    // 必填：品牌 (如 'Espressif', 'Arduino')
     brand: z.string(),
-    // 必填：型号名称 (如 'ESP32-C3 DevKit')
     model: z.string(),
-    // 选填：硬件参数字典 (支持多语言嵌套结构)
     specs: z.union([
-      // 旧格式：平铺结构 Record<string, string | number | boolean>
       z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
-      // 新格式：多语言嵌套 { "zh-cn": {...}, "en": {...} }
       z.object({
         'zh-cn': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
         'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
@@ -26,13 +22,9 @@ const boards = defineCollection({
         'it': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
       })
     ]).optional(),
-    // 选填：官方文档链接
     officialUrl: z.string().url().optional(),
-    // 选填：关键词 (支持多语言嵌套结构)
     keywords: z.union([
-      // 旧格式：字符串数组
       z.array(z.string()),
-      // 新格式：多语言嵌套 { "zh-cn": [...], "en": [...] }
       z.object({
         'zh-cn': z.array(z.string()),
         'zh-tw': z.array(z.string()).optional(),
@@ -45,25 +37,19 @@ const boards = defineCollection({
         'it': z.array(z.string()).optional(),
       })
     ]).optional(),
-    // 选填：缩略图 (相对于 public 目录的路径)
     image: z.string().optional(),
   }),
 });
 
-// 2. 定义 Modules (外设模块) 集合
+// 2. Modules (外设模块) — data/JSON
 const modules = defineCollection({
-  type: 'data',
+  loader: glob({ pattern: '**/*.json', base: './src/content/modules' }),
   schema: z.object({
-    brand: z.string().optional(), // 品牌（可选）
-    // 必填：分类 (枚举类型，强制规范分类)
+    brand: z.string().optional(),
     category: z.enum(['sensor', 'display', 'actuator', 'communication', 'power', 'audio', 'storage', 'lighting', 'other']),
-    // 必填：型号 (如 'DHT11', 'SSD1306')
     model: z.string(),
-    // 选填：硬件参数字典 (支持多语言嵌套结构)
     specs: z.union([
-      // 旧格式：平铺结构 Record<string, string | number | boolean>
       z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
-      // 新格式：多语言嵌套 { "zh-cn": {...}, "en": {...} }
       z.object({
         'zh-cn': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
         'zh-tw': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
@@ -76,11 +62,8 @@ const modules = defineCollection({
         'it': z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
       })
     ]).optional(),
-    // 选填：关键词 (支持多语言嵌套结构)
     keywords: z.union([
-      // 旧格式：字符串数组
       z.array(z.string()),
-      // 新格式：多语言嵌套 { "zh-cn": [...], "en": [...] }
       z.object({
         'zh-cn': z.array(z.string()),
         'zh-tw': z.array(z.string()).optional(),
@@ -93,72 +76,59 @@ const modules = defineCollection({
         'it': z.array(z.string()).optional(),
       })
     ]).optional(),
-    // 选填：官方文档链接
     officialUrl: z.string().url().optional(),
-    // 选填：数据手册链接
     datasheet: z.string().url().optional(),
-    // 选填：缩略图
     image: z.string().optional(),
   }),
 });
 
-// 3. 定义 Experiments (基础实验 - 单对单)
+// 3. Experiments (基础实验) — content/Markdown
 const experiments = defineCollection({
-  type: 'content', // Markdown/MDX 文件
+  loader: glob({ pattern: '**/*.md', base: './src/content/experiments' }),
   schema: z.object({
     title: z.string(),
-    // ✨ 核心魔法：关联到 boards 集合
     boardId: reference('boards'),
-    // ✨ 核心魔法：关联到 modules 集合
     moduleId: reference('modules'),
-    // 选填：关联多个模块（当实验使用多个硬件模块时）
     moduleIds: z.array(reference('modules')).optional(),
-    // 必填：分类 (枚举类型，强制规范分类)
     category: z.enum(['esp32', 'arduino', 'rp', 'stm32', 'other']).optional(),
-
     date: z.date().optional(),
     intro: z.string().optional(),
-    // 选填：缩略图 (相对于 public 目录的路径)
     image: z.string().optional(),
   }),
 });
 
-// 4. 定义 BoardDocs (开发板详细说明)
+// 4. BoardDocs (开发板详细说明) — content/Markdown
 const boardDocs = defineCollection({
-  type: 'content', // Markdown/MDX 文件
+  loader: glob({ pattern: '**/*.md', base: './src/content/boardDocs' }),
   schema: z.object({
-    boardId: reference('boards'), // 关联到开发板
+    boardId: reference('boards'),
   }),
 });
 
-// 5. 定义 ModuleDocs (模块详细说明)
+// 5. ModuleDocs (模块详细说明) — content/Markdown
 const moduleDocs = defineCollection({
-  type: 'content', // Markdown/MDX 文件
+  loader: glob({ pattern: '**/*.md', base: './src/content/moduleDocs' }),
   schema: z.object({
-    moduleId: reference('modules'), // 关联到模块
+    moduleId: reference('modules'),
   }),
 });
 
-// 6. 定义 Solutions (实战方案 - 一对多)
+// 6. Solutions (实战方案) — content/Markdown
 const solutions = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/solutions' }),
   schema: z.object({
     title: z.string(),
-    // 关联一个主控板
     boardId: reference('boards'),
-    // ✨ 核心魔法：关联多个模块 (数组)
     moduleIds: z.array(reference('modules')),
-
     difficulty: z.enum(['Easy', 'Medium', 'Hard']).default('Medium'),
     intro: z.string().optional(),
-    // 选填：缩略图 (相对于 public 目录的路径)
     image: z.string().optional(),
   }),
 });
 
-// 7. 定义 Printers (3D打印机) 集合
+// 7. Printers (3D打印机) — data/JSON
 const printers = defineCollection({
-  type: 'data',
+  loader: glob({ pattern: '**/*.json', base: './src/content/printers' }),
   schema: z.object({
     brand: z.string(),
     model: z.string(),
@@ -198,8 +168,7 @@ const printers = defineCollection({
   }),
 });
 
-// 8. 定义 Filaments (3D打印耗材) 集合
-// 新格式: canonical ID -> 结构化数值
+// 8. Filaments (3D打印耗材) — data/JSON
 const specPropertyValue = z.object({
   value: z.union([z.number(), z.string(), z.boolean()]),
   value_zh: z.string().optional(),
@@ -210,14 +179,12 @@ const specPropertyValue = z.object({
 });
 
 const filaments = defineCollection({
-  type: 'data',
+  loader: glob({ pattern: '**/*.json', base: './src/content/filaments' }),
   schema: z.object({
     brand: z.string().optional(),
     model: z.string(),
     category: z.enum(['pla', 'petg', 'abs', 'tpu', 'nylon', 'pc', 'asa', 'other']),
-    // 新格式: canonical spec ID -> 结构化属性值
     properties: z.record(z.string(), specPropertyValue).optional(),
-    // 旧格式 (兼容过渡, 仅非 filament 集合使用)
     specs: z.union([
       z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
       z.object({
@@ -254,9 +221,9 @@ const filaments = defineCollection({
   }),
 });
 
-// 9. 定义 Models (3D模型) 集合
+// 9. Models (3D模型) — content/Markdown
 const models = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/models' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -279,20 +246,15 @@ const models = defineCollection({
   }),
 });
 
-// 10. 定义 Articles (博客文章) 集合 - 多维正交元数据法
+// 10. Articles (博客文章) — content/Markdown
 const articles = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
   schema: z.object({
     title: z.string(),
-    // 维度1: 领域 domain (单选，决定物理路由)
     domain: z.enum(['ai', 'software', 'hardware', 'devops', 'life']),
-    // 维度2: 平台 platforms (数组，可选，支持跨平台)
     platforms: z.array(z.enum(['mac', 'windows', 'linux', 'web', 'cross-platform'])).optional(),
-    // 维度3: 体裁 format (单选，决定阅读预期)
     format: z.enum(['tutorial', 'prompt-list', 'opinion', 'cheatsheet', 'news']).default('tutorial'),
-    // 维度4: 硬件关联 relatedBoards (数组，可选，打通软硬件生态)
     relatedBoards: z.array(reference('boards')).optional(),
-    // 基础元数据
     date: z.date(),
     intro: z.string().optional(),
     image: z.string().optional(),
@@ -300,7 +262,6 @@ const articles = defineCollection({
   }),
 });
 
-// 11. 导出集合注册
 export const collections = {
   'boards': boards,
   'modules': modules,

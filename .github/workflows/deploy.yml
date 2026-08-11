@@ -25,13 +25,13 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # 这里建议指定你本地使用的大版本（如 8 或 9）
+          version: 10 # 这里建议指定你本地使用的大版本（如 8 或 9）
 
       # 2. 设置 Node，并启用 pnpm 缓存
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: 'pnpm' # 开启缓存，加快之后的构建速度
 
       # 3. 安装依赖
