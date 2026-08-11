@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基础实验 · LINGFLUX — Theme 7 预览</title>
+<meta name="description" content="从零开始的硬件实验教程：每篇实验都附带完整接线表、物料清单、全注释代码。">
+<link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="brand">
+      <span class="brand-dot"></span>LINGFLUX<span class="brand-demo">THEME 7</span>
+    </div>
+    <div class="header-actions">
+      <div class="header-stat"><span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>System: <span class="val">ONLINE</span></div>
+      <button class="icon-btn" title="语言">🌐</button>
+      <button class="icon-btn nav-toggle" onclick="document.querySelector('.nav-backdrop').classList.add('show');document.querySelector('.nav-drawer').classList.add('show')" aria-label="菜单">☰</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tabs">
+      <a href="index.html" class="tab">📊 Overview</a>
+      <a href="#" class="tab">🛠️ Boards</a>
+      <a href="modules.html" class="tab">📦 Modules</a>
+      <a href="experiments.html" class="tab active">🧪 Experiments <span class="badge">46</span></a>
+      <a href="#" class="tab">🏗️ Solutions</a>
+      <a href="#" class="tab">🖨️ 3D Print</a>
+      <a href="#" class="tab">📝 Articles</a>
+    </div>
+  </div>
+</header>
+
+<div class="nav-backdrop" onclick="this.classList.remove('show');document.querySelector('.nav-drawer').classList.remove('show')"></div>
+<aside class="nav-drawer">
+  <a href="index.html">📊 Overview</a><a href="#">🛠️ Boards</a><a href="modules.html">📦 Modules</a><a href="experiments.html" class="active">🧪 Experiments</a><a href="#">🏗️ Solutions</a><a href="#">🖨️ 3D Print</a><a href="#">📝 Articles</a>
+</aside>
+
+<main class="main">
+  <div class="dash-hero">
+    <div class="dash-breadcrumb">
+      <a href="index.html">Overview</a><span class="sep">/</span><span>Experiments</span>
+    </div>
+    <h1>🧪 基础实验</h1>
+    <div class="subtitle">46 experiments · From GPIO blink to WiFi streaming.</div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="dash-grid dash-grid--4" style="margin-bottom:16px">
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">ESP32</div><div class="stat-value" style="color:var(--accent)">22</div></div></div></div>
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">Arduino</div><div class="stat-value" style="color:var(--yellow)">10</div></div></div></div>
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">RP2040</div><div class="stat-value" style="color:var(--purple)">8</div></div></div></div>
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">STM32</div><div class="stat-value" style="color:var(--cyan)">6</div></div></div></div>
+  </div>
+
+  <!-- Featured + Recent -->
+  <div class="dash-grid dash-grid--2-1" style="margin-bottom:16px">
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--cyan"></span> FEATURED EXPERIMENT</span>
+        <a href="experiment-detail.html" class="btn btn--outline btn--sm">Details</a>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;gap:16px">
+          <div style="flex:1">
+            <div style="margin-bottom:8px">
+              <span class="tag tag--blue">ESP32-S3</span>
+              <span class="tag tag--cyan">Display</span>
+              <span class="tag tag--green">Sensor</span>
+            </div>
+            <h3 style="font-size:18px;font-weight:600;color:var(--text-bright);margin-bottom:8px">
+              <a href="experiment-detail.html" style="color:inherit">DHT11 + GC9A01 圆屏 · Game Boy 像素温湿度计</a>
+            </h3>
+            <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
+              ESP32-S3 + GC9A01 + DHT11 · 完整接线表 + 全注释代码 + 3D 外壳 STL。
+            </p>
+          </div>
+          <div style="width:100px;height:100px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0">🌡️</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--purple"></span> BY DIFFICULTY</span>
+      </div>
+      <div class="panel-body">
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>★☆☆☆ Beginner</span><span class="pb-val">35%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--green" style="width:35%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>★★☆☆ Easy</span><span class="pb-val">30%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--blue" style="width:30%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>★★★☆ Medium</span><span class="pb-val">22%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--yellow" style="width:22%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>★★★★ Advanced</span><span class="pb-val">13%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--purple" style="width:13%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Experiments Table -->
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-header">
+      <span><span class="panel-dot panel-dot--green"></span> ALL EXPERIMENTS</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn--outline btn--sm" style="background:rgba(88,166,255,0.1);border-color:var(--accent);color:var(--accent)">All</button>
+        <button class="btn btn--outline btn--sm">ESP32</button>
+        <button class="btn btn--outline btn--sm">Arduino</button>
+        <button class="btn btn--outline btn--sm">RP2040</button>
+      </div>
+    </div>
+    <div class="panel-body panel-body--flush">
+      <table class="dash-table">
+        <thead>
+          <tr><th>Experiment</th><th>Board</th><th>Difficulty</th><th>Reads</th><th>Status</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="experiment-detail.html">Game Boy 像素温湿度计</a></td>
+            <td><span class="tag tag--blue">ESP32-S3</span></td>
+            <td>★★☆☆</td>
+            <td>1.2k</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>07-15</td>
+          </tr>
+          <tr>
+            <td><a href="#">BLE 网关 · 多传感器 MQTT 上报</a></td>
+            <td><span class="tag tag--blue">ESP32</span></td>
+            <td>★★★☆</td>
+            <td>980</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>07-12</td>
+          </tr>
+          <tr>
+            <td><a href="#">NeoPixel 16×16 矩阵动画</a></td>
+            <td><span class="tag tag--purple">RP2040</span></td>
+            <td>★★☆☆</td>
+            <td>850</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>07-10</td>
+          </tr>
+          <tr>
+            <td><a href="#">迷你示波器</a></td>
+            <td><span class="tag tag--yellow">Arduino</span></td>
+            <td>★★★☆</td>
+            <td>720</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>07-08</td>
+          </tr>
+          <tr>
+            <td><a href="#">WiFi 图传 + HA 集成</a></td>
+            <td><span class="tag tag--blue">ESP32-CAM</span></td>
+            <td>★★★★</td>
+            <td>650</td>
+            <td><span class="tag tag--yellow">WIP</span></td>
+            <td>07-05</td>
+          </tr>
+          <tr>
+            <td><a href="#">STM32 + Rust 嵌入式点灯</a></td>
+            <td><span class="tag tag--cyan">STM32</span></td>
+            <td>★★☆☆</td>
+            <td>580</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>07-02</td>
+          </tr>
+          <tr>
+            <td><a href="#">微型气象站</a></td>
+            <td><span class="tag tag--blue">ESP32</span></td>
+            <td>★★★☆</td>
+            <td>520</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>06-28</td>
+          </tr>
+          <tr>
+            <td><a href="#">温度数据记录仪</a></td>
+            <td><span class="tag tag--purple">RP2040</span></td>
+            <td>★☆☆☆</td>
+            <td>480</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>06-25</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="status-bar">
+    <span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>
+    LINGFLUX © 2026 · Theme 7 "Dashboard" · 数据仪表盘
+  </div>
+</footer>
+
+</body>
+</html>

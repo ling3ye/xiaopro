@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外设模块库 · LINGFLUX — Theme 7 预览</title>
+<meta name="description" content="常用硬件外设模块参数库：传感器、显示屏、音频、灯光，参数表与配套实验随查随用。">
+<link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="brand">
+      <span class="brand-dot"></span>LINGFLUX<span class="brand-demo">THEME 7</span>
+    </div>
+    <div class="header-actions">
+      <div class="header-stat"><span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>System: <span class="val">ONLINE</span></div>
+      <button class="icon-btn" title="语言">🌐</button>
+      <button class="icon-btn nav-toggle" onclick="document.querySelector('.nav-backdrop').classList.add('show');document.querySelector('.nav-drawer').classList.add('show')" aria-label="菜单">☰</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tabs">
+      <a href="index.html" class="tab">📊 Overview</a>
+      <a href="#" class="tab">🛠️ Boards</a>
+      <a href="modules.html" class="tab active">📦 Modules <span class="badge">82</span></a>
+      <a href="experiments.html" class="tab">🧪 Experiments</a>
+      <a href="#" class="tab">🏗️ Solutions</a>
+      <a href="#" class="tab">🖨️ 3D Print</a>
+      <a href="#" class="tab">📝 Articles</a>
+    </div>
+  </div>
+</header>
+
+<div class="nav-backdrop" onclick="this.classList.remove('show');document.querySelector('.nav-drawer').classList.remove('show')"></div>
+<aside class="nav-drawer">
+  <a href="index.html">📊 Overview</a>
+  <a href="#">🛠️ Boards</a>
+  <a href="modules.html" class="active">📦 Modules</a>
+  <a href="experiments.html">🧪 Experiments</a>
+  <a href="#">🏗️ Solutions</a>
+  <a href="#">🖨️ 3D Print</a>
+  <a href="#">📝 Articles</a>
+</aside>
+
+<main class="main">
+  <div class="dash-hero">
+    <div class="dash-breadcrumb">
+      <a href="index.html">Overview</a><span class="sep">/</span><span>Modules</span>
+    </div>
+    <h1>📦 外设模块库</h1>
+    <div class="subtitle">82 modules across 8 categories · Filter, sort, compare.</div>
+  </div>
+
+  <!-- Category stats row -->
+  <div class="dash-grid dash-grid--4" style="margin-bottom:16px">
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">Sensors</div><div class="stat-value" style="color:var(--green)">23</div></div></div></div>
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">Displays</div><div class="stat-value" style="color:var(--accent)">15</div></div></div></div>
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">Actuators</div><div class="stat-value" style="color:var(--yellow)">18</div></div></div></div>
+    <div class="panel"><div class="panel-body"><div class="stat-card"><div class="stat-label">Comm+Audio+Light+Power</div><div class="stat-value" style="color:var(--purple)">26</div></div></div></div>
+  </div>
+
+  <!-- Module Table -->
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-header">
+      <span><span class="panel-dot panel-dot--cyan"></span> ALL MODULES</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn--outline btn--sm" style="background:rgba(88,166,255,0.1);border-color:var(--accent);color:var(--accent)">All</button>
+        <button class="btn btn--outline btn--sm">Sensor</button>
+        <button class="btn btn--outline btn--sm">Display</button>
+        <button class="btn btn--outline btn--sm">Actuator</button>
+      </div>
+    </div>
+    <div class="panel-body panel-body--flush">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Category</th>
+            <th>Protocol</th>
+            <th>Voltage</th>
+            <th>Experiments</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><a href="#">DHT11 温湿度传感器</a></strong></td>
+            <td><span class="tag tag--green">Sensor</span></td>
+            <td>OneWire</td>
+            <td>3.3-5V</td>
+            <td>23</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">GC9A01 1.28" 圆形 TFT</a></strong></td>
+            <td><span class="tag tag--blue">Display</span></td>
+            <td>SPI</td>
+            <td>3.3V</td>
+            <td>12</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">SSD1306 0.96" OLED</a></strong></td>
+            <td><span class="tag tag--blue">Display</span></td>
+            <td>I2C</td>
+            <td>3.3V</td>
+            <td>18</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">BMP280 气压传感器</a></strong></td>
+            <td><span class="tag tag--green">Sensor</span></td>
+            <td>I2C/SPI</td>
+            <td>1.8-3.6V</td>
+            <td>8</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">MPU6050 六轴陀螺仪</a></strong></td>
+            <td><span class="tag tag--green">Sensor</span></td>
+            <td>I2C</td>
+            <td>3.3-5V</td>
+            <td>14</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">SG90 微型舵机</a></strong></td>
+            <td><span class="tag tag--yellow">Actuator</span></td>
+            <td>PWM</td>
+            <td>4.8-6V</td>
+            <td>15</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">WS2812B RGB LED 灯带</a></strong></td>
+            <td><span class="tag tag--orange">Lighting</span></td>
+            <td>Single-wire</td>
+            <td>5V</td>
+            <td>20</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">HC-SR04 超声波测距</a></strong></td>
+            <td><span class="tag tag--green">Sensor</span></td>
+            <td>GPIO</td>
+            <td>5V</td>
+            <td>10</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">ESP-NOW 无线通信</a></strong></td>
+            <td><span class="tag tag--cyan">Comm</span></td>
+            <td>WiFi</td>
+            <td>3.3V</td>
+            <td>6</td>
+            <td><span class="tag tag--yellow">WIP</span></td>
+          </tr>
+          <tr>
+            <td><strong><a href="#">MAX98357 I2S 音频功放</a></strong></td>
+            <td><span class="tag tag--purple">Audio</span></td>
+            <td>I2S</td>
+            <td>3.3-5V</td>
+            <td>4</td>
+            <td><span class="tag tag--green">Verified</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="status-bar">
+    <span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>
+    LINGFLUX © 2026 · Theme 7 "Dashboard" · 数据仪表盘
+  </div>
+</footer>
+
+</body>
+</html>

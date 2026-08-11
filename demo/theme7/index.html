@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINGFLUX · Dashboard — Theme 7 预览</title>
+<meta name="description" content="LINGFLUX 硬件创客学习平台 — 仪表盘主题演示。焊接灵感，连接世界。">
+<link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+
+<!-- ==================== HEADER + TABS ==================== -->
+<header class="site-header">
+  <div class="header-top">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      LINGFLUX
+      <span class="brand-demo">THEME 7</span>
+    </div>
+    <div class="header-actions">
+      <div class="header-stat">
+        <span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>
+        System: <span class="val">ONLINE</span>
+      </div>
+      <div class="header-stat">
+        Experiments: <span class="val">300+</span>
+      </div>
+      <div class="header-stat">
+        Modules: <span class="val">82</span>
+      </div>
+      <button class="icon-btn" title="语言">🌐</button>
+      <button class="icon-btn nav-toggle" onclick="document.querySelector('.nav-backdrop').classList.add('show');document.querySelector('.nav-drawer').classList.add('show')" aria-label="菜单">☰</button>
+    </div>
+  </div>
+
+  <!-- Tab 导航 (核心布局差异) -->
+  <div class="tab-bar">
+    <div class="tabs">
+      <a href="index.html" class="tab active">
+        📊 Overview
+      </a>
+      <a href="#" class="tab">
+        🛠️ Boards <span class="badge">12</span>
+      </a>
+      <a href="modules.html" class="tab">
+        📦 Modules <span class="badge">82</span>
+      </a>
+      <a href="experiments.html" class="tab">
+        🧪 Experiments <span class="badge">46</span>
+      </a>
+      <a href="#" class="tab">
+        🏗️ Solutions <span class="badge">18</span>
+      </a>
+      <a href="#" class="tab">
+        🖨️ 3D Print <span class="badge">24</span>
+      </a>
+      <a href="#" class="tab">
+        📝 Articles <span class="badge">35</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="nav-backdrop" onclick="this.classList.remove('show');document.querySelector('.nav-drawer').classList.remove('show')"></div>
+<aside class="nav-drawer">
+  <a href="index.html" class="active">📊 Overview</a>
+  <a href="#">🛠️ Boards</a>
+  <a href="modules.html">📦 Modules</a>
+  <a href="experiments.html">🧪 Experiments</a>
+  <a href="#">🏗️ Solutions</a>
+  <a href="#">🖨️ 3D Print</a>
+  <a href="#">📝 Articles</a>
+</aside>
+
+<!-- ==================== MAIN DASHBOARD ==================== -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="dash-hero">
+    <h1>焊接灵感，连接世界</h1>
+    <div class="subtitle">
+      <span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>
+      All systems operational · Last updated: 2026-08-11 17:50 CST
+    </div>
+  </div>
+
+  <!-- Row 1: Key Metrics -->
+  <div class="dash-grid dash-grid--4" style="margin-bottom:16px">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="stat-card">
+          <div class="stat-label">Total Experiments</div>
+          <div class="stat-value">300<span style="font-size:16px;color:var(--text-dim)">+</span></div>
+          <div class="stat-change stat-change--up">↑ 12 this month</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="stat-card">
+          <div class="stat-label">Modules Documented</div>
+          <div class="stat-value">82</div>
+          <div class="stat-change stat-change--up">↑ 5 this month</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="stat-card">
+          <div class="stat-label">Dev Boards</div>
+          <div class="stat-value">12</div>
+          <div class="stat-change" style="color:var(--text-dim)">ESP32 · Arduino · STM32 · RP2040</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="stat-card">
+          <div class="stat-label">Languages</div>
+          <div class="stat-value">9</div>
+          <div class="stat-change" style="color:var(--text-dim)">zh-CN · EN · JA · KO · ES · DE · FR · IT · zh-TW</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Featured Experiment + Activity Feed -->
+  <div class="dash-grid dash-grid--2-1" style="margin-bottom:16px">
+    <!-- Featured Experiment Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--cyan"></span> FEATURED EXPERIMENT</span>
+        <a href="experiment-detail.html" class="btn btn--outline btn--sm">View Details</a>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="flex:1">
+            <div style="margin-bottom:8px">
+              <span class="tag tag--blue">ESP32-S3</span>
+              <span class="tag tag--cyan">Display</span>
+              <span class="tag tag--green">Sensor</span>
+            </div>
+            <h3 style="font-size:18px;font-weight:600;color:var(--text-bright);margin-bottom:8px;line-height:1.4">
+              <a href="experiment-detail.html" style="color:inherit">DHT11 + GC9A01 圆屏 · Game Boy 像素温湿度计</a>
+            </h3>
+            <p style="font-size:13px;color:var(--text-dim);line-height:1.6;margin-bottom:16px">
+              用 ESP32-S3 驱动 GC9A01 1.28" 圆形 TFT 屏幕配合 DHT11，复刻 Game Boy 经典四阶绿配色。
+            </p>
+            <div class="stat-row" style="margin:0 -16px -16px;border-top:1px solid var(--line)">
+              <div class="stat-item">
+                <div class="val" style="color:var(--yellow)">★★☆☆</div>
+                <div class="lbl">Difficulty</div>
+              </div>
+              <div class="stat-item">
+                <div class="val" style="color:var(--cyan)">1.2k</div>
+                <div class="lbl">Reads</div>
+              </div>
+            </div>
+          </div>
+          <div style="width:140px;height:140px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:48px;flex-shrink:0">
+            🌡️
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Feed Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--green"></span> RECENT ACTIVITY</span>
+      </div>
+      <div class="panel-body panel-body--flush">
+        <ul class="widget-list">
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--green"></span>
+              <div>
+                <span class="item-title">Pixel Thermometer</span>
+                <span class="item-sub">New experiment published</span>
+              </div>
+            </div>
+            <div class="item-meta">2h ago</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--blue"></span>
+              <div>
+                <span class="item-title">BLE Gateway</span>
+                <span class="item-sub">Updated wiring diagram</span>
+              </div>
+            </div>
+            <div class="item-meta">1d ago</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--purple"></span>
+              <div>
+                <span class="item-title">AI Tools Review 2026</span>
+                <span class="item-sub">New article published</span>
+              </div>
+            </div>
+            <div class="item-meta">3d ago</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--cyan"></span>
+              <div>
+                <span class="item-title">GC9A01 Module</span>
+                <span class="item-sub">Added 3D Print STL files</span>
+              </div>
+            </div>
+            <div class="item-meta">5d ago</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Board Popularity + Module Categories -->
+  <div class="dash-grid dash-grid--2" style="margin-bottom:16px">
+    <!-- Board Popularity -->
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--blue"></span> BOARD POPULARITY</span>
+      </div>
+      <div class="panel-body">
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>ESP32 / ESP32-S3</span><span class="pb-val">42%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--blue" style="width:42%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>Arduino (Uno/Nano/Mega)</span><span class="pb-val">28%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--green" style="width:28%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>RP2040 / Pi Pico</span><span class="pb-val">18%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--cyan" style="width:18%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>STM32 Series</span><span class="pb-val">12%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--purple" style="width:12%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module Categories -->
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--cyan"></span> MODULE CATEGORIES</span>
+        <a href="modules.html" class="btn btn--outline btn--sm">All Modules</a>
+      </div>
+      <div class="panel-body panel-body--flush">
+        <ul class="widget-list">
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--green"></span>
+              <span class="item-title">Sensors</span>
+            </div>
+            <div class="item-meta">23 modules</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--blue"></span>
+              <span class="item-title">Displays</span>
+            </div>
+            <div class="item-meta">15 modules</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--yellow"></span>
+              <span class="item-title">Actuators</span>
+            </div>
+            <div class="item-meta">18 modules</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--cyan"></span>
+              <span class="item-title">Communication</span>
+            </div>
+            <div class="item-meta">12 modules</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--purple"></span>
+              <span class="item-title">Audio &amp; Lighting</span>
+            </div>
+            <div class="item-meta">14 modules</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Latest Experiments Table -->
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-header">
+      <span><span class="panel-dot panel-dot--green"></span> LATEST EXPERIMENTS</span>
+      <a href="experiments.html" class="btn btn--outline btn--sm">View All</a>
+    </div>
+    <div class="panel-body panel-body--flush">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Experiment</th>
+            <th>Board</th>
+            <th>Modules</th>
+            <th>Difficulty</th>
+            <th>Status</th>
+            <th>Published</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="experiment-detail.html">Game Boy 像素温湿度计</a></td>
+            <td><span class="tag tag--blue">ESP32-S3</span></td>
+            <td>GC9A01, DHT11</td>
+            <td>★★☆☆</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>2026-07-15</td>
+          </tr>
+          <tr>
+            <td><a href="#">BLE 网关 · 多传感器 MQTT 上报</a></td>
+            <td><span class="tag tag--blue">ESP32</span></td>
+            <td>BLE, MQTT</td>
+            <td>★★★☆</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>2026-07-12</td>
+          </tr>
+          <tr>
+            <td><a href="#">NeoPixel 16×16 矩阵动画</a></td>
+            <td><span class="tag tag--purple">RP2040</span></td>
+            <td>WS2812B</td>
+            <td>★★☆☆</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>2026-07-10</td>
+          </tr>
+          <tr>
+            <td><a href="#">迷你示波器</a></td>
+            <td><span class="tag tag--yellow">Arduino</span></td>
+            <td>SSD1306</td>
+            <td>★★★☆</td>
+            <td><span class="tag tag--green">Verified</span></td>
+            <td>2026-07-08</td>
+          </tr>
+          <tr>
+            <td><a href="#">WiFi 图传 + HA 集成</a></td>
+            <td><span class="tag tag--blue">ESP32-CAM</span></td>
+            <td>Camera</td>
+            <td>★★★★</td>
+            <td><span class="tag tag--yellow">WIP</span></td>
+            <td>2026-07-05</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Row 5: Latest Articles + Language Coverage -->
+  <div class="dash-grid dash-grid--2" style="margin-bottom:16px">
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--purple"></span> LATEST ARTICLES</span>
+      </div>
+      <div class="panel-body panel-body--flush">
+        <ul class="widget-list">
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--purple"></span>
+              <div>
+                <span class="item-title">2026 AI 编程工具横评</span>
+                <span class="item-sub">AI · 12 min read</span>
+              </div>
+            </div>
+            <div class="item-meta">07.20</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--blue"></span>
+              <div>
+                <span class="item-title">PlatformIO vs Arduino IDE</span>
+                <span class="item-sub">Software · 8 min read</span>
+              </div>
+            </div>
+            <div class="item-meta">07.18</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--green"></span>
+              <div>
+                <span class="item-title">从零设计 ESP32 开发板</span>
+                <span class="item-sub">Hardware · 15 min read</span>
+              </div>
+            </div>
+            <div class="item-meta">07.14</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--cyan"></span> LANGUAGE COVERAGE</span>
+      </div>
+      <div class="panel-body">
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>简体中文 (zh-CN)</span><span class="pb-val">100%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--green" style="width:100%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>English (en)</span><span class="pb-val">95%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--blue" style="width:95%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>日本語 (ja)</span><span class="pb-val">78%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--cyan" style="width:78%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>한국어 (ko)</span><span class="pb-val">72%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--purple" style="width:72%"></div></div>
+        </div>
+        <div class="progress-bar-widget">
+          <div class="pb-label"><span>Other 5 langs</span><span class="pb-val">60%</span></div>
+          <div class="pb-track"><div class="pb-fill pb-fill--yellow" style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Panel -->
+  <div class="panel" style="text-align:center;margin-bottom:16px">
+    <div class="panel-body" style="padding:32px">
+      <h3 style="font-size:18px;color:var(--text-bright);margin-bottom:8px">Ready to build?</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">从第一个 LED 闪烁开始，到构建智能硬件产品。</p>
+      <a class="btn btn--primary" href="experiments.html">Start Experiment</a>
+      <a class="btn btn--outline" href="modules.html" style="margin-left:8px">Browse Modules</a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="status-bar">
+    <span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>
+    <span>LINGFLUX © 2026</span>
+    <span style="opacity:0.4">|</span>
+    <span>Theme 7 "Dashboard" · 数据仪表盘</span>
+    <span style="opacity:0.4">|</span>
+    <span>Uptime: 365d</span>
+  </div>
+</footer>
+
+</body>
+</html>

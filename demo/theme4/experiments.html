@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基础实验 · LINGFLUX — Theme 4 工程蓝图预览</title>
+<meta name="description" content="ESP32 基础实验教程：完整接线表、BOM 清单、可直接烧录的注释代码。">
+<link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+
+<header class="site-header"><div class="container">
+<a class="brand" href="index.html"><svg class="brand-logo" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="#67e8f9" stroke-width="2"/><circle cx="16" cy="12" r="3" stroke="#67e8f9" stroke-width="1.5"/><path d="M16 15v4M14 19h4M10.5 25l5.5-10M21.5 25l-5.5-10" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/></svg>LINGFLUX<span class="brand-demo">THEME&nbsp;4</span></a>
+<nav class="main-nav"><a href="index.html">首页</a><a href="#">开发板</a><a href="modules.html">外设模块</a><a href="experiments.html" class="active">基础实验</a><a href="#">实战方案</a><a href="#">3D 打印</a><a href="#">文章</a></nav>
+<div class="header-actions"><div class="lang-switch"><button class="icon-btn" aria-label="切换语言"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button><div class="lang-panel"><a href="#" class="on">简体中文 <span class="code">zh-cn</span></a><a href="#">English <span class="code">en</span></a><a href="#">繁體中文 <span class="code">zh-tw</span></a><a href="#">日本語 <span class="code">ja</span></a><a href="#">한국어 <span class="code">ko</span></a><a href="#">Español <span class="code">es</span></a><a href="#">Deutsch <span class="code">de</span></a><a href="#">Français <span class="code">fr</span></a><a href="#">Italiano <span class="code">it</span></a></div></div>
+<button class="icon-btn" aria-label="搜索"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+<button class="icon-btn nav-toggle" aria-label="打开菜单"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div></header>
+<div class="nav-backdrop"></div>
+<aside class="nav-drawer"><div class="drawer-head"><strong>LINGFLUX</strong><button class="icon-btn nav-drawer-close" aria-label="关闭菜单"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><a href="index.html">首页</a><a href="#">开发板</a><a href="modules.html">外设模块</a><a href="experiments.html" class="active">基础实验</a><a href="#">实战方案</a><a href="#">3D 打印</a><a href="#">文章</a></aside>
+
+<section class="page-hero"><div class="container">
+<nav class="breadcrumb"><a href="index.html">HOME</a><span class="sep">/</span><span aria-current="page">EXPERIMENTS · 基础实验</span></nav>
+<span class="eyebrow">DWG ARCHIVE · 实验档案</span>
+<h1>基础实验教程</h1>
+<p class="lead">每个实验都是一张可复现的工程图纸：完整接线表、BOM 物料清单和可直接烧录的全注释代码。</p>
+</div></section>
+
+<section class="section"><div class="container">
+<div class="filter-bar reveal" data-filter>
+<button class="filter-chip active" data-value="all">全部平台 <span class="count">20+</span></button>
+<button class="filter-chip" data-value="esp32">ESP32 / S3 <span class="count">20+</span></button>
+<button class="filter-chip" data-value="arduino">Arduino <span class="count">SOON</span></button>
+<button class="filter-chip" data-value="rp">RP2040 <span class="count">SOON</span></button>
+<button class="filter-chip" data-value="stm32">STM32 <span class="count">SOON</span></button>
+</div>
+
+<article class="card-feature reveal" style="margin-bottom:32px" data-cat="esp32">
+<span class="stamp">VERIFIED</span>
+<div class="media"><img src="https://img.lingflux.com/2026/06/4d154493c9e833bc839cec1050f749f6.jpg" alt="Game Boy 像素复古风温湿度计" loading="lazy"></div>
+<div class="body">
+<div class="card-meta"><span class="chip chip--amber">本周最热</span><span class="chip">ESP32-S3</span><span class="chip">GC9A01</span><span class="chip">DHT11</span></div>
+<h3><a href="experiment-detail.html">DHT11 + GC9A01 圆屏打造 Game Boy 像素复古风温湿度计</a></h3>
+<p>奶油绿四阶配色 + 手写像素字体 + 超限闪烁告警。SPI 接线、Arduino_GFX 双缓冲渲染，全部代码逐行注释。</p>
+<div class="card-meta"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>2026-06-18</span><span class="chip chip--green">入门 · 约 45 分钟</span></div>
+<div><a class="btn btn--primary" href="experiment-detail.html">阅读教程 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></div></article>
+
+<div class="card-grid">
+<article class="card reveal" data-cat="esp32" style="--d:.03s"><div class="card-media"><span class="chip chip--accent float-tag">教程</span><img src="https://img.lingflux.com/2026/07/6c72c55fa63614eb8c2086c24d993d5f.jpg" alt="V8 引擎声浪模拟器" loading="lazy"></div><div class="card-body"><div class="card-meta"><span class="chip">ESP32-S3</span><span class="chip">MAX98357A</span></div><h3 class="card-title"><a href="experiment-detail.html">ESP32-S3 + MAX98357A 制作 V8 引擎声浪模拟器（I2S + 旋转编码器油门）</a></h3><p class="card-desc">I2S 数字音频输出，转动编码器就像踩下油门，转速联动声浪。</p><div class="card-foot"><time>2026-07-14 · 进阶</time><span class="card-link">阅读 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></article>
+<article class="card reveal" data-cat="esp32" style="--d:.09s"><div class="card-media"><span class="chip chip--accent float-tag">教程</span><img src="https://img.lingflux.com/2026/07/39d31272f2976bb195ecea554654502d.jpg" alt="空气质量看板" loading="lazy"></div><div class="card-body"><div class="card-meta"><span class="chip">ESP32-S3</span><span class="chip">SSD1683</span></div><h3 class="card-title"><a href="experiment-detail.html">驱动 4.2 寸墨水屏，接入 AQICN 做一个空气质量看板</a></h3><p class="card-desc">GxEPD2 局部刷新 + WiFi 拉取 AQI 数据，断电也能常显。</p><div class="card-foot"><time>2026-07-08 · 进阶</time><span class="card-link">阅读 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></article>
+<article class="card reveal" data-cat="esp32" style="--d:.15s"><div class="card-media"><span class="chip chip--accent float-tag">教程</span><img src="https://img.lingflux.com/2026/07/683e33cff80c152435263c8e4e6c546d.jpg" alt="墨水屏股价看板" loading="lazy"></div><div class="card-body"><div class="card-meta"><span class="chip">ESP32-S3</span><span class="chip">墨水屏</span></div><h3 class="card-title"><a href="experiment-detail.html">驱动 7.5 寸三色墨水屏，实时显示腾讯控股股价看板</a></h3><p class="card-desc">GxEPD2 + SPI + HTTPS 行情接口，红黑黄三色大屏数据看板。</p><div class="card-foot"><time>2026-07-06 · 进阶</time><span class="card-link">阅读 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></article>
+<article class="card reveal" data-cat="esp32" style="--d:.21s"><div class="card-media"><span class="chip chip--accent float-tag">教程</span><img src="https://img.lingflux.com/2026/06/e53fb5a7bdaee8448584fb9f21aa504d.jpg" alt="B 站粉丝计数器" loading="lazy"></div><div class="card-body"><div class="card-meta"><span class="chip">ESP32-S3</span><span class="chip">SSD1306</span></div><h3 class="card-title"><a href="experiment-detail.html">0.91 寸 OLED 打造桌面 B 站粉丝「解压」计数器</a></h3><p class="card-desc">弹簧阻尼物理动画，粉丝数跳动时数字会「Duang」一下。</p><div class="card-foot"><time>2026-06-27 · 入门</time><span class="card-link">阅读 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></article>
+<article class="card reveal" data-cat="esp32" style="--d:.27s"><div class="card-media"><span class="chip chip--accent float-tag">教程</span><img src="https://img.lingflux.com/2026/06/7747ada90e61ba2360585e6934fbf7a7.jpg" alt="圆形音频频谱仪" loading="lazy"></div><div class="card-body"><div class="card-meta"><span class="chip">ESP32-S3</span><span class="chip">INMP441</span></div><h3 class="card-title"><a href="experiment-detail.html">INMP441 + GC9A01 DIY 圆形音频频谱仪（I2S + FFT）</a></h3><p class="card-desc">麦克风采集 + 快速傅里叶变换，在圆屏上画出跳动的频谱柱。</p><div class="card-foot"><time>2026-06-08 · 进阶</time><span class="card-link">阅读 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></article>
+<article class="card reveal" data-cat="esp32" style="--d:.33s"><div class="card-media"><span class="chip chip--accent float-tag">教程</span><img src="https://img.lingflux.com/2026/05/a6a0b0037d4fd0650665e49e7364d65d.jpg" alt="圆屏心形线动画" loading="lazy"></div><div class="card-body"><div class="card-meta"><span class="chip">ESP32-S3</span><span class="chip">GC9A01</span></div><h3 class="card-title"><a href="experiment-detail.html">驱动 GC9A01 圆屏画心形线：极坐标动画 30 分钟搞定</a></h3><p class="card-desc">一行参数方程 + 双缓冲，让圆屏呼吸出一颗跳动的心。</p><div class="card-foot"><time>2026-05-19 · 入门</time><span class="card-link">阅读 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></article></div>
+
+<p class="filter-empty" style="display:none; text-align:center; color:var(--ink-3); padding:48px 0;">该平台的实验教程正在筹备中，先看看 ESP32 系列吧。</p>
+<div class="pagination"><span class="cur">SHEET 1</span><a href="#">SHEET 2</a><span class="dots">…</span><a href="#" aria-label="下一页">NEXT SHEET →</a></div>
+</div></section>
+
+<footer class="site-footer"><div class="container"><div class="footer-grid">
+<div class="footer-brand"><a class="brand" href="index.html"><svg class="brand-logo" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="#67e8f9" stroke-width="2"/><circle cx="16" cy="12" r="3" stroke="#67e8f9" stroke-width="1.5"/><path d="M16 15v4M14 19h4M10.5 25l5.5-10M21.5 25l-5.5-10" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/></svg>LINGFLUX</a><p>硬件开发教程与项目分享平台。</p><div class="social-row"><a class="icon-btn" href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.35.77 1.05.77 2.12v3.15c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg></a><a class="icon-btn" href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 7.2s-.23-1.63-.95-2.35c-.9-.95-1.92-.96-2.38-1.02C16.9 3.5 12 3.5 12 3.5h-.01s-4.9 0-8.16.33c-.47.06-1.48.07-2.38 1.02-.72.72-.95 2.35-.95 2.35S.26 9.12.26 11.03v1.79c0 1.91.24 3.83.24 3.83s.23 1.63.95 2.35c.9.95 2.09.92 2.62 1.02 1.9.18 8.06.33 8.06.33s4.91 0 8.17-.34c.47-.06 1.48-.07 2.38-1.02.72-.72.95-2.35.95-2.35s.24-1.91.24-3.83v-1.79c0-1.91-.24-3.83-.24-3.83ZM9.7 14.98V8.66l6.4 3.17-6.4 3.15Z"/></svg></a></div></div>
+<div class="footer-col"><h5>快速导航</h5><ul><li><a href="experiments.html">基础实验</a></li><li><a href="modules.html">外设模块</a></li><li><a href="#">开发板</a></li><li><a href="#">3D 打印</a></li><li><a href="#">技术文章</a></li></ul></div>
+<div class="footer-col"><h5>友情链接</h5><ul><li><a href="#">灵顺实验室 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><a href="#">Maker Onsite <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><a href="#">Free AI Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><a href="#">DaShen Tech <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li></ul></div>
+</div><div class="footer-bottom"><span>© 2026 LINGFLUX · All Rights Reserved</span><span>Theme 4「Blueprint 工程蓝图」· DWG NO. LF-THEME4</span></div></div></footer>
+
+<button class="to-top" aria-label="回到顶部"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

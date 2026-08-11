@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DHT11 + GC9A01 圆屏打造 Game Boy 像素复古风温湿度计 · LINGFLUX — Theme 7 预览</title>
+<meta name="description" content="用 ESP32-S3 驱动 GC9A01 圆屏配合 DHT11，复刻 Game Boy DMG 经典四阶绿配色的像素复古温湿度计。">
+<link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="brand">
+      <span class="brand-dot"></span>LINGFLUX<span class="brand-demo">THEME 7</span>
+    </div>
+    <div class="header-actions">
+      <div class="header-stat"><span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>System: <span class="val">ONLINE</span></div>
+      <button class="icon-btn" title="语言">🌐</button>
+      <button class="icon-btn nav-toggle" onclick="document.querySelector('.nav-backdrop').classList.add('show');document.querySelector('.nav-drawer').classList.add('show')" aria-label="菜单">☰</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tabs">
+      <a href="index.html" class="tab">📊 Overview</a>
+      <a href="#" class="tab">🛠️ Boards</a>
+      <a href="modules.html" class="tab">📦 Modules</a>
+      <a href="experiments.html" class="tab active">🧪 Experiments</a>
+      <a href="#" class="tab">🏗️ Solutions</a>
+      <a href="#" class="tab">🖨️ 3D Print</a>
+      <a href="#" class="tab">📝 Articles</a>
+    </div>
+  </div>
+</header>
+
+<div class="nav-backdrop" onclick="this.classList.remove('show');document.querySelector('.nav-drawer').classList.remove('show')"></div>
+<aside class="nav-drawer">
+  <a href="index.html">📊 Overview</a><a href="#">🛠️ Boards</a><a href="modules.html">📦 Modules</a><a href="experiments.html" class="active">🧪 Experiments</a><a href="#">🏗️ Solutions</a><a href="#">🖨️ 3D Print</a><a href="#">📝 Articles</a>
+</aside>
+
+<main class="main">
+  <div class="detail-container">
+    <div class="dash-breadcrumb">
+      <a href="index.html">Overview</a><span class="sep">/</span>
+      <a href="experiments.html">Experiments</a><span class="sep">/</span>
+      <a href="experiments.html">ESP32</a><span class="sep">/</span>
+      <span>Pixel Thermometer</span>
+    </div>
+
+    <!-- Tags -->
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <span class="tag tag--blue">ESP32-S3</span>
+      <span class="tag tag--cyan">Display</span>
+      <span class="tag tag--green">Sensor</span>
+      <span class="tag tag--purple">Tutorial</span>
+    </div>
+
+    <h1>DHT11 + GC9A01 圆屏 · Game Boy 像素复古风温湿度计</h1>
+
+    <div class="meta-row">
+      <span>📅 2026-07-15</span>
+      <span>📖 1,200 reads</span>
+      <span>⭐ ★★☆☆ Beginner</span>
+      <span>🛠️ ESP32-S3 WROOM-1</span>
+      <span>📦 GC9A01 + DHT11</span>
+    </div>
+
+    <!-- Status panels row -->
+    <div class="dash-grid dash-grid--3" style="margin-bottom:24px">
+      <div class="panel">
+        <div class="panel-header">
+          <span><span class="panel-dot panel-dot--green"></span> STATUS</span>
+        </div>
+        <div class="panel-body" style="text-align:center">
+          <div style="font-size:28px;font-weight:700;color:var(--green);margin-bottom:4px">VERIFIED</div>
+          <div style="font-size:11px;color:var(--text-dim)">Tested on hardware</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span><span class="panel-dot panel-dot--blue"></span> BOM COUNT</span>
+        </div>
+        <div class="panel-body" style="text-align:center">
+          <div style="font-size:28px;font-weight:700;color:var(--accent);margin-bottom:4px">4</div>
+          <div style="font-size:11px;color:var(--text-dim)">Components</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span><span class="panel-dot panel-dot--cyan"></span> CODE LINES</span>
+        </div>
+        <div class="panel-body" style="text-align:center">
+          <div style="font-size:28px;font-weight:700;color:var(--cyan);margin-bottom:4px">~120</div>
+          <div style="font-size:11px;color:var(--text-dim)">Arduino / C++</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>📋 物料清单</h2>
+    <table class="dash-table" style="margin-bottom:24px">
+      <thead>
+        <tr><th>#</th><th>Component</th><th>Qty</th><th>Spec</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>ESP32-S3 Dev Board</td><td>1</td><td>WROOM-1</td><td>Type-C 接口</td></tr>
+        <tr><td>2</td><td>GC9A01 TFT 圆屏</td><td>1</td><td>240×240, SPI</td><td>1.28" IPS</td></tr>
+        <tr><td>3</td><td>DHT11 温湿度传感器</td><td>1</td><td>0-50℃, 20-90%RH</td><td>含 4.7kΩ 上拉电阻</td></tr>
+        <tr><td>4</td><td>面包板 + 杜邦线</td><td>1 set</td><td>—</td><td>公母各若干</td></tr>
+      </tbody>
+    </table>
+
+    <h2>🔌 接线表</h2>
+    <table class="dash-table" style="margin-bottom:24px">
+      <thead>
+        <tr><th>ESP32-S3</th><th>GC9A01</th><th>DHT11</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GPIO10 (CS)</td><td>CS</td><td>—</td></tr>
+        <tr><td>GPIO11 (MOSI)</td><td>SDA</td><td>—</td></tr>
+        <tr><td>GPIO12 (SCLK)</td><td>SCL</td><td>—</td></tr>
+        <tr><td>GPIO13 (DC)</td><td>DC</td><td>—</td></tr>
+        <tr><td>GPIO14 (RST)</td><td>RST</td><td>—</td></tr>
+        <tr><td>GPIO15 (BL)</td><td>BLK</td><td>—</td></tr>
+        <tr><td>3V3</td><td>VCC</td><td>VCC (+)</td></tr>
+        <tr><td>GND</td><td>GND</td><td>GND (-)</td></tr>
+        <tr><td>GPIO4</td><td>—</td><td>DATA</td></tr>
+      </tbody>
+    </table>
+
+    <h2>💻 核心代码</h2>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="lang">pixel-thermometer.ino</span>
+        <span>Arduino</span>
+      </div>
+      <pre>#include &lt;Adafruit_GC9A01A.h&gt;
+#include &lt;DHT.h&gt;
+
+#define DHTPIN 4
+#define DHTTYPE DHT11
+#define TFT_CS 10
+#define TFT_DC 13
+#define TFT_RST 14
+
+Adafruit_GC9A01A tft(TFT_CS, TFT_DC, TFT_RST);
+DHT dht(DHTPIN, DHTTYPE);
+
+// Game Boy DMG 四阶绿色调色板
+const uint16_t DMG_COLORS[4] = {
+  0x18E3, 0x3146, 0x8C51, 0x9CD3
+};
+
+void setup() {
+  Serial.begin(115200);
+  tft.begin();
+  tft.fillScreen(DMG_COLORS[0]);
+  dht.begin();
+}
+
+void loop() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  if (isnan(h) || isnan(t)) { delay(2000); return; }
+  drawPixelFrame();
+  drawTemp(t);
+  drawHumidity(h);
+  delay(2000);
+}</pre>
+    </div>
+
+    <h2>🎯 运行效果</h2>
+    <ul>
+      <li>屏幕顶部显示 Game Boy 风格标题栏 "GB-THERMO"</li>
+      <li>中间大字显示温度（℃）和湿度（%）</li>
+      <li>底部像素进度条展示湿度百分比</li>
+      <li>每 2 秒刷新，刷新时有像素翻页动画</li>
+    </ul>
+
+    <h2>🚀 扩展建议</h2>
+    <ul>
+      <li>替换 DHT11 为 DHT22（精度 ±0.5℃）</li>
+      <li>加入 WiFi + MQTT 上报至 Home Assistant</li>
+      <li>添加锂电池供电，做成便携设备</li>
+      <li>加入 microSD 离线数据记录</li>
+    </ul>
+
+    <!-- Related -->
+    <div class="panel" style="margin-top:32px">
+      <div class="panel-header">
+        <span><span class="panel-dot panel-dot--blue"></span> RELATED RESOURCES</span>
+      </div>
+      <div class="panel-body panel-body--flush">
+        <ul class="widget-list">
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--blue"></span>
+              <span class="item-title"><a href="#">ESP32-S3 开发板文档</a></span>
+            </div>
+            <div class="item-meta">Board Doc</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--cyan"></span>
+              <span class="item-title"><a href="#">GC9A01 模块参数</a></span>
+            </div>
+            <div class="item-meta">Module Doc</div>
+          </li>
+          <li>
+            <div class="item-main">
+              <span class="item-indicator ind--green"></span>
+              <span class="item-title"><a href="#">DHT11 数据手册</a></span>
+            </div>
+            <div class="item-meta">Datasheet</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="status-bar">
+    <span class="panel-dot panel-dot--green" style="width:6px;height:6px"></span>
+    LINGFLUX © 2026 · Theme 7 "Dashboard" · 数据仪表盘
+  </div>
+</footer>
+
+</body>
+</html>
