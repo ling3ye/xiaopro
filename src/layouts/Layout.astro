@@ -13,6 +13,7 @@
  */
 
 import '../styles/global.css';
+import '../styles/theme-ocean.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { ui, languages, defaultLang } from '../i18n/config';
@@ -118,6 +119,25 @@ const organizationData = {
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+		<!-- 主题防闪烁：在绘制前恢复 data-theme（须在 CSS 生效前执行）。
+		     优先级：URL ?theme= 参数（预览/分享用，会记住选择） > 本地存储 -->
+		<script is:inline>
+			(function () {
+				try {
+					var q = new URLSearchParams(location.search).get('theme');
+					if (q === 'ocean' || q === 'paper') {
+						document.documentElement.setAttribute('data-theme', q);
+						localStorage.setItem('lf-theme', q);
+						return;
+					}
+					var t = localStorage.getItem('lf-theme');
+					if (t === 'ocean' || t === 'paper') {
+						document.documentElement.setAttribute('data-theme', t);
+					}
+				} catch (e) {}
+			})();
+		</script>
+
 		<!-- SEO 元信息 -->
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
@@ -211,6 +231,33 @@ const organizationData = {
 					'it': { copy: 'Copia codice', copied: 'Copiato', failed: 'Copia non riuscita' },
 				};
 				var L = I18N[docLang] || I18N['en'];
+
+			/* ---------- 主题切换（Paper Lab / Ocean Deep） ---------- */
+			var themeChoices = document.querySelectorAll('[data-theme-choice]');
+			function syncThemeUI(theme: string) {
+				themeChoices.forEach(function (b) {
+					b.classList.toggle('on', b.getAttribute('data-theme-choice') === theme);
+				});
+			}
+			function applyTheme(theme: string) {
+				document.documentElement.setAttribute('data-theme', theme);
+				try { localStorage.setItem('lf-theme', theme); } catch (err) {}
+				syncThemeUI(theme);
+			}
+			syncThemeUI(document.documentElement.getAttribute('data-theme') || 'paper');
+			themeChoices.forEach(function (b) {
+				b.addEventListener('click', function () {
+					var t = b.getAttribute('data-theme-choice');
+					if (t) applyTheme(t);
+				});
+			});
+			/* 多标签页同步 */
+			window.addEventListener('storage', function (e) {
+				if (e.key === 'lf-theme' && (e.newValue === 'ocean' || e.newValue === 'paper')) {
+					document.documentElement.setAttribute('data-theme', e.newValue);
+					syncThemeUI(e.newValue);
+				}
+			});
 
 				/* ---------- 移动端抽屉导航 ---------- */
 				var toggle = document.querySelector('.nav-toggle');

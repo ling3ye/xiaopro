@@ -1,0 +1,397 @@
+/* ==========================================================================
+   LINGFLUX · Theme "Ocean Deep" 深海 —— 换肤层
+   深海军蓝基底 + 青绿→天蓝渐变强调（移植自 demo/theme1）
+
+   原理：不改动任何 DOM 与组件结构，仅通过 <html data-theme="ocean">
+   重新定义 Paper Lab 的同名设计令牌，并覆盖少量"氛围层"样式
+   （背景光晕 / 玻璃导航 / 按钮渐变 / 纸胶带等纸感专属装饰的取舍）。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 令牌重定义（变量名与 Paper Lab 一一对应）
+   -------------------------------------------------------------------------- */
+:root[data-theme='ocean'] {
+  color-scheme: dark;
+
+  --paper: #050d16;        /* 页面底色：深海最底层 */
+  --paper-2: #081422;      /* 交替区块 / 页脚 */
+  --card: #0d1d2f;         /* 卡片面 */
+  --note: #122540;         /* 便利贴 → 深海浮层 */
+  --ink: #e8f2fb;          /* 主文字 */
+  --ink-2: #9db4c8;        /* 次级 */
+  --ink-3: #617c93;        /* 弱化 */
+
+  --line: rgba(139, 184, 224, 0.12);
+  --line-2: rgba(139, 184, 224, 0.22);
+
+  --accent: #40e0cf;       /* 文本级高亮：青 */
+  --accent-2: #2dd4bf;     /* 强调加深 */
+  --accent-tint: rgba(64, 224, 207, 0.12);
+  --pen: #38bdf8;          /* 链接：天蓝 */
+  --pen-tint: rgba(56, 189, 248, 0.1);
+  --green: #34d399;        /* 检验绿 */
+  --green-tint: rgba(52, 211, 153, 0.1);
+
+  --shadow-1: 0 4px 24px rgba(2, 8, 16, 0.45);
+  --shadow-2: 0 16px 48px rgba(2, 8, 16, 0.55);
+
+  /* Ocean Deep 标题使用无衬线（Paper 的衬线标题是其皮肤的一部分） */
+  --font-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Cascadia Code",
+    Consolas, "Courier New", monospace;
+
+  --r-s: 8px;
+  --r-m: 14px;
+  --r-l: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   2. 氛围层：全局光晕 + 基础元素
+   -------------------------------------------------------------------------- */
+:root[data-theme='ocean'] body {
+  /* 去掉方格纸纹理 */
+  background-image: none;
+}
+
+/* 深海氛围光（青 / 蓝两束顶光） */
+:root[data-theme='ocean'] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 480px at 85% -10%, rgba(56, 189, 248, 0.07), transparent 60%),
+    radial-gradient(800px 500px at 0% 30%, rgba(45, 212, 191, 0.05), transparent 60%);
+}
+
+:root[data-theme='ocean'] ::selection { background: rgba(45, 212, 191, 0.32); color: #f0fdfc; }
+
+:root[data-theme='ocean'] ::-webkit-scrollbar-track { background: #050d16; }
+:root[data-theme='ocean'] ::-webkit-scrollbar-thumb { background: #1d3350; border-color: #050d16; }
+:root[data-theme='ocean'] ::-webkit-scrollbar-thumb:hover { background: #2a4a73; }
+
+/* --------------------------------------------------------------------------
+   3. 头部导航：玻璃拟态 + 发光激活态
+   -------------------------------------------------------------------------- */
+[data-theme='ocean'] .site-header {
+  background: rgba(8, 20, 34, 0.72);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom-color: var(--line);
+}
+
+[data-theme='ocean'] .brand { font-weight: 800; }
+[data-theme='ocean'] .brand-logo { filter: drop-shadow(0 0 8px rgba(64, 224, 207, 0.45)); }
+
+[data-theme='ocean'] .main-nav a:hover { background: rgba(139, 184, 224, 0.07); }
+[data-theme='ocean'] .main-nav a.active {
+  background: none;
+  color: var(--accent);
+}
+/* 发光下划线（替代纸感的荧光笔涂抹） */
+[data-theme='ocean'] .main-nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 13px; right: 13px; bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dd4bf, #38bdf8);
+  box-shadow: 0 0 10px rgba(64, 224, 207, 0.7);
+}
+
+[data-theme='ocean'] .icon-btn { background: rgba(139, 184, 224, 0.05); border-color: var(--line); }
+[data-theme='ocean'] .icon-btn:hover { border-color: rgba(64, 224, 207, 0.4); }
+
+[data-theme='ocean'] .lang-panel {
+  background: rgba(13, 29, 47, 0.96);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+[data-theme='ocean'] .nav-backdrop { background: rgba(3, 8, 14, 0.6); }
+[data-theme='ocean'] .nav-drawer { background: #0b1a2b; }
+
+/* --------------------------------------------------------------------------
+   4. 通用组件：按钮 / 眉标 / 芯片
+   -------------------------------------------------------------------------- */
+/* 渐变主按钮（青→蓝），深色底上文字用深色 */
+[data-theme='ocean'] .btn--primary {
+  background: linear-gradient(120deg, #2dd4bf 0%, #38bdf8 100%);
+  color: #04222b;
+  box-shadow: 0 8px 28px rgba(45, 212, 191, 0.28);
+}
+[data-theme='ocean'] .btn--primary:hover {
+  background: linear-gradient(120deg, #5eead4 0%, #38bdf8 100%);
+  color: #04222b;
+  box-shadow: 0 14px 36px rgba(45, 212, 191, 0.4);
+}
+
+[data-theme='ocean'] .btn--ghost { background: rgba(139, 184, 224, 0.06); }
+[data-theme='ocean'] .btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+[data-theme='ocean'] .btn--green:hover { background: #24a376; color: #04222b; }
+
+/* 眉标：胶囊 + 光点（替代方色块） */
+[data-theme='ocean'] .eyebrow {
+  color: var(--accent);
+  font-weight: 600;
+  padding: 6px 14px;
+  border: 1px solid rgba(64, 224, 207, 0.28);
+  border-radius: 999px;
+  background: var(--accent-tint);
+}
+[data-theme='ocean'] .eyebrow::before {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #2dd4bf, #38bdf8);
+  box-shadow: 0 0 10px rgba(64, 224, 207, 0.9);
+}
+
+/* 章节标题的双线装饰在深海里去掉 */
+[data-theme='ocean'] .section-head h2::after { display: none; }
+
+/* 芯片描边改为发光色调 */
+[data-theme='ocean'] .chip--accent { border-color: rgba(64, 224, 207, 0.35); }
+[data-theme='ocean'] .chip--pen { border-color: rgba(56, 189, 248, 0.35); }
+[data-theme='ocean'] .chip--green { border-color: rgba(52, 211, 153, 0.35); }
+
+/* 荧光笔划重点 → 青色 */
+[data-theme='ocean'] .mark {
+  background: linear-gradient(transparent 62%, rgba(64, 224, 207, 0.3) 62%, rgba(64, 224, 207, 0.3) 94%, transparent 94%);
+}
+[data-theme='ocean'] .mark--green {
+  background: linear-gradient(transparent 62%, rgba(52, 211, 153, 0.28) 62%, rgba(52, 211, 153, 0.28) 94%, transparent 94%);
+}
+
+/* --------------------------------------------------------------------------
+   5. 首页 Hero 氛围
+   -------------------------------------------------------------------------- */
+[data-theme='ocean'] .hero::before {
+  background-image:
+    linear-gradient(rgba(139, 184, 224, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 184, 224, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 30%, transparent 75%);
+}
+
+/* 纸胶带是纸感专属装饰，深海中隐藏 */
+[data-theme='ocean'] .tape { display: none; }
+
+/* 实验记录卡：去掉微倾斜，加深海玻璃感 */
+[data-theme='ocean'] .record-card {
+  transform: none;
+  border-color: var(--line);
+  box-shadow: 0 0 0 1px rgba(64, 224, 207, 0.12), 0 16px 48px rgba(2, 8, 16, 0.55);
+}
+[data-theme='ocean'] .rc-head { border-bottom-color: var(--line-2); }
+
+/* 漂浮便签 → 深海浮层 */
+[data-theme='ocean'] .hero-badge-float {
+  background: var(--note);
+  border-color: rgba(64, 224, 207, 0.3);
+  border-radius: var(--r-s);
+}
+
+/* 检验章微调：深色底上提高不透明度 */
+[data-theme='ocean'] .stamp { opacity: 0.95; box-shadow: none; }
+[data-theme='ocean'] .card-feature .stamp { background: rgba(13, 29, 47, 0.75); }
+
+/* --------------------------------------------------------------------------
+   6. 卡片与列表
+   -------------------------------------------------------------------------- */
+[data-theme='ocean'] .card:hover { border-color: rgba(64, 224, 207, 0.35); }
+[data-theme='ocean'] .card-feature:hover { border-color: rgba(64, 224, 207, 0.3); }
+
+/* 对比勾选浮标 */
+[data-theme='ocean'] .compare-check { background: rgba(13, 29, 47, 0.92); }
+[data-theme='ocean'] .compare-pill { border-color: rgba(64, 224, 207, 0.35); }
+[data-theme='ocean'] .compare-pill button:hover { background: rgba(64, 224, 207, 0.2); }
+
+/* 下拉筛选的深色 chevron（data-URI 需整体替换） */
+[data-theme='ocean'] .filter-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239db4c8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* 分页当前页：渐变底 + 深色字 */
+[data-theme='ocean'] .pagination .cur {
+  background: linear-gradient(120deg, #2dd4bf, #38bdf8);
+  border-color: transparent;
+  color: #04222b;
+}
+
+/* --------------------------------------------------------------------------
+   7. 正文 / 详情页适配（对齐 demo/theme1「Ocean Deep」实验详情页）
+   -------------------------------------------------------------------------- */
+/* 稿纸卡片去卡片化：正文直接铺在深海背景上（参考页无卡片容器） */
+[data-theme='ocean'] .paper-page {
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+/* 装订红边线 + 装订孔：深海中移除 */
+[data-theme='ocean'] .paper-page::before,
+[data-theme='ocean'] .paper-page::after { display: none; }
+
+/* 文章头：字距收紧，更接近参考页的无衬线大标题 */
+[data-theme='ocean'] .article-head h1 { letter-spacing: -0.02em; }
+[data-theme='ocean'] .article-hero-img { border-radius: var(--r-l); }
+
+/* 面包屑：去掉纸感的虚线下划线 */
+[data-theme='ocean'] .breadcrumb a { border-bottom: none; padding-bottom: 0; }
+
+[data-theme='ocean'] .prose { color: var(--ink-2); }
+[data-theme='ocean'] .prose a { text-decoration-color: rgba(56, 189, 248, 0.45); }
+
+/* h2：去掉 "§" 前缀与双线底框 → 左侧 56px 渐变发光下划线 */
+[data-theme='ocean'] .prose h2 {
+  border-bottom: none;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+[data-theme='ocean'] .prose h2::before { content: none; }
+[data-theme='ocean'] .prose h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 56px; height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2dd4bf, #38bdf8);
+  box-shadow: 0 0 10px rgba(64, 224, 207, 0.5);
+}
+
+/* h3："◦" → 等宽 "#" 前缀 */
+[data-theme='ocean'] .prose h3::before {
+  content: "# ";
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* hr：✂ 剪刀装饰 → 渐隐分割线 */
+[data-theme='ocean'] .prose hr {
+  background: linear-gradient(90deg, transparent, var(--line-2), transparent);
+}
+[data-theme='ocean'] .prose hr::after { content: none; }
+
+/* 图注：去掉 "FIG. " 前缀与等宽字体 */
+[data-theme='ocean'] .prose figcaption { font-family: var(--font-body); }
+[data-theme='ocean'] .prose figcaption::before { content: none; }
+
+/* 行内代码：橙色 → 青色 */
+[data-theme='ocean'] .prose :not(pre) > code {
+  color: #7ef0dd;
+  background: rgba(45, 212, 191, 0.1);
+  border-color: rgba(45, 212, 191, 0.22);
+}
+
+/* 引用块：左侧青边 + 青色渐隐底 */
+[data-theme='ocean'] .prose blockquote {
+  border-left: 3px solid #2dd4bf;
+  background: linear-gradient(90deg, rgba(45, 212, 191, 0.08), rgba(45, 212, 191, 0.02));
+}
+
+/* 表格斑马线 */
+[data-theme='ocean'] .prose tbody td { color: var(--ink-2); }
+[data-theme='ocean'] .prose tbody tr:nth-child(even) { background: rgba(139, 184, 224, 0.05); }
+
+/* 便利贴 callout → 深海浮层（天蓝描边 + 左上光晕） */
+[data-theme='ocean'] .callout {
+  transform: none;
+  border-radius: var(--r-m);
+  border-color: rgba(56, 189, 248, 0.3);
+  background:
+    radial-gradient(400px 160px at 0% 0%, rgba(56, 189, 248, 0.1), transparent 70%),
+    rgba(13, 29, 47, 0.7);
+}
+[data-theme='ocean'] .callout::before { display: none; }
+[data-theme='ocean'] .callout .callout-title { color: #7dd3fc; }
+[data-theme='ocean'] .callout .callout-title svg { color: #7dd3fc; }
+[data-theme='ocean'] .callout--warn {
+  border-color: rgba(251, 191, 36, 0.35);
+  background:
+    radial-gradient(400px 160px at 0% 0%, rgba(251, 191, 36, 0.08), transparent 70%),
+    rgba(13, 29, 47, 0.7);
+}
+[data-theme='ocean'] .callout--warn .callout-title { color: #fbbf24; }
+[data-theme='ocean'] .callout--warn .callout-title svg { color: #fbbf24; }
+
+/* 代码块：深海终端 */
+[data-theme='ocean'] .code-block { background: #0a1622; }
+[data-theme='ocean'] .code-lang {
+  color: var(--accent);
+  background: var(--accent-tint);
+  border-color: rgba(64, 224, 207, 0.3);
+}
+[data-theme='ocean'] .code-block pre {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(139, 184, 224, 0.05) 27px 28px),
+    #0a1622;
+  color: #d7e5f2;
+}
+[data-theme='ocean'] .code-block pre::-webkit-scrollbar-thumb { background: #1d3350; }
+[data-theme='ocean'] .prose > pre { background: #0a1622; color: #d7e5f2; }
+
+/* 目录：虚线引导符 → 左侧激活光条 */
+[data-theme='ocean'] .toc a::after { content: none; }
+[data-theme='ocean'] .toc a::before {
+  content: "";
+  position: absolute;
+  left: 2px; top: 50%;
+  width: 3px; height: 16px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #2dd4bf, #38bdf8);
+  transform: translateY(-50%) scaleY(0);
+  transition: transform 0.25s ease;
+}
+[data-theme='ocean'] .toc a.on::before { transform: translateY(-50%) scaleY(1); }
+
+/* 侧栏卡片标题：粗墨线 → 右侧渐隐细线（参考页同款） */
+[data-theme='ocean'] .aside-card h4 { border-bottom: none; padding-bottom: 0; }
+[data-theme='ocean'] .aside-card h4::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* FAQ 展开态：青色描边 */
+[data-theme='ocean'] .faq details[open] { border-color: rgba(64, 224, 207, 0.35); }
+
+/* 计数徽标 / FAQ 等描边色 */
+[data-theme='ocean'] .count-badge { border-color: rgba(64, 224, 207, 0.35); }
+[data-theme='ocean'] .faq details[open] summary .q-badge { color: #04222b; }
+
+/* 阅读进度条：青→蓝渐变 */
+[data-theme='ocean'] .progress-bar {
+  background: linear-gradient(90deg, #2dd4bf, #38bdf8);
+  box-shadow: 0 0 10px rgba(64, 224, 207, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   8. 页面区块氛围
+   -------------------------------------------------------------------------- */
+[data-theme='ocean'] .page-hero::before {
+  background-image:
+    linear-gradient(rgba(139, 184, 224, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 184, 224, 0.05) 1px, transparent 1px);
+}
+
+[data-theme='ocean'] .cta-banner {
+  background:
+    linear-gradient(rgba(139, 184, 224, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 184, 224, 0.05) 1px, transparent 1px),
+    var(--paper-2);
+  background-size: 26px 26px, 26px 26px, auto;
+}
+
+/* 打印时仍按浅色输出 */
+@media print {
+  :root[data-theme='ocean'] body { background: #fff; color: #1c1a17; }
+  :root[data-theme='ocean'] body::before { display: none; }
+}

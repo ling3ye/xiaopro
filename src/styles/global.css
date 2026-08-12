@@ -8,6 +8,8 @@
    1. 设计令牌
    -------------------------------------------------------------------------- */
 :root {
+  color-scheme: light;
+
   --paper: #faf7f0;        /* 页面底色：暖白纸 */
   --paper-2: #f0eadd;      /* 区块/页脚：略深米色 */
   --card: #fffdf8;         /* 卡片：亮纸面 */
@@ -322,7 +324,9 @@ a.chip:hover { border-color: var(--accent); color: var(--accent); }
   z-index: 120;
 }
 .lang-switch:hover .lang-panel,
-.lang-switch:focus-within .lang-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-switch:focus-within .lang-panel,
+.theme-switch:hover .lang-panel,
+.theme-switch:focus-within .lang-panel { opacity: 1; visibility: visible; transform: translateY(0); }
 .lang-panel a {
   display: flex;
   justify-content: space-between;
@@ -336,6 +340,57 @@ a.chip:hover { border-color: var(--accent); color: var(--accent); }
 .lang-panel a:hover { background: var(--paper-2); color: var(--ink); }
 .lang-panel a.on { color: var(--accent-2); font-weight: 700; background: var(--accent-tint); }
 .lang-panel a .code { font-size: 11px; color: var(--ink-3); font-family: var(--font-mono); }
+
+/* 主题切换（复用语言面板外观，选项为 button） */
+.theme-switch { position: relative; }
+.theme-panel { min-width: 168px; }
+.theme-panel button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--r-s);
+  background: none;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+  text-align: left;
+}
+.theme-panel button:hover { background: var(--paper-2); color: var(--ink); }
+.theme-panel button.on { color: var(--accent-2); font-weight: 700; background: var(--accent-tint); }
+.theme-panel button .code { font-size: 11px; color: var(--ink-3); font-family: var(--font-mono); }
+
+/* 移动端抽屉里的主题切换 */
+.drawer-theme { margin-top: 6px; padding-top: 14px; border-top: 1px dashed var(--line-2); }
+.drawer-theme .drawer-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 0 16px 8px;
+}
+.drawer-theme button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--r-s);
+  background: none;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  text-align: left;
+}
+.drawer-theme button:hover { background: var(--paper-2); color: var(--ink); }
+.drawer-theme button.on { color: var(--accent-2); font-weight: 700; background: var(--accent-tint); }
+.drawer-theme button .code { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); margin-left: auto; }
 
 /* 汉堡 & 抽屉 */
 .nav-toggle { display: none; }
