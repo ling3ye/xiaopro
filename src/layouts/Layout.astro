@@ -120,7 +120,7 @@ const organizationData = {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<!-- 主题防闪烁：在绘制前恢复 data-theme（须在 CSS 生效前执行）。
-		     优先级：URL ?theme= 参数（预览/分享用，会记住选择） > 本地存储 -->
+		     优先级：URL ?theme= 参数（预览/分享用，会记住选择） > 本地存储 > 默认 ocean -->
 		<script is:inline>
 			(function () {
 				try {
@@ -133,6 +133,8 @@ const organizationData = {
 					var t = localStorage.getItem('lf-theme');
 					if (t === 'ocean' || t === 'paper') {
 						document.documentElement.setAttribute('data-theme', t);
+					} else {
+						document.documentElement.setAttribute('data-theme', 'ocean');
 					}
 				} catch (e) {}
 			})();
@@ -244,7 +246,7 @@ const organizationData = {
 				try { localStorage.setItem('lf-theme', theme); } catch (err) {}
 				syncThemeUI(theme);
 			}
-			syncThemeUI(document.documentElement.getAttribute('data-theme') || 'paper');
+			syncThemeUI(document.documentElement.getAttribute('data-theme') || 'ocean');
 			themeChoices.forEach(function (b) {
 				b.addEventListener('click', function () {
 					var t = b.getAttribute('data-theme-choice');

@@ -337,6 +337,14 @@
 [data-theme='ocean'] .code-block pre::-webkit-scrollbar-thumb { background: #1d3350; }
 [data-theme='ocean'] .prose > pre { background: #0a1622; color: #d7e5f2; }
 
+/* Shiki token 切换到 ocean-deep 调色板（--shiki-dark 变量由构建期双主题注入，
+   配色对齐 demo/theme1：青函数 / 天蓝关键字 / 青绿字符串 / 琥珀数字 / 紫预处理） */
+[data-theme='ocean'] .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+}
+
 /* 目录：虚线引导符 → 左侧激活光条 */
 [data-theme='ocean'] .toc a::after { content: none; }
 [data-theme='ocean'] .toc a::before {
