@@ -849,6 +849,10 @@ body.nav-open .nav-drawer { transform: translateX(0); }
 }
 .article-layout--wide { grid-template-columns: minmax(0, 1fr); }
 
+/* grid item 默认最小宽度为 min-content，长代码/表格会把整列撑爆；
+   显式归零让正文列在窄屏可收缩，溢出交给内部滚动容器处理 */
+.article-body { min-width: 0; }
+
 /* 笔记本页面：装订孔 + 红色边线 */
 .paper-page {
   position: relative;
@@ -906,7 +910,7 @@ body.nav-open .nav-drawer { transform: translateX(0); }
 .article-hero-img .tape { top: 8px; left: 50%; transform: translateX(-50%) rotate(-1.5deg); z-index: 3; }
 
 /* ---- prose 正文 ---- */
-.prose { font-size: 16.5px; color: #36312a; }
+.prose { font-size: 16.5px; color: #36312a; overflow-wrap: break-word; }
 .prose > *:first-child { margin-top: 0; }
 .prose h2 {
   font-family: var(--font-serif);
@@ -968,7 +972,10 @@ body.nav-open .nav-drawer { transform: translateX(0); }
   border: 1px solid rgba(217, 98, 43, 0.25);
   padding: 2px 7px;
   border-radius: 4px;
-  white-space: nowrap;
+  /* 允许换行：短代码仍保持整行，长代码（如编译宏、URL）在窄屏可断行，
+     避免 min-content 过宽把手机布局视口撑爆、整页缩成蚂蚁字 */
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* 引用 */
@@ -1643,7 +1650,9 @@ body.nav-open .nav-drawer { transform: translateX(0); }
   .card-grid, .card-grid--4 { grid-template-columns: repeat(2, 1fr); }
   .card-feature { grid-template-columns: 1fr; }
   .card-feature .media { min-height: 220px; border-radius: var(--r-l) var(--r-l) 0 0; border-right: none; border-bottom: 1px solid var(--line); }
-  .article-layout { grid-template-columns: 1fr; }
+  /* 必须是 minmax(0, 1fr)：裸 1fr = minmax(auto, 1fr)，会按内容 min-content
+     撑宽轨道，导致手机布局视口膨胀、页面整体缩小 */
+  .article-layout { grid-template-columns: minmax(0, 1fr); }
   .article-aside { display: none; }
   .toc-mobile { display: block; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 34px; }
@@ -1663,9 +1672,12 @@ body.nav-open .nav-drawer { transform: translateX(0); }
   .stat { padding: 20px 12px; }
   .hero-badge-float { display: none; }
   .record-card { transform: none; }
-  .paper-page { padding: 30px 20px 34px 46px; }
-  .paper-page::before { left: 32px; }
+  /* 手机端收窄纸张留白，把宽度还给正文（装订线同步左移） */
+  .paper-page { padding: 26px 16px 30px 40px; }
+  .paper-page::before { left: 27px; }
   .paper-page::after { display: none; }
+  /* 小屏不再强制 480px 最小宽，短表格免于无谓的横向滚动 */
+  .prose table { min-width: 0; }
   .cta-banner { padding: 42px 22px; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; }
