@@ -336,6 +336,7 @@ a.chip:hover { border-color: var(--accent); color: var(--accent); }
   border-radius: var(--r-s);
   font-size: 13.5px;
   color: var(--ink-2);
+  white-space: nowrap;
 }
 .lang-panel a:hover { background: var(--paper-2); color: var(--ink); }
 .lang-panel a.on { color: var(--accent-2); font-weight: 700; background: var(--accent-tint); }
@@ -358,6 +359,7 @@ a.chip:hover { border-color: var(--accent); color: var(--accent); }
   color: var(--ink-2);
   cursor: pointer;
   text-align: left;
+  white-space: nowrap;
 }
 .theme-panel button:hover { background: var(--paper-2); color: var(--ink); }
 .theme-panel button.on { color: var(--accent-2); font-weight: 700; background: var(--accent-tint); }
@@ -1119,6 +1121,16 @@ body.nav-open .nav-drawer { transform: translateX(0); }
 .code-block pre::-webkit-scrollbar-thumb { background: #c8bda2; border: none; }
 .code-block pre code { font-family: inherit; font-size: inherit; background: none; border: none; padding: 0; white-space: pre; }
 .code-block pre code span { font-family: inherit; }
+
+/* Shiki 双主题着色（github-light + ocean-deep，astro.config.mjs 中 defaultColor: false）：
+   token 颜色全部以 CSS 变量输出，Paper Lab 默认取 --shiki-light；
+   Ocean Deep 的切换规则见 theme-ocean.css（--shiki-dark）。
+   font-style/font-weight 同步切换（ocean-deep 的注释为斜体），无变量时回落 inherit */
+.astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+}
 
 /* 未被 JS 包装的 pre 兜底（JS 禁用时仍可读） */
 .prose > pre {
