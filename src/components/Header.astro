@@ -55,10 +55,10 @@ const isActive = (itemPath: string) => {
   <div class="container">
     <a class="brand" href={getLocalizedPath('/', lang)} aria-label="LINGFLUX Home">
       <svg class="brand-logo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-        <path d="M13 3h6M14.5 3v8.2L7.6 23.5A3.4 3.4 0 0 0 10.6 28.5h10.8a3.4 3.4 0 0 0 3-12.3L17.5 11.2V3" stroke="#1c1a17" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M10.5 19h11" stroke="#d9622b" stroke-width="2.2" stroke-linecap="round"/>
-        <circle cx="14" cy="23.5" r="1.6" fill="#d9622b"/>
-        <circle cx="18.5" cy="25" r="1.2" fill="#3b6d11"/>
+        <path d="M13 3h6M14.5 3v8.2L7.6 23.5A3.4 3.4 0 0 0 10.6 28.5h10.8a3.4 3.4 0 0 0 3-12.3L17.5 11.2V3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10.5 19h11" style="stroke: var(--accent)" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="14" cy="23.5" r="1.6" style="fill: var(--accent)"/>
+        <circle cx="18.5" cy="25" r="1.2" style="fill: var(--green)"/>
       </svg>
       LINGFLUX
     </a>
@@ -75,6 +75,19 @@ const isActive = (itemPath: string) => {
     </nav>
 
     <div class="header-actions">
+      <div class="theme-switch">
+        <button class="icon-btn" aria-label="Switch theme" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18V3z" fill="currentColor" stroke="none" opacity="0.8"/></svg>
+        </button>
+        <div class="lang-panel theme-panel">
+          <button type="button" data-theme-choice="paper">
+            Paper Lab <span class="code">纸感 · 默认</span>
+          </button>
+          <button type="button" data-theme-choice="ocean">
+            Ocean Deep <span class="code">深海</span>
+          </button>
+        </div>
+      </div>
       <div class="lang-switch">
         <button class="icon-btn" aria-label="Switch language" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -110,6 +123,15 @@ const isActive = (itemPath: string) => {
       {t(`nav.${item.key}` as any)}
     </a>
   ))}
+  <div class="drawer-theme">
+    <div class="drawer-label">Theme</div>
+    <button type="button" data-theme-choice="paper">
+      Paper Lab <span class="code">纸感 · 默认</span>
+    </button>
+    <button type="button" data-theme-choice="ocean">
+      Ocean Deep <span class="code">深海</span>
+    </button>
+  </div>
   <div class="drawer-lang">
     {langOrder.map(code => (
       <a href={langHref(code)} class={code === lang ? 'on' : ''}>
