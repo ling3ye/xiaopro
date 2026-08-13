@@ -13,7 +13,7 @@
  * 如何切换路线（方案 A → 方案 B · 构建期 rehype 注入）：
  *   1) 删除本文件，以及 Layout.astro 底部对本文件的 <script> 引用；
  *   2) 在 astro.config.mjs 的 markdown 配置里新增 rehype 插件，
- *      沿用下方 IN_ARTICLE_AD_CONFIG 的 positions / client / slot 语义；
+ *      沿用下方 IN_ARTICLE_AD_CONFIG 的 ads（位置 + slot）/ client 语义；
  *   3) 页面上的 data-in-article-ads 标记可保留，供 rehype 端按该标记 gate。
  *
  * @module in-article-ads
@@ -21,12 +21,14 @@
 
 /* ==================== CONFIG（改广告参数只需动这里） ==================== */
 const IN_ARTICLE_AD_CONFIG = {
-  /** 插入位置：第 N 个 H2 之前（1-based）。
-   *  例：3 → 插在第 2 个 H2 的正文与第 3 个 H2 标题之间。 */
-  positions: [3, 6],
+  /** 广告位列表：每个位置（第 N 个 H2 之前，1-based）配一个独立广告单元 slot。
+   *  例：position:3 → 插在第 2 个 H2 的正文与第 3 个 H2 标题之间。
+   *  想加/减广告，直接增删本数组项；两处位置用不同 slot，便于在 AdSense 后台分开统计效果。 */
+  ads: [
+    { position: 3, slot: '6671033283' },  // 第 3 个 H2 上方
+  ],
   /** AdSense 参数（与 Layout.astro <head> 中全局加载的 script 对应） */
   client: 'ca-pub-5370940476348866',
-  slot: '6671033283',
   format: 'fluid',       // in-article 流式
   layout: 'in-article',
   /** 预留最小高度（px）：降低广告填充前后的 CLS 布局跳动（fluid 高度不定，此为经验值，可按需调） */
@@ -45,7 +47,7 @@ const IN_ARTICLE_AD_CONFIG = {
 
   var config = IN_ARTICLE_AD_CONFIG;
 
-  function buildAdUnit() {
+  function buildAdUnit(slot) {
     var wrap = document.createElement('div');
     wrap.className = 'in-article-ad';
     wrap.style.minHeight = config.minHeight + 'px';
@@ -72,7 +74,7 @@ const IN_ARTICLE_AD_CONFIG = {
     ins.setAttribute('data-ad-layout', config.layout);
     ins.setAttribute('data-ad-format', config.format);
     ins.setAttribute('data-ad-client', config.client);
-    ins.setAttribute('data-ad-slot', config.slot);
+    ins.setAttribute('data-ad-slot', slot);
     wrap.appendChild(ins);
 
     return wrap;
@@ -84,13 +86,12 @@ const IN_ARTICLE_AD_CONFIG = {
 
   hosts.forEach(function (host) {
     var h2s = Array.prototype.slice.call(host.querySelectorAll('h2'));
-    // 第 N 个 H2 → 数组下标 N-1；H2 数量不足的位置自然跳过
-    var targets = config.positions
-      .map(function (n) { return h2s[n - 1]; })
-      .filter(Boolean);
 
-    targets.forEach(function (heading) {
-      heading.parentNode.insertBefore(buildAdUnit(), heading);
+    config.ads.forEach(function (ad) {
+      // 第 N 个 H2 → 数组下标 N-1；H2 数量不足的位置自然跳过
+      var heading = h2s[ad.position - 1];
+      if (!heading) return;
+      heading.parentNode.insertBefore(buildAdUnit(ad.slot), heading);
       inserted++;
     });
   });
