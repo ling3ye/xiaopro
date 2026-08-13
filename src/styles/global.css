@@ -959,10 +959,9 @@ body.nav-open .nav-drawer { transform: translateX(0); }
 .prose figcaption { text-align: center; font-size: 13px; color: var(--ink-3); margin-top: 10px; font-family: var(--font-mono); }
 .prose figcaption::before { content: "FIG. "; color: var(--accent-2); font-weight: 700; }
 
-/* 嵌入视频自适应 */
+/* 嵌入视频自适应：固定 16:9（CSS 的 attr() 暂不支持用在 aspect-ratio 上，故直接写死比例） */
 .prose iframe { max-width: 100%; border: 1px solid var(--line-2); border-radius: var(--r-s); box-shadow: var(--shadow-1); margin: 26px auto; display: block; }
-.prose iframe[width][height] { aspect-ratio: attr(width) / attr(height); height: auto; }
-@supports not (aspect-ratio: 1) { .prose iframe[width][height] { height: auto; } }
+.prose iframe[width][height] { aspect-ratio: 16 / 9; height: auto; }
 
 /* 行内代码 */
 .prose :not(pre) > code {
