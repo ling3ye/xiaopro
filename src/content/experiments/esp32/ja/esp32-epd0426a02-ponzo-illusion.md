@@ -51,6 +51,9 @@ image: "https://img.lingflux.com/2026/10/71af63a18796270f26845066c55d2283.jpg"
 
 ![](https://img.lingflux.com/2026/10/68b443e3994d10b40d287b13965c7c93.jpg)
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OTnjpqa3W_M?si=bx7XbbxggXATzQhh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 部品解説
 
 ### EPD0426A02 電子ペーパー — 電源を切っても「記憶」する電子黒板
