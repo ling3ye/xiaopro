@@ -43,14 +43,14 @@ Tras grabar un único archivo `.ino`, la pantalla empieza por la página de inic
 |    # | Demo          | Qué mirar                                              | Duración | FPS objetivo |
 | ---: | ------------- | ------------------------------------------------------ | -------: | -----------: |
 |    1 | Hello World   | Texto grande, bordes, fondo tramado y una carita       |   3.5 s  |      estática |
-|    2 | Dither Gray   | 17 niveles de tramado Bayer 4×4, gradiente y círculos grises | 6.5 s |  estática |
+|    2 | Dither Gray   | 17 niveles de tramado ordenado Bayer 4×4, degradado, círculos grises (no es escala de grises nativa; los píxeles físicos siguen siendo 1 bit) | 6.5 s |  estática |
 |    3 | Geometry      | Líneas, rectángulos, círculos, triángulos y polígonos  |      5 s |      estática |
 |    4 | Pixel Grid    | Bordes, relación de aspecto, diagonales y centrado geométrico | 5 s |   estática |
 |    5 | Text & Font   | ASCII 5×7, escalado entero y texto invertido           |    5.5 s |      estática |
 |    6 | Dashboard UI  | Tarjetas, barras de progreso, interruptores, batería y datos en vivo | 9 s | 4 FPS |
 |    7 | Frame Rate    | FPS real, coste por trama y gráfico histórico de 54 puntos | 8.5 s | sin límite |
 |    8 | Fine Patterns | Tableros de 1/2/4 píxeles y parpadeo de líneas finas   |      6 s |       2 FPS  |
-|    9 | Bounce        | Rebotes, colisiones, ghosting de movimiento y contador |      9 s |      20 FPS  |
+|    9 | Bounce        | Rebotes, colisiones, observación de ghosting de movimiento y contador |      9 s |      20 FPS  |
 |   10 | Starfield     | Vuelo en perspectiva a través de 56 estrellas          |      9 s |      20 FPS  |
 |   11 | Game of Life  | Juego de la vida de Conway en un toroide 34×34         |     12 s |       3 FPS  |
 |   12 | Uptime Clock  | Reloj de tiempo activo basado en `esp_timer`           |      9 s |       4 FPS  |
@@ -259,7 +259,7 @@ Código fuente completo y listo para grabar:
 #define PIN_CS           9
 #define PIN_DC           7
 #define PIN_RES          6
-#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz; se recomienda 20~30 MHz */
+#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz usado en este ejemplo; si la pantalla se corrompe, bajar primero a 8/5 MHz */
 
 /* ================= Parámetros básicos del ST7305 ================= */
 #define ST7305_LCD_WIDTH      300
@@ -355,7 +355,7 @@ static void initial_st7305(st7305_handle_t dev)
     WR(0x36, 0x48);         /* MADCTL: MX=1, DO=1 */
     WR(0x3A, 0x11);         /* Data Format: 3-write 24-bit */
     WR(0xB9, 0x20);         /* Modo Mono (legado del fabricante) */
-    WR(0xB8, 0x29);         /* Panel: dot_1 inversión + escaneo Frame */
+    WR(0xB8, 0x29);         /* Panel: inversión de polaridad de controlador 1-dot + escaneo Frame */
 
     write_register(dev, 0x21);  /* Inverse ON */
 
@@ -1567,6 +1567,10 @@ Así que cada fila no es el habitual 300÷8, sino 300÷4 = 75 bytes; verticalmen
 
 El framebuffer es como dibujar primero en un borrador y entregarlo después a la pantalla de una vez. Así el dibujo no se enreda con el timing de SPI y el código es más fácil de mantener.
 
+Los 17 niveles de brillo de este ejemplo se producen mediante una matriz Bayer 4×4 que controla la densidad de puntos negros y blancos — la profundidad de píxel no aumenta, por lo que el framebuffer de 300×400 sigue siendo de 15000 bytes. Los «17 niveles» son el número teórico de patrones de tramado; el grado realmente distinguible depende también de la distancia de visualización y del efecto de visualización del panel.
+
+`INVON/INVOFF` controla la inversión de visualización blanco/negro; `Dot Inversion` es un mecanismo de polaridad de controlador LCD — no son el mismo concepto, ni tampoco es una «inversión periódica de pantalla completa para eliminar imágenes fantasma».
+
 ### Nota de código 2: cómo una coordenada aterriza en un bit concreto del framebuffer
 
 Tras la rotación, las coordenadas lógicas se mapean de vuelta a coordenadas físicas 300×400, y luego se calculan la posición del byte y la posición del bit:
@@ -1623,6 +1627,8 @@ void st7305_display(st7305_handle_t dev)
 ```
 
 A 20 MHz, el tiempo teórico de transferencia SPI pura de 15000 bytes es de unos 6 ms; en la práctica hay que sumar comandos, dibujo y planificación del programa. La página 7 muestra el coste real medido — no se hacen pasar valores teóricos por FPS medidos.
+
+El límite inferior del ciclo de escritura indicado en la hoja de datos corresponde a unos 33,3 MHz — es la especificación de temporización del controlador ST7305, no una garantía de que cualquier cable dupont, placa adaptadora o entorno de alimentación pueda alcanzar esa velocidad de forma estable. Este ejemplo usa 20 MHz; si aparecen pantallas corruptas, desalineaciones o arranques inestables, bajar primero la velocidad para revisar el cableado y la integridad de la señal.
 
 ### Nota de código 4: HPM, LPM y las imágenes estáticas no son lo mismo
 
@@ -1687,6 +1693,8 @@ Es una pantalla totalmente reflectiva sin retroiluminación — no ha aprendido 
 ### 5. La animación deja estelas o los patrones finos parpadean
 
 Los tableros densos, la alternancia de fases y la inversión rápida de trama completa son pruebas de estrés por diseño — no todas las UI se verán así. Baja el `target_fps` de las páginas animadas, reduce la inversión de alta frecuencia en áreas grandes y confirma que estás en HPM; si el ghosting es evidente, no sigas acelerando contra la física del panel.
+
+Este controlador no necesita inversiones periódicas de pantalla completa blanco/negro para eliminar imágenes fantasma, a diferencia de algunas pantallas e-paper. Las páginas animadas borran y redibujan el framebuffer cada fotograma — es una actualización de pantalla normal; las páginas estáticas se escriben una vez y el controlador las escanea continuamente. Si las imágenes fantasma persisten, se deben revisar los parámetros de inicialización del fabricante, los ajustes HPM/LPM y el ritmo de actualización, en lugar de añadir un flash de inversión temporizado.
 
 ### 6. Tras cambiar a chino solo salen signos de interrogación o cuadros
 

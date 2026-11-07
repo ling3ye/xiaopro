@@ -43,14 +43,14 @@ Après avoir flashé un seul fichier `.ino`, l'écran démarre sur la page d'acc
 |    # | Démo          | À observer                                             | Durée   | FPS cible    |
 | ---: | ------------- | ------------------------------------------------------ | ------: | -----------: |
 |    1 | Hello World   | Grand texte, bordures, fond tramé et un sourire        |  3,5 s  |     statique |
-|    2 | Dither Gray   | 17 niveaux de tramage Bayer 4×4, dégradé et cercles gris | 6,5 s |     statique |
+|    2 | Dither Gray   | 17 niveaux de tramage ordonné Bayer 4×4, dégradé et cercles gris (pas de niveaux de gris natifs ; les pixels physiques restent 1 bit) | 6,5 s |     statique |
 |    3 | Geometry      | Lignes, rectangles, cercles, triangles et polygones    |     5 s |     statique |
 |    4 | Pixel Grid    | Bords, rapport d'aspect, diagonales et centrage géométrique | 5 s |   statique |
 |    5 | Text & Font   | ASCII 5×7, mise à l'échelle entière et texte inversé   |   5,5 s |     statique |
 |    6 | Dashboard UI  | Cartes, barres de progression, interrupteurs, batterie et données live | 9 s | 4 FPS |
 |    7 | Frame Rate    | FPS réel, coût par trame et graphe d'historique à 54 points | 8,5 s | sans limite |
 |    8 | Fine Patterns | Damiers 1/2/4 pixels et scintillement de lignes fines  |     6 s |       2 FPS  |
-|    9 | Bounce        | Rebonds, collisions, ghosting de mouvement et compteur |     9 s |      20 FPS  |
+|    9 | Bounce        | Rebonds, collisions, observation du ghosting de mouvement et compteur |     9 s |      20 FPS  |
 |   10 | Starfield     | Vol en perspective à travers 56 étoiles                |     9 s |      20 FPS  |
 |   11 | Game of Life  | Jeu de la vie de Conway sur un tore 34×34              |    12 s |       3 FPS  |
 |   12 | Uptime Clock  | Une horloge de durée de fonctionnement basée sur `esp_timer` | 9 s |   4 FPS  |
@@ -259,7 +259,7 @@ Code source complet et prêt à flasher :
 #define PIN_CS           9
 #define PIN_DC           7
 #define PIN_RES          6
-#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz ; 20~30 MHz recommandé */
+#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz utilisé dans cet exemple ; en cas d'affichage corrompu, baisser d'abord à 8/5 MHz */
 
 /* ================= Paramètres de base du ST7305 ================= */
 #define ST7305_LCD_WIDTH      300
@@ -355,7 +355,7 @@ static void initial_st7305(st7305_handle_t dev)
     WR(0x36, 0x48);         /* MADCTL: MX=1, DO=1 */
     WR(0x3A, 0x11);         /* Data Format: 3-write 24-bit */
     WR(0xB9, 0x20);         /* Mode Mono (héritage du fabricant) */
-    WR(0xB8, 0x29);         /* Panel : dot_1 inversion + balayage Frame */
+    WR(0xB8, 0x29);         /* Panel : inversion de polarité de commande 1-dot + balayage Frame */
 
     write_register(dev, 0x21);  /* Inverse ON */
 
@@ -1567,6 +1567,10 @@ Donc chaque ligne n'est pas l'habituel 300÷8, mais 300÷4 = 75 octets ; vertica
 
 Le framebuffer, c'est comme dessiner d'abord sur un brouillon puis le remettre à l'écran d'un coup. Ainsi le dessin ne s'emmêle pas avec le timing SPI et le code reste plus facile à maintenir.
 
+Les 17 niveaux de luminosité de cet exemple sont produits par une matrice Bayer 4×4 qui contrôle la densité des points noirs et blancs — la profondeur de pixel n'augmente pas, donc le framebuffer 300×400 reste à 15000 octets. Les « 17 niveaux » correspondent au nombre théorique de motifs de tramage ; le nombre réellement discernable dépend aussi de la distance de visualisation et du rendu du panneau.
+
+`INVON/INVOFF` contrôle l'inversion d'affichage noir/blanc ; `Dot Inversion` est un mécanisme de polarité de commande LCD — ce ne sont pas les mêmes concepts, et ce n'est pas non plus une « inversion plein écran temporisée pour éliminer les images fantômes ».
+
 ### Note de code 2 : comment une coordonnée atterrit sur un bit précis du framebuffer
 
 Après rotation, les coordonnées logiques sont mappées vers les coordonnées physiques 300×400, puis on calcule la position de l'octet et la position du bit :
@@ -1623,6 +1627,8 @@ void st7305_display(st7305_handle_t dev)
 ```
 
 À 20 MHz, le temps théorique de transfert SPI pur de 15000 octets est d'environ 6 ms ; en pratique on ajoute les commandes, le dessin et l'ordonnancement du programme. La page 7 affiche le coût réel mesuré — on ne fait pas passer des valeurs théoriques pour des FPS mesurés.
+
+La limite inférieure du cycle d'écriture indiquée dans la fiche technique correspond à environ 33,3 MHz — c'est la spécification de timing du contrôleur ST7305, pas une garantie que n'importe quels câbles dupont, cartes d'adaptation ou environnements d'alimentation puissent atteindre cette vitesse de manière stable. Cet exemple utilise 20 MHz ; en cas d'affichage corrompu, de décalage ou de démarrage instable, baisser d'abord la fréquence pour vérifier le câblage et l'intégrité du signal.
 
 ### Note de code 4 : HPM, LPM et les images statiques ne sont pas la même chose
 
@@ -1687,6 +1693,8 @@ C'est un écran totalement réflectif sans rétroéclairage — il n'a pas souda
 ### 5. L'animation laisse des traînées ou les motifs fins scintillent
 
 Les damiers denses, l'alternance de phases et l'inversion rapide pleine trame sont des tests de stress par conception — toutes les UI ne ressembleront pas à ça. Baissez le `target_fps` des pages animées, réduisez l'inversion haute fréquence sur de grandes surfaces et confirmez que vous êtes en HPM ; si le ghosting est marqué, n'accélérez pas contre la physique du panneau.
+
+Ce pilote n'a pas besoin d'inversions périodiques plein écran noir/blanc pour éliminer les images fantômes, contrairement à certains écrans e-paper. Les pages animées effacent et redessinent le framebuffer à chaque frame — c'est une simple mise à jour d'affichage ; les pages statiques sont écrites une fois et le contrôleur les balaie en continu. Si les images fantômes persistent, il faut vérifier les paramètres d'initialisation du fabricant, les réglages HPM/LPM et le rythme de rafraîchissement, plutôt que d'ajouter un flash d'inversion temporisé.
 
 ### 6. Après passage au chinois, seuls des points d'interrogation ou des cases sortent
 

@@ -43,14 +43,14 @@ Dopo aver flashato un unico file `.ino`, lo schermo parte dalla pagina iniziale 
 |    # | Demo          | Cosa guardare                                          | Durata  | FPS obiettivo |
 | ---: | ------------- | ------------------------------------------------------ | ------: | ------------: |
 |    1 | Hello World   | Testo grande, bordi, sfondo ditherato e uno smiley     |  3,5 s  |       statica |
-|    2 | Dither Gray   | 17 livelli di dithering Bayer 4×4, gradiente e cerchi grigi | 6,5 s |     statica |
+|    2 | Dither Gray   | 17 livelli di dithering ordinato Bayer 4×4, gradiente, cerchi grigi (non scala di grigi nativa; i pixel fisici restano 1 bit) | 6,5 s |     statica |
 |    3 | Geometry      | Linee, rettangoli, cerchi, triangoli e poligoni        |     5 s |       statica |
 |    4 | Pixel Grid    | Bordi, rapporto d'aspetto, diagonali e centratura geometrica | 5 s |     statica |
 |    5 | Text & Font   | ASCII 5×7, scaling intero e testo invertito            |   5,5 s |       statica |
 |    6 | Dashboard UI  | Card, barre di avanzamento, interruttori, batteria e dati live | 9 s | 4 FPS |
 |    7 | Frame Rate    | FPS reale, costo per trama e grafico storico a 54 punti |   8,5 s | senza limiti |
 |    8 | Fine Patterns | Scacchiere da 1/2/4 pixel e sfarfallio di linee sottili |    6 s |        2 FPS  |
-|    9 | Bounce        | Rimbalzi, collisioni, ghosting di movimento e contatore |    9 s |       20 FPS  |
+|    9 | Bounce        | Rimbalzi, collisioni, osservazione del ghosting di movimento e contatore |    9 s |       20 FPS  |
 |   10 | Starfield     | Volo in prospettiva attraverso 56 stelle               |     9 s |       20 FPS  |
 |   11 | Game of Life  | Gioco della vita di Conway su un toro 34×34            |    12 s |        3 FPS  |
 |   12 | Uptime Clock  | Un orologio di uptime basato su `esp_timer`            |     9 s |        4 FPS  |
@@ -259,7 +259,7 @@ Codice sorgente completo e pronto da flashare:
 #define PIN_CS           9
 #define PIN_DC           7
 #define PIN_RES          6
-#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz; consigliati 20~30 MHz */
+#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz usato in questo esempio; in caso di schermo corrotto, abbassare prima a 8/5 MHz */
 
 /* ================= Parametri base dello ST7305 ================= */
 #define ST7305_LCD_WIDTH      300
@@ -355,9 +355,9 @@ static void initial_st7305(st7305_handle_t dev)
     WR(0x36, 0x48);         /* MADCTL: MX=1, DO=1 */
     WR(0x3A, 0x11);         /* Data Format: 3-write 24-bit */
     WR(0xB9, 0x20);         /* Modalità Mono (retaggio del produttore) */
-    WR(0xB8, 0x29);         /* Panel: dot_1 inversione + scansione Frame */
+    WR(0xB8, 0x29);         /* Panel: inversione di polarità del driver 1-dot + scansione Frame */
 
-    write_register(dev, 0x21);  /* Inverse ON */
+    write_register(dev, 0x21);  /* Inverse ON (INVON): inversione di visualizzazione bianco/nero, non Dot Inversion */
 
     /* WRITE RAM finestra indirizzi 300*400 */
     WR(0x2A, 0x12, 0x2B);   /* CASET */
@@ -1567,6 +1567,10 @@ Quindi ogni riga non è il solito 300÷8, ma 300÷4 = 75 byte; verticalmente i p
 
 Il framebuffer è come disegnare prima su una brutta copia e poi consegnarla allo schermo in un colpo solo. Così il disegno non si ingarbuglia con il timing SPI e il codice resta più facile da mantenere.
 
+I 17 livelli di luminosità di questo esempio sono prodotti da una matrice Bayer 4×4 che controlla la densità dei punti bianchi e neri — la profondità di pixel non aumenta, quindi il framebuffer 300×400 resta di 15000 byte. I «17 livelli» sono il numero teorico di pattern di dithering; il grado effettivamente distinguibile dipende anche dalla distanza di visualizzazione e dall'effetto di visualizzazione del pannello.
+
+`INVON/INVOFF` controlla l'inversione di visualizzazione bianco/nero; `Dot Inversion` è un meccanismo di polarità del driver LCD — non sono lo stesso concetto, né è una «inversione periodica a schermo intero per eliminare le immagini fantasma».
+
 ### Nota di codice 2: come una coordinata atterra su un bit preciso del framebuffer
 
 Dopo la rotazione, le coordinate logiche vengono rimappate sulle coordinate fisiche 300×400, poi si calcolano la posizione del byte e la posizione del bit:
@@ -1623,6 +1627,8 @@ void st7305_display(st7305_handle_t dev)
 ```
 
 A 20 MHz, il tempo teorico di trasferimento SPI puro di 15000 byte è di circa 6 ms; in pratica si sommano comandi, disegno e scheduling del programma. La pagina 7 mostra il costo reale misurato — non si spacciano valori teorici per FPS misurati.
+
+Il limite inferiore del ciclo di scrittura indicato nel datasheet corrisponde a circa 33,3 MHz — è la specifica di temporizzazione del controller ST7305, non una garanzia che qualsiasi cavo dupont, scheda adattatrice o ambiente di alimentazione possa raggiungere stabilmente quella velocità. Questo esempio usa 20 MHz; in caso di schermo corrotto, disallineamenti o avvii instabili, abbassare prima la velocità per verificare cablaggio e integrità del segnale.
 
 ### Nota di codice 4: HPM, LPM e le immagini statiche non sono la stessa cosa
 
@@ -1687,6 +1693,8 @@ Controlla `DTFORM=0x11`, la finestra indirizzi di colonna e il mapping dei bit d
 ### 5. L'animazione lascia scie o i pattern fini sfarfallano
 
 Le scacchiere fitte, l'alternanza di fasi e l'inversione rapida a trama intera sono stress test per progettazione — non tutte le UI saranno così. Abbassa il `target_fps` delle pagine animate, riduci l'inversione ad alta frequenza su grandi aree e conferma di essere in HPM; se il ghosting è marcato, non continuare ad accelerare contro la fisica del pannello.
+
+Questo driver non necessita di inversioni periodiche a schermo intero bianco/nero per eliminare le immagini fantasma, a differenza di alcuni display e-paper. Le pagine animate cancellano e ridisegnano il framebuffer ogni frame — è un normale aggiornamento dello schermo; le pagine statiche vengono scritte una volta e il controller le scansiona continuamente. Se le immagini fantasma persistono, si dovrebbero controllare i parametri di inizializzazione del produttore, le impostazioni HPM/LPM e il ritmo di aggiornamento, anziché aggiungere un flash di inversione temporizzato.
 
 ### 6. Dopo il passaggio al cinese escono solo punti interrogativi o quadratini
 

@@ -43,14 +43,14 @@ After flashing a single `.ino` file, the screen starts at the splash page and lo
 |    # | Demo          | What to look at                                      | Dwell time | Target FPS  |
 | ---: | ------------- | ---------------------------------------------------- | ---------: | ----------: |
 |    1 | Hello World   | Big text, borders, dithered background and a smiley  |      3.5 s |      static |
-|    2 | Dither Gray   | 17 levels of 4×4 Bayer dithering, gradient, gray circles |   6.5 s |      static |
+|    2 | Dither Gray   | 17 shades of 4×4 Bayer ordered dithering, gradient, gray circles (not native grayscale; physical pixels remain 1-bit) |   6.5 s |      static |
 |    3 | Geometry      | Lines, rectangles, circles, triangles and polygons   |         5 s |      static |
 |    4 | Pixel Grid    | Edges, aspect ratio, diagonals and geometric centering |       5 s |      static |
 |    5 | Text & Font   | 5×7 ASCII, integer scaling and reversed text         |       5.5 s |      static |
 |    6 | Dashboard UI  | Cards, progress bars, toggles, battery and live data |         9 s |      4 FPS  |
 |    7 | Frame Rate    | Real FPS, per-frame cost and a 54-point history graph |      8.5 s | unthrottled |
 |    8 | Fine Patterns | 1/2/4-pixel checkerboards and thin-line flicker      |         6 s |      2 FPS  |
-|    9 | Bounce        | Bouncing, collisions, motion ghosting and hit counter |        9 s |     20 FPS  |
+|    9 | Bounce        | Bouncing, collisions, motion ghosting observation and hit counter |        9 s |     20 FPS  |
 |   10 | Starfield     | Perspective flight through 56 stars                  |         9 s |     20 FPS  |
 |   11 | Game of Life  | Conway's Life on a 34×34 toroidal grid               |        12 s |      3 FPS  |
 |   12 | Uptime Clock  | An uptime clock based on `esp_timer`                 |         9 s |      4 FPS  |
@@ -259,7 +259,7 @@ Complete flashable source code:
 #define PIN_CS           9
 #define PIN_DC           7
 #define PIN_RES          6
-#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz; 20~30 MHz recommended */
+#define SPI_CLOCK_HZ     20000000UL   /* 20 MHz used in this example; drop to 8/5 MHz first if the screen garbles */
 
 /* ================= ST7305 basic parameters ================= */
 #define ST7305_LCD_WIDTH      300
@@ -355,7 +355,7 @@ static void initial_st7305(st7305_handle_t dev)
     WR(0x36, 0x48);         /* MADCTL: MX=1, DO=1 */
     WR(0x3A, 0x11);         /* Data Format: 3-write 24-bit */
     WR(0xB9, 0x20);         /* Mono mode (vendor legacy) */
-    WR(0xB8, 0x29);         /* Panel: dot_1 inversion + Frame scan */
+    WR(0xB8, 0x29);         /* Panel: 1-dot drive polarity inversion + Frame scan */
 
     write_register(dev, 0x21);  /* Inverse ON */
 
@@ -1567,6 +1567,10 @@ So each row is not the usual 300÷8, but 300÷4 = 75 bytes; vertically, pixels a
 
 The framebuffer is like sketching on scratch paper first and then handing it to the screen in one go. That way drawing doesn't get tangled up with SPI timing, and the code stays easier to maintain.
 
+The 17 shades in this example are produced by a 4×4 Bayer matrix controlling black/white dot density — no extra pixel depth is added, so the 300×400 framebuffer remains 15000 bytes. The "17 shades" is the theoretical number of dither patterns; actual discernible levels depend on viewing distance and panel rendering.
+
+`INVON/INVOFF` controls display black/white inversion; `Dot Inversion` is an LCD drive polarity mechanism — they are not the same concept, nor is it a "timed full-screen inversion to clear ghosting".
+
 ### Code Note 2: How a Coordinate Lands on a Specific Bit in the Framebuffer
 
 After rotation, logical coordinates are mapped back to 300×400 physical coordinates, then the byte position and bit position are computed:
@@ -1623,6 +1627,8 @@ void st7305_display(st7305_handle_t dev)
 ```
 
 At 20 MHz, the theoretical pure-SPI transfer time for 15000 bytes is about 6 ms; in practice you add commands, drawing and scheduling on top. Page 7 shows the real measured cost — no theoretical numbers passed off as measured FPS.
+
+The datasheet's write-cycle lower bound corresponds to about 33.3 MHz — that is the ST7305 controller's timing spec, not a guarantee that any dupont wires, adapter boards or power environment can reliably reach that speed. This example uses 20 MHz; if you see garbled output, misalignment or unstable startup, lower the clock first to check wiring and signal integrity.
 
 ### Code Note 4: HPM, LPM and Static Images Are Not the Same Thing
 
@@ -1687,6 +1693,8 @@ This is a fully reflective backlight-free screen — it hasn't suddenly learned 
 ### 5. Animation ghosts or fine patterns flicker
 
 Dense checkerboards, alternating phases and fast full-frame inversion are stress tests by design — not every UI will look like that. Lower the animated pages' `target_fps`, reduce large-area high-frequency inversion, and confirm you're in HPM; if ghosting is obvious, don't keep pushing speed against the panel's physics.
+
+This driver does not need periodic full-screen black/white inversion to clear ghosting, unlike some e-paper displays. Animated pages clear and redraw the framebuffer every frame — that is just normal refresh; static pages are written once and the controller keeps scanning them. If ghosting persists, check the vendor initialization parameters, HPM/LPM settings and refresh cadence instead of adding a timed inversion flash.
 
 ### 6. After switching to Chinese, you only get question marks or boxes
 
