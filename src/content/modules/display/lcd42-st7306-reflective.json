@@ -1,0 +1,217 @@
+{
+  "brand": "Osptek",
+  "category": "display",
+  "model": "4.2' Reflective 4-Color LCD ST7306 (YDP420H005-V3)",
+  "specs": {
+    "zh-cn": {
+      "显示颜色": "2 bit 四色：白、青、红、黑（无灰阶）",
+      "尺寸": "4.2 寸全反射 TFT",
+      "类型": "全反射式 TFT LCD（无背光，依靠环境光显示）",
+      "驱动芯片": "Sitronix ST7306",
+      "分辨率": "300(H) × 400(V)（软件可映射为 400×300 横屏）",
+      "通信接口": "4 线 SPI（只写，FPC 无 MISO/SDO；示例 20MHz）",
+      "工作电压": "3.3V（供电与逻辑；两个供电脚都要接）",
+      "管脚数量": "21Pin FPC（含 TE 帧同步与触摸预留脚）",
+      "有效显示区域": "63.6 × 84.8 mm",
+      "整帧数据量": "30000 字节（2bit/像素，每字节 2×2 共 4 像素）",
+      "工作温度": "-20 ~ +70°C",
+      "模组型号": "Osptek YDP420H005-V3",
+      "引脚定义": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, 低有效), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, 丝印RS), CS(13, 低有效), 触摸(15~19, 本模组无触摸)"
+    },
+    "zh-tw": {
+      "顯示顏色": "2 bit 四色：白、青、紅、黑（無灰階）",
+      "尺寸": "4.2 吋全反射 TFT",
+      "類型": "全反射式 TFT LCD（無背光，依靠環境光顯示）",
+      "驅動晶片": "Sitronix ST7306",
+      "解析度": "300(H) × 400(V)（軟體可映射為 400×300 橫屏）",
+      "通訊介面": "4 線 SPI（只寫，FPC 無 MISO/SDO；示例 20MHz）",
+      "工作電壓": "3.3V（供電與邏輯；兩個供電腳都要接）",
+      "管腳數量": "21Pin FPC（含 TE 幀同步與觸摸預留腳）",
+      "有效顯示區域": "63.6 × 84.8 mm",
+      "整幀資料量": "30000 位元組（2bit/像素，每位元組 2×2 共 4 像素）",
+      "工作溫度": "-20 ~ +70°C",
+      "模組型號": "Osptek YDP420H005-V3",
+      "引腳定義": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, 低電位有效), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, 絲印RS), CS(13, 低電位有效), 觸摸(15~19, 本模組無觸摸)"
+    },
+    "en": {
+      "Display Color": "2-bit 4-color: white, cyan, red, black (no grayscale)",
+      "Size": "4.2 inch reflective TFT",
+      "Type": "Fully reflective TFT LCD (no backlight, uses ambient light)",
+      "Driver Chip": "Sitronix ST7306",
+      "Resolution": "300(H) × 400(V) (software-mappable to 400×300 landscape)",
+      "Interface": "4-wire SPI (write-only, no MISO/SDO on FPC; example runs at 20MHz)",
+      "Operating Voltage": "3.3V (power and logic; connect both supply pins)",
+      "Pin Count": "21Pin FPC (incl. TE frame sync and reserved touch pins)",
+      "Active Display Area": "63.6 × 84.8 mm",
+      "Full Frame Data": "30000 bytes (2bit/pixel, 2×2 = 4 pixels per byte)",
+      "Operating Temperature": "-20 ~ +70°C",
+      "Module Model": "Osptek YDP420H005-V3",
+      "Pin Definition": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, active low), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, silkscreen RS), CS(13, active low), touch(15-19, not populated on this module)"
+    },
+    "ja": {
+      "表示色": "2bit 4色：白・シアン・赤・黒（中間階調なし）",
+      "サイズ": "4.2インチ 反射型TFT",
+      "タイプ": "全反射型TFT液晶（バックライトなし、環境光で表示）",
+      "ドライバーチップ": "Sitronix ST7306",
+      "解像度": "300(H) × 400(V)（ソフトで400×300横画面にマッピング可能）",
+      "通信インターフェース": "4線SPI（書き込み専用、FPCにMISO/SDOなし；例は20MHz）",
+      "動作電圧": "3.3V（電源・ロジックとも；2本の電源ピンを両方接続）",
+      "ピン数": "21Pin FPC（TEフレーム同期・タッチ用予約ピン含む）",
+      "有効表示エリア": "63.6 × 84.8 mm",
+      "フルフレームデータ量": "30000バイト（2bit/ピクセル、1バイト=2×2の4ピクセル）",
+      "動作温度": "-20 ~ +70°C",
+      "モジュール型番": "Osptek YDP420H005-V3",
+      "ピン定義": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, LOW有効), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, シルク印字RS), CS(13, LOW有効), タッチ(15~19, 本モジュールは非対応)"
+    },
+    "ko": {
+      "표시 색상": "2bit 4색: 흰색, 시안, 빨강, 검정(그레이스케일 없음)",
+      "크기": "4.2인치 반사형 TFT",
+      "유형": "전반사형 TFT LCD(백라이트 없음, 주변광으로 표시)",
+      "드라이버 칩": "Sitronix ST7306",
+      "해상도": "300(H) × 400(V)(소프트웨어로 400×300 가로 화면 매핑 가능)",
+      "통신 인터페이스": "4선 SPI(쓰기 전용, FPC에 MISO/SDO 없음; 예제 20MHz)",
+      "작동 전압": "3.3V(전원 및 로직; 두 전원 핀 모두 연결)",
+      "핀 수": "21핀 FPC(TE 프레임 동기 및 터치 예약 핀 포함)",
+      "유효 표시 영역": "63.6 × 84.8 mm",
+      "전체 프레임 데이터": "30000바이트(2bit/픽셀, 바이트당 2×2 = 4픽셀)",
+      "작동 온도": "-20 ~ +70°C",
+      "모듈 모델": "Osptek YDP420H005-V3",
+      "핀 정의": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, LOW 활성), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, 실크 RS), CS(13, LOW 활성), 터치(15~19, 이 모듈은 미지원)"
+    },
+    "es": {
+      "Color de pantalla": "4 colores de 2 bits: blanco, cian, rojo, negro (sin escala de grises)",
+      "Tamaño": "TFT reflectivo de 4.2 pulgadas",
+      "Tipo": "LCD TFT reflectivo (sin retroiluminación, usa luz ambiental)",
+      "Chip controlador": "Sitronix ST7306",
+      "Resolución": "300(H) × 400(V) (mapeable por software a 400×300 horizontal)",
+      "Interfaz de comunicación": "SPI de 4 hilos (solo escritura, sin MISO/SDO en el FPC; ejemplo a 20MHz)",
+      "Voltaje de operación": "3.3V (alimentación y lógica; conectar ambos pines de alimentación)",
+      "Cantidad de pines": "FPC de 21 pines (incl. sincronización de trama TE y pines táctiles reservados)",
+      "Área de visualización activa": "63.6 × 84.8 mm",
+      "Datos de trama completa": "30000 bytes (2 bits/píxel, 2×2 = 4 píxeles por byte)",
+      "Temperatura de operación": "-20 ~ +70°C",
+      "Modelo del módulo": "Osptek YDP420H005-V3",
+      "Definición de pines": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, activo bajo), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, serigrafía RS), CS(13, activo bajo), táctil(15-19, no implementado en este módulo)"
+    },
+    "de": {
+      "Anzeigefarbe": "2 Bit, 4 Farben: Weiß, Cyan, Rot, Schwarz (keine Graustufen)",
+      "Größe": "4,2 Zoll reflektives TFT",
+      "Typ": "Vollreflektives TFT-LCD (ohne Hintergrundbeleuchtung, nutzt Umgebungslicht)",
+      "Treiberchip": "Sitronix ST7306",
+      "Auflösung": "300(H) × 400(V) (per Software auf 400×300 Querformat abbildbar)",
+      "Kommunikationsschnittstelle": "4-Draht-SPI (nur Schreiben, kein MISO/SDO auf dem FPC; Beispiel mit 20MHz)",
+      "Betriebsspannung": "3,3V (Versorgung und Logik; beide Versorgungspins anschließen)",
+      "Pin-Anzahl": "21Pin FPC (inkl. TE-Framesync und reservierten Touch-Pins)",
+      "Aktiver Anzeigebereich": "63.6 × 84.8 mm",
+      "Vollbild-Datenmenge": "30000 Bytes (2 Bit/Pixel, 2×2 = 4 Pixel pro Byte)",
+      "Betriebstemperatur": "-20 ~ +70°C",
+      "Modellbezeichnung": "Osptek YDP420H005-V3",
+      "Pin-Definition": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, LOW aktiv), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, Aufdruck RS), CS(13, LOW aktiv), Touch(15-19, bei diesem Modul nicht bestückt)"
+    },
+    "fr": {
+      "Couleur d'affichage": "4 couleurs sur 2 bits : blanc, cyan, rouge, noir (pas de niveaux de gris)",
+      "Taille": "TFT réflectif de 4,2 pouces",
+      "Type": "LCD TFT réflectif (sans rétroéclairage, utilise la lumière ambiante)",
+      "Puce pilote": "Sitronix ST7306",
+      "Résolution": "300(H) × 400(V) (mappable par logiciel en 400×300 paysage)",
+      "Interface de communication": "SPI 4 fils (écriture seule, pas de MISO/SDO sur le FPC ; exemple à 20MHz)",
+      "Tension de fonctionnement": "3,3V (alimentation et logique ; connecter les deux broches d'alimentation)",
+      "Nombre de broches": "FPC 21 broches (incl. synchro de trame TE et broches tactiles réservées)",
+      "Zone d'affichage active": "63.6 × 84.8 mm",
+      "Données de trame complète": "30000 octets (2 bits/pixel, 2×2 = 4 pixels par octet)",
+      "Température de fonctionnement": "-20 ~ +70°C",
+      "Référence du module": "Osptek YDP420H005-V3",
+      "Définition des broches": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, actif bas), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, sérigraphie RS), CS(13, actif bas), tactile(15-19, non implémenté sur ce module)"
+    },
+    "it": {
+      "Colore display": "4 colori a 2 bit: bianco, ciano, rosso, nero (nessuna scala di grigi)",
+      "Dimensione": "TFT riflettente da 4,2 pollici",
+      "Tipo": "LCD TFT riflettente (senza retroilluminazione, usa luce ambientale)",
+      "Chip driver": "Sitronix ST7306",
+      "Risoluzione": "300(H) × 400(V) (mappabile via software in 400×300 orizzontale)",
+      "Interfaccia di comunicazione": "SPI a 4 fili (sola scrittura, niente MISO/SDO sul FPC; esempio a 20MHz)",
+      "Tensione di funzionamento": "3,3V (alimentazione e logica; collegare entrambi i pin di alimentazione)",
+      "Numero pin": "FPC 21 pin (incl. sincronizzazione frame TE e pin touch riservati)",
+      "Area di visualizzazione attiva": "63.6 × 84.8 mm",
+      "Dati frame completo": "30000 byte (2 bit/pixel, 2×2 = 4 pixel per byte)",
+      "Temperatura di funzionamento": "-20 ~ +70°C",
+      "Modello modulo": "Osptek YDP420H005-V3",
+      "Definizione pin": "GND(1/4/7/14/20/21), NC(2/3), VCC 3.3V(5/6), RESET(8, attivo basso), SCLK(9), TE(10), MOSI/SDI(11), D/C(12, serigrafia RS), CS(13, attivo basso), touch(15-19, non presente su questo modulo)"
+    }
+  },
+  "image": "https://img.lingflux.com/2026/11/0784aa352ac306a54f4bc28e49cd0d48.jpg",
+  "keywords": {
+    "zh-cn": [
+      "全反射屏",
+      "ST7306",
+      "四色LCD",
+      "YDP420H005",
+      "4.2寸反射屏",
+      "300x400屏幕"
+    ],
+    "zh-tw": [
+      "全反射螢幕",
+      "ST7306",
+      "四色LCD",
+      "YDP420H005",
+      "4.2吋反射螢幕",
+      "300x400螢幕"
+    ],
+    "en": [
+      "Reflective LCD",
+      "ST7306",
+      "4-color LCD",
+      "YDP420H005",
+      "4.2 inch reflective display",
+      "300x400 screen"
+    ],
+    "ja": [
+      "反射型LCD",
+      "ST7306",
+      "4色LCD",
+      "YDP420H005",
+      "4.2インチ反射ディスプレイ",
+      "300x400画面"
+    ],
+    "ko": [
+      "반사형 LCD",
+      "ST7306",
+      "4색 LCD",
+      "YDP420H005",
+      "4.2인치 반사 디스플레이",
+      "300x400 화면"
+    ],
+    "es": [
+      "LCD reflectivo",
+      "ST7306",
+      "LCD de 4 colores",
+      "YDP420H005",
+      "pantalla reflectiva 4.2 pulgadas",
+      "pantalla 300x400"
+    ],
+    "de": [
+      "Reflektives LCD",
+      "ST7306",
+      "4-Farben-LCD",
+      "YDP420H005",
+      "4,2 Zoll Reflexionsdisplay",
+      "300x400 Bildschirm"
+    ],
+    "fr": [
+      "LCD réflectif",
+      "ST7306",
+      "LCD 4 couleurs",
+      "YDP420H005",
+      "écran réflectif 4,2 pouces",
+      "écran 300x400"
+    ],
+    "it": [
+      "LCD riflettivo",
+      "ST7306",
+      "LCD a 4 colori",
+      "YDP420H005",
+      "display riflettivo 4,2 pollici",
+      "schermo 300x400"
+    ]
+  }
+}
