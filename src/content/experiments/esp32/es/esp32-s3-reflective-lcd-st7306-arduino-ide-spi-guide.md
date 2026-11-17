@@ -45,6 +45,10 @@ Con el cableado y la subida correctos, el programa muestra en bucle 8 páginas d
 ![](https://img.lingflux.com/2026/11/0784aa352ac306a54f4bc28e49cd0d48.jpg)
 
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Jb9UiMvgtTQ?si=IvvwAvHHZx5RICSM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
+
 ## Componentes: YDP420H005-V3 y ST7306
 
 ### Módulo LCD reflectante YDP420H005-V3

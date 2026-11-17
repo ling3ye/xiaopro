@@ -45,6 +45,10 @@ Wenn Verkabelung und Flashen stimmen, zeigt das Programm 8 Testseiten in einer S
 ![](https://img.lingflux.com/2026/11/0784aa352ac306a54f4bc28e49cd0d48.jpg)
 
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Jb9UiMvgtTQ?si=IvvwAvHHZx5RICSM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
+
 ## Bauteile: YDP420H005-V3 und ST7306
 
 ### Das reflektive LCD-Modul YDP420H005-V3

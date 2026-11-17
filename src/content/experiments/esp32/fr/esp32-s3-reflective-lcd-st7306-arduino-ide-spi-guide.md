@@ -45,6 +45,10 @@ Une fois le câblage et le téléversement corrects, le programme fait défiler 
 ![](https://img.lingflux.com/2026/11/0784aa352ac306a54f4bc28e49cd0d48.jpg)
 
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Jb9UiMvgtTQ?si=IvvwAvHHZx5RICSM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
+
 ## Les composants : YDP420H005-V3 et ST7306
 
 ### Le module LCD réflectif YDP420H005-V3
