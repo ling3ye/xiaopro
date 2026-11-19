@@ -108,6 +108,10 @@ const formatDate = (d: Date) => {
 // 规格摘要（硬件卡最多 2 条）
 const specEntries = specs ? Object.entries(specs).slice(0, 2) : [];
 
+// 纯文字卡顶部最多展示 2 个标签，其余收进计数标签，避免窄卡片被标签挤满
+const textCardTags = tags.slice(0, 2);
+const hiddenTextCardTags = tags.slice(2);
+
 const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 ---
 
@@ -204,17 +208,20 @@ const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 ) : (
   /* ============ 纯文字卡 ============ */
   <article class="card article-card reveal" {...dataAttrs}>
-    <div class="domain-row">
-      <span class="card-meta">
-        {tags.map(tag => <span class="chip chip--accent">{tag}</span>)}
+    <div class="article-card-top">
+      <span class="article-card-icon" aria-hidden="true"><Fragment set:html={typeIcons[type]} /></span>
+      <div class="card-meta article-card-tags">
+        {textCardTags.map(tag => <span class="chip chip--accent">{tag}</span>)}
+        {hiddenTextCardTags.length > 0 && (
+          <span class="chip article-card-more" title={hiddenTextCardTags.join('、')}>+{hiddenTextCardTags.length}</span>
+        )}
         {difficulty && <span class={`chip ${difficultyChip[difficulty]}`}>{difficulty}</span>}
-      </span>
-      {date && <time datetime={date.toISOString()}>{formatDate(date)}</time>}
+      </div>
     </div>
     <h3 class="card-title">{link ? <a href={link}>{title}</a> : title}</h3>
     {description && <p class="card-desc">{description}</p>}
     <div class="card-foot">
-      <span></span>
+      {date ? <time datetime={date.toISOString()}>{formatDate(date)}</time> : <span></span>}
       {link && (
         <a class="card-link" href={link}>
           {t(readKey as any)}
