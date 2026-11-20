@@ -1,0 +1,85 @@
+---
+/**
+ * 阅读数徽章 ViewBadge · 只读展示，不增加计数
+ *
+ * 与 ViewCounter（详情页，调用 increment_article_view 自增）不同，
+ * 本组件供列表页卡片使用：每页所有徽章合并为一次
+ * get_article_views RPC 批量只读查询。
+ * RPC 未部署或查询失败时整个徽章隐藏，不占位、不报错。
+ */
+interface Props {
+  contentKey: string;
+  label: string;
+}
+
+const { contentKey, label } = Astro.props;
+---
+
+<span class="view-badge" data-view-badge={contentKey} title={label} hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+  <span data-view-badge-count aria-label={label}></span>
+</span>
+
+<script>
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseKey = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const badges = Array.from(document.querySelectorAll<HTMLElement>('[data-view-badge]'));
+
+  if (badges.length > 0 && supabaseUrl && supabaseKey) {
+    const keys = Array.from(
+      new Set(badges.map(b => b.getAttribute('data-view-badge')).filter((k): k is string => Boolean(k)))
+    );
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/rpc/get_article_views`, {
+        method: 'POST',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ p_article_keys: keys }),
+      });
+
+      if (!response.ok) throw new Error(`View badges failed: ${response.status}`);
+
+      const rows = await response.json();
+      if (!Array.isArray(rows)) throw new Error('Invalid view badge payload');
+
+      const counts = new Map<string, number>();
+      for (const row of rows) {
+        if (row && typeof row.article_key === 'string' && Number.isSafeInteger(row.view_count) && row.view_count >= 0) {
+          counts.set(row.article_key, row.view_count);
+        }
+      }
+
+      const locale = document.documentElement.lang || 'en';
+      const formatter = new Intl.NumberFormat(locale);
+      for (const badge of badges) {
+        const key = badge.getAttribute('data-view-badge');
+        const countElement = badge.querySelector('[data-view-badge-count]');
+        if (!key || !countElement || !counts.has(key)) continue;
+        const count = counts.get(key)!;
+        countElement.textContent = formatter.format(count);
+        countElement.setAttribute('aria-label', `${countElement.getAttribute('aria-label')}: ${count}`);
+        badge.hidden = false;
+      }
+    } catch (error) {
+      console.warn('Unable to load view counts', error);
+    }
+  }
+</script>
+
+<style>
+  .view-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .view-badge[hidden] { display: none; }
+  .view-badge svg { width: 13px; height: 13px; color: var(--ink-3); }
+</style>

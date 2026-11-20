@@ -286,6 +286,7 @@ const boltIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
                   date={('date' in exp.data ? exp.data.date as Date : undefined)}
                   image={exp.data.image}
                   locale={currentLocale}
+                  viewKey={`experiments/${expSlug}`}
                 />
               );
             })}

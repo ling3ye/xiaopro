@@ -12,6 +12,7 @@
 
 import { useTranslations } from '../utils/i18n';
 import { defaultLang, type SupportedLocale } from '../i18n/config';
+import ViewBadge from './ViewBadge.astro';
 
 interface Props {
   type?: 'article' | 'board' | 'module' | 'printer' | 'filament' | 'model';
@@ -34,6 +35,8 @@ interface Props {
   catLabel?: string;
   /** 图文卡不显示图片上的悬浮标签（tags[0] 不渲染为 float-tag） */
   hideFloatTag?: boolean;
+  /** 阅读数内容 key（如 experiments/slug）；传入后在卡片底部只读展示阅读数，不增加计数 */
+  viewKey?: string;
   /** 任意 data-* 属性会自动透传到卡片根元素（供筛选脚本使用） */
   [key: `data-${string}`]: string | undefined;
 }
@@ -54,6 +57,7 @@ const {
   priceRange,
   catLabel,
   hideFloatTag = false,
+  viewKey,
 } = Astro.props;
 
 // 透传 data-* 属性（供列表页筛选脚本读取 dataset）
@@ -195,7 +199,10 @@ const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
       <h3 class="card-title">{link ? <a href={link}>{title}</a> : title}</h3>
       {description && <p class="card-desc">{description}</p>}
       <div class="card-foot">
-        {date ? <time datetime={date.toISOString()}>{formatDate(date)}</time> : <span></span>}
+        <span class="card-foot-meta">
+          {date ? <time datetime={date.toISOString()}>{formatDate(date)}</time> : <span></span>}
+          {viewKey && <ViewBadge contentKey={viewKey} label={t('ui.views')} />}
+        </span>
         {link && (
           <a class="card-link" href={link}>
             {t(readKey as any)}
@@ -221,7 +228,10 @@ const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
     <h3 class="card-title">{link ? <a href={link}>{title}</a> : title}</h3>
     {description && <p class="card-desc">{description}</p>}
     <div class="card-foot">
-      {date ? <time datetime={date.toISOString()}>{formatDate(date)}</time> : <span></span>}
+      <span class="card-foot-meta">
+        {date ? <time datetime={date.toISOString()}>{formatDate(date)}</time> : <span></span>}
+        {viewKey && <ViewBadge contentKey={viewKey} label={t('ui.views')} />}
+      </span>
       {link && (
         <a class="card-link" href={link}>
           {t(readKey as any)}
@@ -233,6 +243,13 @@ const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 )}
 
 <style>
+  /* 底部元信息组：日期 + 只读阅读数徽章 */
+  .card-foot-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
   /* 图片链接：保证 img 被 a 包裹时布局不变 */
   .card-img-link {
     display: block;

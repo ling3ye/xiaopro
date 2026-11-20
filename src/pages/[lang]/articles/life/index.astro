@@ -75,6 +75,7 @@ const breadcrumbItems = [
             date={art.data.date}
             image={art.data.image}
             locale={currentLocale}
+            viewKey={`${DOMAIN}/${art.id.replace(`${lang}/`, '').replace('.md', '')}`}
           />
         ))}
       </div>
