@@ -35,6 +35,11 @@ ESP32-S3 で電子ペーパーのデモカードを作りたいと思いまし�
 ![](https://img.lingflux.com/2026/11/dc08d160b6bc55bc5a237bcadf4abc9f.jpg)
 
 
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kzJw5SoUn40?si=yWxWSi7nY-pc4jXh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<br>
+
+
 
 ## 部品の説明
 ### EPD037A02 6 色電子ペーパー
