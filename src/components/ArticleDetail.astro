@@ -10,6 +10,7 @@
 
 import { getEntry } from 'astro:content';
 import Breadcrumb from './Breadcrumb.astro';
+import ViewCounter from './ViewCounter.astro';
 import { useTranslations, getLocalizedPath, type UIKey } from '../utils/i18n';
 import type { SupportedLocale } from '../i18n/config';
 
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const { article, domain, lang, slug } = Astro.props;
+const articleKey = `${domain}/${slug}`;
 const currentLocale = lang;
 const t = useTranslations(currentLocale);
 
@@ -79,6 +81,7 @@ const boardIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
                 year: 'numeric', month: 'long', day: 'numeric'
               })}
             </time>
+            <ViewCounter contentKey={articleKey} label={t('ui.views')} />
             {article.data.tags && article.data.tags.map((tag: string) => (
               <span class="chip">{tag}</span>
             ))}

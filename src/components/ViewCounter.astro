@@ -1,0 +1,56 @@
+---
+interface Props {
+  contentKey: string;
+  label: string;
+}
+
+const { contentKey, label } = Astro.props;
+---
+
+<span class="article-views" data-view-counter={contentKey} title={label}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+  <span data-view-count aria-label={label}>—</span>
+</span>
+
+<script>
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseKey = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const viewCounter = document.querySelector('[data-view-counter]');
+
+  if (viewCounter && supabaseUrl && supabaseKey) {
+    const contentKey = viewCounter.getAttribute('data-view-counter');
+    const countElement = viewCounter.querySelector('[data-view-count]');
+
+    if (contentKey && countElement) {
+      try {
+        const response = await fetch(`${supabaseUrl}/rest/v1/rpc/increment_article_view`, {
+          method: 'POST',
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ p_article_key: contentKey }),
+        });
+
+        if (!response.ok) throw new Error(`View counter failed: ${response.status}`);
+
+        const count = await response.json();
+        if (!Number.isSafeInteger(count) || count < 0) throw new Error('Invalid view count');
+
+        const locale = document.documentElement.lang || 'en';
+        countElement.textContent = new Intl.NumberFormat(locale).format(count);
+        countElement.setAttribute('aria-label', `${countElement.getAttribute('aria-label')}: ${count}`);
+      } catch (error) {
+        console.warn('Unable to update view count', error);
+      }
+    }
+  }
+</script>
+
+<style>
+  .article-views [data-view-count] {
+    min-width: 1ch;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
