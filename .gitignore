@@ -27,4 +27,10 @@ pnpm-debug.log*
 .claude/
 
 .workbuddy/
-.*/
+
+# box-agent local state
+.box-agent/
+.box-agent-scratch/
+
+# editor settings
+.vscode/
